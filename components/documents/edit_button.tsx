@@ -72,7 +72,7 @@ export default function EditButton(props: any) {
       if (postDocReq.status === 200) {
         setShowSnackbar(true);
 
-        router.push("/admin/documents");
+        router.push("/admin/dashboard");
 
         console.log(postDocRes);
       }
