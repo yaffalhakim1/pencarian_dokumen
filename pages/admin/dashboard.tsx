@@ -1,8 +1,8 @@
 import { SetStateAction, useState } from "react";
 import Router from "next/router";
 import Cookie from "js-cookie";
-import CrudDocument from "./crudDokumen";
-import CrudAlat from "./crudAlat";
+import CrudDocument from "./documents";
+import CrudAlat from "./tools";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
