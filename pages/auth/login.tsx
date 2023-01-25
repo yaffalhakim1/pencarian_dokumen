@@ -10,7 +10,6 @@ function LoginForm(this: any) {
   const { setAuth } = useContext<any>(AuthContext);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [field, setField] = useState({ username: "", password: "" });
-  const [loading, setLoading] = useState(false);
 
   function fieldHandler(e: any) {
     setField({
@@ -36,8 +35,8 @@ function LoginForm(this: any) {
       if (loginReq.status === 200) {
         setAuth(loginResp);
         Cookie.set("token", loginResp.token);
-        setLoading(true);
         Router.push("/admin/dashboard");
+        console.log(loginResp);
       }
     } catch (error) {
       const err = error as AxiosError;
@@ -85,26 +84,15 @@ function LoginForm(this: any) {
                   />
                 </div>
 
-                {loading ? (
-                  <button
-                    type="button"
-                    className="inline-block px-7 py-3 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full"
-                    data-mdb-ripple="true"
-                    data-mdb-ripple-color="light"
-                  >
-                    Loading...
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleLogin}
-                    className="inline-block px-7 py-3 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full"
-                    data-mdb-ripple="true"
-                    data-mdb-ripple-color="light"
-                  >
-                    Sign in
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={handleLogin}
+                  className="inline-block px-7 py-3 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full"
+                  data-mdb-ripple="true"
+                  data-mdb-ripple-color="light"
+                >
+                  Sign in
+                </button>
               </form>
             </div>
           </div>
