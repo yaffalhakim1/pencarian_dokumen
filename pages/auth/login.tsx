@@ -10,6 +10,7 @@ function LoginForm(this: any) {
   const { setAuth } = useContext<any>(AuthContext);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [field, setField] = useState({ username: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   function fieldHandler(e: any) {
     setField({
@@ -18,21 +19,14 @@ function LoginForm(this: any) {
     });
   }
 
-  // useEffect(() => {
-  //   const token = Cookie.get("token");
-  //   if (token) {
-  //     Router.push("/");
-  //   }
-  // }, []);
-
   async function handleLogin(e: any) {
     e.preventDefault();
     try {
       const loginReq = await axios.post(
         "https://spda-api.onrender.com/api/auth/login",
         {
-          Headers: {
-            "Content-Type": "application/json",
+          headers: {
+            "Content-Type": "application/json;charset=utf-8",
           },
           username: field.username,
           password: field.password,
@@ -42,7 +36,7 @@ function LoginForm(this: any) {
       if (loginReq.status === 200) {
         setAuth(loginResp);
         Cookie.set("token", loginResp.token);
-        console.log(Cookie.get("token"));
+        setLoading(true);
         Router.push("/admin/dashboard");
       }
     } catch (error) {
@@ -68,7 +62,7 @@ function LoginForm(this: any) {
               />
             </div>
             <div className="md:w-8/12 lg:w-5/12 lg:ml-20">
-              <form onSubmit={handleLogin}>
+              <form>
                 <div className="mb-6">
                   <input
                     type="text"
@@ -91,23 +85,26 @@ function LoginForm(this: any) {
                   />
                 </div>
 
-                <div className="flex justify-between items-center mb-6">
-                  <a
-                    href="#!"
-                    className="text-blue-600 hover:text-blue-700 focus:text-blue-700 active:text-blue-800 duration-200 transition ease-in-out"
+                {loading ? (
+                  <button
+                    type="submit"
+                    className="inline-block px-7 py-3 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full"
+                    data-mdb-ripple="true"
+                    data-mdb-ripple-color="light"
                   >
-                    Forgot password?
-                  </a>
-                </div>
-
-                <button
-                  type="submit"
-                  className="inline-block px-7 py-3 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full"
-                  data-mdb-ripple="true"
-                  data-mdb-ripple-color="light"
-                >
-                  Sign in
-                </button>
+                    Loading...
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleLogin}
+                    className="inline-block px-7 py-3 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full"
+                    data-mdb-ripple="true"
+                    data-mdb-ripple-color="light"
+                  >
+                    Sign in
+                  </button>
+                )}
               </form>
             </div>
           </div>

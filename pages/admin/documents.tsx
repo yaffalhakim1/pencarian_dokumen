@@ -3,7 +3,7 @@ import EditButton from "../../components/documents/edit_button";
 import DeleteButton from "../../components/documents/button_hapus";
 import Cookie from "js-cookie";
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 
 export default function CrudDocument(props: any) {
   const url = "https://spda-api.onrender.com/api/admin/documents";
@@ -19,6 +19,9 @@ export default function CrudDocument(props: any) {
       })
       .then((res) => {
         setData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
       });
   }, []);
 

@@ -20,6 +20,12 @@ export default function DashboardAdmin() {
   return (
     <div>
       <div className="text-white font-semibold ml-8 mt-5">
+        <label
+          htmlFor="my-drawer-2"
+          className="btn btn-primary drawer-button lg:hidden"
+        >
+          Open drawer
+        </label>
         <h1>Dashboard Admin</h1>
       </div>
       <div className="drawer drawer-mobile">
@@ -27,12 +33,6 @@ export default function DashboardAdmin() {
         <div className="drawer-content flex flex-col items-center justify-center">
           {selectedItem === 1 && <CrudDocument />}
           {selectedItem === 2 && <CrudAlat />}
-          <label
-            htmlFor="my-drawer-2"
-            className="btn btn-primary drawer-button lg:hidden"
-          >
-            Open drawer
-          </label>
         </div>
 
         <div className="drawer-side">
