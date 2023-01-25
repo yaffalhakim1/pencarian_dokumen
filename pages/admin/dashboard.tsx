@@ -20,13 +20,15 @@ export default function DashboardAdmin() {
   return (
     <div>
       <div className="text-white font-semibold ml-8 mt-5">
-        <label
-          htmlFor="my-drawer-2"
-          className="btn btn-primary drawer-button lg:hidden"
-        >
-          Open drawer
-        </label>
-        <h1>Dashboard Admin</h1>
+        <div className="flex flex-row container items-center">
+          <label
+            htmlFor="my-drawer-2"
+            className="btn btn-sm btn-primary drawer-button lg:hidden mr-4"
+          >
+            Menu
+          </label>
+          <h1>Dashboard Admin</h1>
+        </div>
       </div>
       <div className="drawer drawer-mobile">
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
@@ -44,10 +46,17 @@ export default function DashboardAdmin() {
             <li>
               <a onClick={() => handleClick(2)}>Alat</a>
             </li>
+            <li>
+              <a
+                className="btn btn-error text-black mt-5"
+                onClick={logoutHandler}
+              >
+                Logout
+              </a>
+            </li>
           </ul>
         </div>
       </div>
-      <button onClick={logoutHandler}>logout</button>
     </div>
   );
 }

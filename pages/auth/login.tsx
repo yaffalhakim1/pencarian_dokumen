@@ -36,7 +36,6 @@ function LoginForm(this: any) {
         setAuth(loginResp);
         Cookie.set("token", loginResp.token);
         Router.push("/admin/dashboard");
-        console.log(loginResp);
       }
     } catch (error) {
       const err = error as AxiosError;
