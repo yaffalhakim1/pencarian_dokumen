@@ -27,7 +27,7 @@ export default function AddDocument(this: any) {
   async function handleDocSubmit(e: any) {
     e.preventDefault();
     const token = Cookie.get("token") as string;
-    console.log(`token: ${token}`);
+    // console.log(`token: ${token}`);
     try {
       const postDocReq = await axios.post(
         "https://spda-api.onrender.com/api/admin/documents",
@@ -38,6 +38,7 @@ export default function AddDocument(this: any) {
         },
         {
           headers: {
+            // crossorigin: true,
             "Content-Type": "application/json",
             authorization: `Bearer ${token}`,
           },
@@ -47,8 +48,9 @@ export default function AddDocument(this: any) {
       const postDocRes = await postDocReq.data;
       if (postDocReq.status === 200) {
         setShowSnackbar(true);
+
         Router.reload();
-        // console.log(postDocRes);
+        console.log(postDocRes);
       }
     } catch (error) {
       const err = error as AxiosError;
@@ -116,6 +118,7 @@ export default function AddDocument(this: any) {
               </label>
               <input
                 type="file"
+                crossOrigin="true"
                 className="file-input w-full max-w-xs"
                 name="photo"
                 onChange={fieldHandler}

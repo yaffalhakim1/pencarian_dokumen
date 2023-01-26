@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { AxiosError } from "axios";
 import AuthContext from "../../context/AuthProvider";
 import axios from "axios";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import Cookie from "js-cookie";
 import SnackbarAlert from "../../components/snackbar";
 
@@ -10,6 +10,7 @@ function LoginForm(this: any) {
   const { setAuth } = useContext<any>(AuthContext);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [field, setField] = useState({ username: "", password: "" });
+  const router = useRouter();
 
   function fieldHandler(e: any) {
     setField({
@@ -18,14 +19,15 @@ function LoginForm(this: any) {
     });
   }
 
-  async function handleLogin(e: any) {
-    e.preventDefault();
+  async function handleLogin(event: React.SyntheticEvent) {
+    event.preventDefault();
+    console.log(event);
     try {
       const loginReq = await axios.post(
         "https://spda-api.onrender.com/api/auth/login",
         {
           headers: {
-            "Content-Type": "application/json;charset=utf-8",
+            "Content-Type": "application/json; charset=utf-8",
           },
           username: field.username,
           password: field.password,
@@ -35,7 +37,9 @@ function LoginForm(this: any) {
       if (loginReq.status === 200) {
         setAuth(loginResp);
         Cookie.set("token", loginResp.token);
-        Router.push("/admin/dashboard");
+        Cookie.set("role", loginResp.data.role_id);
+        console.log(loginResp);
+        router.push("/admin/dashboard");
       }
     } catch (error) {
       const err = error as AxiosError;
@@ -60,7 +64,7 @@ function LoginForm(this: any) {
               />
             </div>
             <div className="md:w-8/12 lg:w-5/12 lg:ml-20">
-              <form>
+              <form onSubmit={handleLogin}>
                 <div className="mb-6">
                   <input
                     type="text"
@@ -83,13 +87,7 @@ function LoginForm(this: any) {
                   />
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleLogin}
-                  className="inline-block px-7 py-3 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full"
-                  data-mdb-ripple="true"
-                  data-mdb-ripple-color="light"
-                >
+                <button type="submit" className="btn btn-primary w-full">
                   Sign in
                 </button>
               </form>
