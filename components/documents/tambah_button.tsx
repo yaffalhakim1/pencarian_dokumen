@@ -1,21 +1,23 @@
 import axios, { AxiosError } from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SuccessInfo from "../success_toast";
 import Cookie from "js-cookie";
 import { Dialog } from "@headlessui/react";
-import { useRouter } from "next/router";
-import Router from "next/router";
+import { Router, useRouter } from "next/router";
 
 export default function AddDocument(this: any) {
-  const router = useRouter();
-
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [field, setField] = useState({
     name: "",
     location: "",
     photo: "",
   });
+  const [photoUrl, setPhotoUrl] = useState("");
   let [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+  const [data, setData] = useState(null);
+  const [secondData, setSecondData] = useState(null);
+
   function closeModal() {
     setIsOpen(false);
   }
@@ -24,21 +26,62 @@ export default function AddDocument(this: any) {
     setIsOpen(true);
   }
 
-  async function handleDocSubmit(e: any) {
-    e.preventDefault();
+  const handleChange = (e: any) => {
+    const { name, value, files } = e.target;
+    setField({
+      ...field,
+      [e.target.name]: e.target.value,
+      photo: name === "photo" ? files[0] : field.photo,
+
+      // photo: files ? files[0] : field.photo,
+    });
+  };
+
+  async function handleFileUpload() {
+    const input = document.querySelector(
+      "input[type='file']"
+    ) as HTMLInputElement;
+    const formData = new FormData();
+    formData.append("file", input.files![0]);
     const token = Cookie.get("token") as string;
-    // console.log(`token: ${token}`);
+    const options = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    try {
+      const postFileReq = await axios.post(
+        "https://spda-api.onrender.com/api/file/upload",
+        formData,
+        options
+      );
+      const postFileRes = await postFileReq.data.image;
+      if (postFileReq.status === 200) {
+        setPhotoUrl((prev) => {
+          return postFileRes;
+        });
+
+        handleDocSubmit(postFileRes);
+      }
+    } catch (error) {
+      const err = error as AxiosError;
+      console.log(err.response?.data);
+    }
+  }
+
+  async function handleDocSubmit(photoUrl: string) {
+    const token = Cookie.get("token") as string;
     try {
       const postDocReq = await axios.post(
         "https://spda-api.onrender.com/api/admin/documents",
         {
-          location: field.location,
           name: field.name,
-          photo: field.photo,
+          location: field.location,
+          photo: photoUrl,
         },
         {
           headers: {
-            // crossorigin: true,
             "Content-Type": "application/json",
             authorization: `Bearer ${token}`,
           },
@@ -48,8 +91,8 @@ export default function AddDocument(this: any) {
       const postDocRes = await postDocReq.data;
       if (postDocReq.status === 200) {
         setShowSnackbar(true);
+        router.reload();
 
-        Router.reload();
         console.log(postDocRes);
       }
     } catch (error) {
@@ -58,12 +101,53 @@ export default function AddDocument(this: any) {
     }
   }
 
-  function fieldHandler(e: any) {
-    setField({
-      ...field,
-      [e.target.name]: e.target.value,
-    });
-  }
+  const fetchData = async () => {
+    const input = document.querySelector(
+      "input[type='file']"
+    ) as HTMLInputElement;
+    const formData = new FormData();
+    formData.append("file", input.files![0]);
+    const token = Cookie.get("token") as string;
+    const options = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    try {
+      const response = await axios.post(
+        "https://spda-api.onrender.com/api/file/upload",
+        formData,
+        options
+      );
+      setData(response.data.image);
+      //if first api was successful,call the second api
+      const secondResponse = await axios.post(
+        "https://spda-api.onrender.com/api/admin/documents",
+        {
+          name: field.name,
+          location: field.location,
+          photo: data,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (secondResponse.status === 200) {
+        setShowSnackbar(true);
+        console.log(secondResponse.data);
+      }
+
+      console.log(secondResponse.data);
+    } catch (error) {
+      const err = error as AxiosError;
+      console.log(err.response?.data);
+    }
+  };
 
   return (
     <>
@@ -100,7 +184,7 @@ export default function AddDocument(this: any) {
                   placeholder="nama dokumen"
                   className="input input-bordered"
                   name="name"
-                  onChange={fieldHandler}
+                  onChange={handleChange}
                 />
               </label>
               <label className="input-group mb-3">
@@ -110,7 +194,7 @@ export default function AddDocument(this: any) {
                   placeholder="Lokasi dokumen"
                   className="input input-bordered"
                   name="location"
-                  onChange={fieldHandler}
+                  onChange={handleChange}
                 />
               </label>
               <label className="label">
@@ -118,13 +202,12 @@ export default function AddDocument(this: any) {
               </label>
               <input
                 type="file"
-                crossOrigin="true"
                 className="file-input w-full max-w-xs"
                 name="photo"
-                onChange={fieldHandler}
+                // onChange={handleFileUpload}
               />
             </Dialog.Description>
-            <button onClick={handleDocSubmit} className="btn btn-success mr-3">
+            <button onClick={handleFileUpload} className="btn btn-success mr-3">
               Tambahkan
             </button>
             <button onClick={closeModal} className="btn">

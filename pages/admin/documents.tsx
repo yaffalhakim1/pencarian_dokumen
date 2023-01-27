@@ -49,7 +49,7 @@ export default function CrudDocument(props: any) {
                     <td>{item.name}</td>
                     <td>{item.location}</td>
                     <td>
-                      <img src={item.photo} alt="" width={60} />
+                      <img src={item.photo} alt="" width={100} />
                     </td>
 
                     <td>

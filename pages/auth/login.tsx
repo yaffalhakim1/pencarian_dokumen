@@ -5,11 +5,13 @@ import axios from "axios";
 import Router, { useRouter } from "next/router";
 import Cookie from "js-cookie";
 import SnackbarAlert from "../../components/snackbar";
+import PuffLoader from "react-spinners/PuffLoader";
 
 function LoginForm(this: any) {
   const { setAuth } = useContext<any>(AuthContext);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [field, setField] = useState({ username: "", password: "" });
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   function fieldHandler(e: any) {
@@ -34,16 +36,17 @@ function LoginForm(this: any) {
         }
       );
       const loginResp = await loginReq.data;
+      setLoading(false);
       if (loginReq.status === 200) {
         setAuth(loginResp);
         Cookie.set("token", loginResp.token);
-        Cookie.set("role", loginResp.data.role_id);
-        console.log(loginResp);
+        // Cookie.set("role", loginResp.data.role_id);
         router.push("/admin/dashboard");
       }
     } catch (error) {
       const err = error as AxiosError;
       console.log(err);
+      setLoading(false);
       setShowSnackbar(true);
     }
   }
@@ -87,8 +90,19 @@ function LoginForm(this: any) {
                   />
                 </div>
 
-                <button type="submit" className="btn btn-primary w-full">
-                  Sign in
+                <button
+                  type="submit"
+                  className="btn btn-primary w-full"
+                  onClick={() => setLoading(true)}
+                >
+                  {loading ? (
+                    <div className="flex flex-row items-center">
+                      <PuffLoader color="#fff" size={20} className="mr-3" />
+                      <span className="text-white">Signing you in...</span>
+                    </div>
+                  ) : (
+                    "Sign In"
+                  )}
                 </button>
               </form>
             </div>
