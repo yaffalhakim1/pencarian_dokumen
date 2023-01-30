@@ -3,22 +3,29 @@ import Router from "next/router";
 import Cookie from "js-cookie";
 import CrudDocument from "./documents";
 import CrudAlat from "./tools";
+import Head from "next/head";
+import { MoonLoader } from "react-spinners";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const handleClick = (item: SetStateAction<number>) => {
     setSelectedItem(item);
   };
 
-  function logoutHandler(e: { preventDefault: () => void }) {
-    e.preventDefault();
+  function logoutHandler() {
     Cookie.remove("token");
+    setLoading(false);
     Router.replace("/auth/login");
   }
 
   return (
     <div>
+      <Head>
+        <title>Dashboard Admin</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <div className="text-white font-semibold ml-8 mt-5">
         <div className="flex flex-row container items-center">
           <label
@@ -48,10 +55,18 @@ export default function DashboardAdmin() {
             </li>
             <li>
               <a
-                className="btn btn-error text-black mt-5"
+                className="btn btn-error text-black mt-5 py-3"
+                //setloading true onclick
                 onClick={logoutHandler}
               >
-                Logout
+                {loading ? (
+                  <div className="flex flex-row items-center">
+                    <MoonLoader color="#fff" size={20} className="mr-3" />
+                    <span className="text-white">Loading...</span>
+                  </div>
+                ) : (
+                  "Logout"
+                )}
               </a>
             </li>
           </ul>

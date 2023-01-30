@@ -6,6 +6,8 @@ import Router, { useRouter } from "next/router";
 import Cookie from "js-cookie";
 import SnackbarAlert from "../../components/snackbar";
 import PuffLoader from "react-spinners/PuffLoader";
+import { RotateLoader } from "react-spinners";
+import MoonLoader from "react-spinners/MoonLoader";
 
 function LoginForm(this: any) {
   const { setAuth } = useContext<any>(AuthContext);
@@ -23,7 +25,6 @@ function LoginForm(this: any) {
 
   async function handleLogin(event: React.SyntheticEvent) {
     event.preventDefault();
-    console.log(event);
     try {
       const loginReq = await axios.post(
         "https://spda-api.onrender.com/api/auth/login",
@@ -97,7 +98,7 @@ function LoginForm(this: any) {
                 >
                   {loading ? (
                     <div className="flex flex-row items-center">
-                      <PuffLoader color="#fff" size={20} className="mr-3" />
+                      <MoonLoader color="#fff" size={20} className="mr-3" />
                       <span className="text-white">Signing you in...</span>
                     </div>
                   ) : (
