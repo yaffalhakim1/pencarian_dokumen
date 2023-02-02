@@ -8,6 +8,8 @@ import SnackbarAlert from "../../components/snackbar";
 import PuffLoader from "react-spinners/PuffLoader";
 import { RotateLoader } from "react-spinners";
 import MoonLoader from "react-spinners/MoonLoader";
+import { TailSpin } from "react-loader-spinner";
+import Head from "next/head";
 
 function LoginForm(this: any) {
   const { setAuth } = useContext<any>(AuthContext);
@@ -30,7 +32,7 @@ function LoginForm(this: any) {
         "https://spda-api.onrender.com/api/auth/login",
         {
           headers: {
-            "Content-Type": "application/json; charset=utf-8",
+            "Content-Type": "application/json",
           },
           username: field.username,
           password: field.password,
@@ -54,6 +56,9 @@ function LoginForm(this: any) {
 
   return (
     <>
+      <Head>
+        <title>Login</title>
+      </Head>
       <section className="h-screen">
         <div className="container px-6 py-12 h-full">
           <div className=" md:w-8/12 lg:w-6/12 mb-12 md:mb-0">
@@ -98,7 +103,16 @@ function LoginForm(this: any) {
                 >
                   {loading ? (
                     <div className="flex flex-row items-center">
-                      <MoonLoader color="#fff" size={20} className="mr-3" />
+                      <TailSpin
+                        height="20"
+                        width="20"
+                        color="#ffffff"
+                        ariaLabel="tail-spin-loading"
+                        radius="1"
+                        wrapperStyle={{}}
+                        wrapperClass="mr-3"
+                        visible={true}
+                      />
                       <span className="text-white">Signing you in...</span>
                     </div>
                   ) : (

@@ -1,8 +1,18 @@
 import Link from "next/link";
+import { useEffect } from "react";
 import "tailwindcss/tailwind.css";
 import HomeUser from "./users/homeuser";
+import Cookie from "js-cookie";
+import Router from "next/router";
 
 export default function Home() {
+  useEffect(() => {
+    const token = Cookie.get("token") as string;
+    if (!token) {
+      Router.push("/auth/login");
+    }
+  }, []);
+
   return (
     <>
       <p>

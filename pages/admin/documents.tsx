@@ -1,15 +1,18 @@
 import AddDocument from "../../components/documents/tambah_button";
 import EditButton from "../../components/documents/edit_button";
-import DeleteButton from "../../components/documents/button_hapus";
 import Cookie from "js-cookie";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import React, { useState } from "react";
+import DeleteButton from "../../components/documents/button_hapus";
+import EditId from "../../components/documents/edit/[id]";
+import SuccessInfo from "../../components/success_toast";
 
-export default function CrudDocument(props: any) {
+export default function CrudDocument() {
   const url = "https://spda-api.onrender.com/api/admin/documents";
   const token = Cookie.get("token") as string;
-  //get data with axios
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState<
+    { id: string; name: string; location: string; photo: string }[]
+  >([]);
   React.useEffect(() => {
     axios
       .get(url, {
@@ -25,11 +28,36 @@ export default function CrudDocument(props: any) {
       });
   }, []);
 
+  // delete
+
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  async function deleteDoc(id: any) {
+    const token = Cookie.get("token") as string;
+    const url = "https://spda-api.onrender.com/api/admin/documents";
+    try {
+      const res = await axios
+        .delete(`${url}/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then(() => {
+          setShowSnackbar(true);
+
+          setData((prevData) =>
+            prevData.filter((item) => item.id !== id && data)
+          );
+        });
+    } catch (error) {
+      const err = error as AxiosError;
+      console.log(err.response?.data);
+    }
+  }
+
   return (
     <>
       <div className="container px-6 py-12 h-full">
         <div className="flex flex-col h-full w-full  ">
-          {/* <div className="md:w-full lg:w-10/12 lg:ml-20"> */}
           <AddDocument />
           <div className="overflow-x-auto">
             <table className="table table-normal lg:10/12 w-full">
@@ -53,8 +81,17 @@ export default function CrudDocument(props: any) {
                     </td>
 
                     <td>
-                      <EditButton id={item.id} />
-                      <DeleteButton id={item.id} />
+                      <EditId
+                        id={item.id}
+                        name={item.name}
+                        location={item.location}
+                        photo={item.photo}
+                      />
+                      <DeleteButton
+                        onClick={() => {
+                          deleteDoc(item.id);
+                        }}
+                      />
                     </td>
                   </tr>
                 ))}

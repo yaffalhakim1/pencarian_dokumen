@@ -6,13 +6,10 @@ import Router from "next/router";
 import SuccessInfo from "../success_toast";
 
 interface Props {
-  id: any;
+  onClick: () => void;
 }
 
 export default function DeleteButton(this: any, props: Props) {
-  const token = Cookie.get("token") as string;
-  const url = "https://spda-api.onrender.com/api/admin/documents";
-  const id = props.id;
   let [isOpen, setIsOpen] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
 
@@ -22,25 +19,6 @@ export default function DeleteButton(this: any, props: Props) {
 
   function openModal() {
     setIsOpen(true);
-  }
-
-  async function deleteDoc() {
-    try {
-      const res = await axios.delete(`${url}/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (res.status == 200) {
-        setShowSnackbar(true);
-        Router.reload();
-        // console.log(res);
-      }
-    } catch (error) {
-      const err = error as AxiosError;
-      console.log(err.response?.data);
-    }
   }
 
   return (
@@ -86,7 +64,10 @@ export default function DeleteButton(this: any, props: Props) {
                   Apakah anda yakin ingin menghapus dokumen ini? setelah
                   menghapus dokumen ini, anda tidak dapat mengembalikannya lagi.
                 </Dialog.Description>
-                <button onClick={deleteDoc} className="btn btn-error mr-3">
+                <button
+                  onClick={() => props.onClick && props.onClick()}
+                  className="btn btn-error mr-3"
+                >
                   Hapus
                 </button>
                 <button onClick={closeModal} className="btn">

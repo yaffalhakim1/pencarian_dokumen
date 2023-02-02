@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import axios, { AxiosError } from "axios";
 import Cookie from "js-cookie";
-import { Dialog } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
 import SuccessInfo from "../success_toast";
 import Router from "next/router";
+import { TailSpin } from "react-loader-spinner";
+import { GetServerSideProps } from "next";
 
 interface Props {
   id: any;
 }
 
-export async function getServerSideProps(props: Props) {
+export async function getServerSideProps(context: any, props: Props) {
   const id = props.id;
+  console.log(id, "ini id");
   const token = Cookie.get("token") as string;
 
   const documentHistory = await axios.get(
@@ -22,25 +25,29 @@ export async function getServerSideProps(props: Props) {
     }
   );
 
-  const docHistoryRes = await documentHistory.data;
+  const docHistoryRes = await documentHistory.data.data;
+  console.log(docHistoryRes, "ini doc history");
 
   return {
     props: {
       token: token,
-      document: docHistoryRes.data,
+      histDoc: docHistoryRes.data,
     },
   };
 }
 
 export default function EditButton(props: any) {
-  const document = props;
+  const histDoc = props;
+  console.log(histDoc, "ini hist doc");
   const [field, setField] = React.useState({
-    name: document.name,
-    location: document.location,
-    photo: document.photo,
+    name: histDoc.name,
+    location: histDoc.location,
+    photo: histDoc.photo,
   });
   let [isOpen, setIsOpen] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [loading, setLoading] = useState(false);
 
   function closeModal() {
     setIsOpen(false);
@@ -50,15 +57,50 @@ export default function EditButton(props: any) {
     setIsOpen(true);
   }
 
-  async function handleDocSubmitEdit(e: any) {
+  async function handleFileUpload() {
+    const input = document.querySelector(
+      "input[type='file']"
+    ) as HTMLInputElement;
+    const formData = new FormData();
+    formData.append("file", input.files![0]);
     const token = Cookie.get("token") as string;
+    const options = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    try {
+      const postFileReq = await axios.post(
+        "https://spda-api.onrender.com/api/file/upload",
+        formData,
+        options
+      );
+      const postFileRes = await postFileReq.data.image;
+      setLoading(false);
+      if (postFileReq.status === 200) {
+        setPhotoUrl((prev) => {
+          return postFileRes;
+        });
+
+        handleDocSubmitEdit(postFileRes);
+      }
+    } catch (error) {
+      const err = error as AxiosError;
+      console.log(err.response?.data);
+    }
+  }
+
+  async function handleDocSubmitEdit(photoUrl: string) {
+    const token = Cookie.get("token") as string;
+    const id = props.id;
     try {
       const postDocReq = await axios.put(
-        `https://spda-api.onrender.com/api/admin/documents/${document.id}`,
+        `https://spda-api.onrender.com/api/admin/documents/${id}`,
         {
           location: field.location,
           name: field.name,
-          photo: field.photo,
+          photo: photoUrl,
         },
         {
           headers: {
@@ -68,22 +110,25 @@ export default function EditButton(props: any) {
         }
       );
       const postDocRes = await postDocReq.data;
+      setLoading(false);
       if (postDocReq.status === 200) {
         setShowSnackbar(true);
         Router.reload();
-        // console.log(postDocRes);
+        console.log(postDocRes);
       }
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data);
     }
   }
-  function fieldHandler(e: any) {
+  const handleChange = (e: any) => {
+    const { name, value, files } = e.target;
     setField({
       ...field,
       [e.target.name]: e.target.value,
+      photo: name === "photo" ? files[0] : field.photo,
     });
-  }
+  };
 
   return (
     <>
@@ -92,67 +137,114 @@ export default function EditButton(props: any) {
         onClick={openModal}
         className="btn btn-sm btn-warning mb-3 ml-auto"
       >
-        Edit Dokumen
+        Ubah Dokumen
       </button>
 
-      <Dialog
-        open={isOpen}
-        onClose={() => closeModal()}
-        className="relative z-50"
-      >
-        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          {showSnackbar && <SuccessInfo message="Dokumen berhasil diubah" />}
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" onClose={() => closeModal()} className="relative z-50">
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+          <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+          <div className="fixed inset-0 flex items-center justify-center p-4">
+            {showSnackbar && (
+              <SuccessInfo message="Dokumen berhasil ditambahkan" />
+            )}
 
-          <Dialog.Panel className="modal-box m-5">
-            <Dialog.Title className="font-bold text-lg">
-              Tambah Dokumen
-            </Dialog.Title>
-            <Dialog.Description className="py-4 mb-4">
-              Masukkan nama, lokasi, dan foto dokumen yang ingin anda ubah
-              disini
-              <label className="input-group mb-5">
-                <span>Nama Dokumen</span>
-                <input
-                  type="text"
-                  placeholder={document.name}
-                  className="input input-bordered"
-                  name="name"
-                  onChange={fieldHandler}
-                />
-              </label>
-              <label className="input-group mb-3">
-                <span>Lokasi Dokumen</span>
-                <input
-                  type="text"
-                  placeholder={document.location}
-                  className="input input-bordered"
-                  name="location"
-                  onChange={fieldHandler}
-                />
-              </label>
-              <label className="label">
-                <span className="label-text">Masukkan foto ruangan lokasi</span>
-              </label>
-              <input
-                type="file"
-                className="file-input w-full max-w-xs"
-                name="photo"
-                onChange={fieldHandler}
-              />
-            </Dialog.Description>
-            <button
-              onClick={handleDocSubmitEdit}
-              className="btn btn-warning mr-3"
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
             >
-              Ubah Dokumen
-            </button>
-            <button onClick={closeModal} className="btn">
-              Batal
-            </button>
-          </Dialog.Panel>
-        </div>
-      </Dialog>
+              <Dialog.Panel className="modal-box m-5">
+                <Dialog.Title className="font-bold text-lg">
+                  Ubah Dokumen
+                </Dialog.Title>
+                <Dialog.Description className="py-4 mb-4">
+                  Masukkan nama, lokasi, dan foto dokumen yang ingin anda ubah
+                  disini
+                  <label className="input-group mb-5">
+                    <span>Nama Dokumen</span>
+                    <input
+                      type="text"
+                      placeholder={histDoc.name}
+                      className="input input-bordered"
+                      name="name"
+                      onChange={handleChange}
+                      defaultValue={histDoc.name}
+                    />
+                  </label>
+                  <label className="input-group mb-3">
+                    <span>Lokasi Dokumen</span>
+                    <input
+                      type="text"
+                      placeholder={histDoc.location}
+                      className="input input-bordered"
+                      name="location"
+                      onChange={handleChange}
+                      defaultValue={histDoc.location}
+                    />
+                  </label>
+                  <label className="label">
+                    <span className="label-text">
+                      Masukkan foto ruangan lokasi
+                    </span>
+                  </label>
+                  <input
+                    type="file"
+                    className="file-input w-full max-w-xs"
+                    name="photo"
+                    defaultValue={histDoc.photo}
+                  />
+                </Dialog.Description>
+                {/* set loading here */}
+
+                <button
+                  onClick={() => {
+                    handleFileUpload();
+                    setLoading(true);
+                  }}
+                  className="btn btn-warning mr-3"
+                >
+                  {loading ? (
+                    <div className="flex flex-row items-center">
+                      <TailSpin
+                        height="20"
+                        width="20"
+                        color="#ffffff"
+                        ariaLabel="tail-spin-loading"
+                        radius="1"
+                        wrapperStyle={{}}
+                        wrapperClass="mr-3"
+                        visible={true}
+                      />
+                      <span className="btn btn-warning">Mengubah data...</span>
+                    </div>
+                  ) : (
+                    "Ubah Dokumen"
+                  )}
+                </button>
+
+                <button onClick={closeModal} className="btn">
+                  Batal
+                </button>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition>
     </>
   );
 }

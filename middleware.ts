@@ -6,8 +6,7 @@ import Cookie from "js-cookie";
 export function middleware(request: NextRequest) {
   //get token from cookie
   let token = request.headers.get("cookie");
-  let token2 = request.cookies.get("token")?.value;
-  console.log(token2);
+
   if (request.nextUrl.pathname === "/" && !token) {
     return NextResponse.rewrite(new URL("/auth/login", request.url));
   }

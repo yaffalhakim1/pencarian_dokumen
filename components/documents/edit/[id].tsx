@@ -1,21 +1,50 @@
+import React, { Fragment, useState } from "react";
 import axios, { AxiosError } from "axios";
-import { useState, Fragment } from "react";
-import SuccessInfo from "../success_toast";
 import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
-import { useRouter } from "next/router";
+import Router from "next/router";
 import { TailSpin } from "react-loader-spinner";
+import { GetServerSideProps } from "next";
+import SuccessInfo from "../../success_toast";
 
-export default function AddDocument(this: any) {
-  const [showSnackbar, setShowSnackbar] = useState(false);
-  const [field, setField] = useState({
-    name: "",
-    location: "",
-    photo: "",
+type Data = {
+  name: string;
+  location: string;
+  photo: string;
+  id: any;
+};
+
+export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
+  context
+) => {
+  const id = context.query.id as string;
+  const token = context.req.headers.token;
+  const response = await axios.get(
+    "https://spda-api.onrender.com/api/admin/documents/" + id,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return {
+    props: {
+      token: token,
+      data: response.data,
+    },
+  };
+};
+
+export default function EditId(this: any, props: Data) {
+  const data = props;
+  const [field, setField] = React.useState({
+    name: data.name,
+    location: data.location,
+    photo: data.photo,
   });
-  const [photoUrl, setPhotoUrl] = useState("");
   let [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
   function closeModal() {
@@ -26,22 +55,13 @@ export default function AddDocument(this: any) {
     setIsOpen(true);
   }
 
-  const handleChange = (e: any) => {
-    const { name, value, files } = e.target;
-    setField({
-      ...field,
-      [e.target.name]: e.target.value,
-      photo: name === "photo" ? files[0] : field.photo,
-    });
-  };
-
   async function handleFileUpload() {
+    const token = Cookie.get("token") as string;
     const input = document.querySelector(
       "input[type='file']"
     ) as HTMLInputElement;
     const formData = new FormData();
     formData.append("file", input.files![0]);
-    const token = Cookie.get("token") as string;
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -56,13 +76,12 @@ export default function AddDocument(this: any) {
       );
       const postFileRes = await postFileReq.data.image;
       setLoading(false);
-
       if (postFileReq.status === 200) {
         setPhotoUrl((prev) => {
           return postFileRes;
         });
 
-        handleDocSubmit(postFileRes);
+        handleDocSubmitEdit(postFileRes);
       }
     } catch (error) {
       const err = error as AxiosError;
@@ -70,46 +89,54 @@ export default function AddDocument(this: any) {
     }
   }
 
-  async function handleDocSubmit(photoUrl: string) {
+  async function handleDocSubmitEdit(photoUrl: string) {
     const token = Cookie.get("token") as string;
+    const id = props.id;
+
     try {
-      const postDocReq = await axios.post(
-        "https://spda-api.onrender.com/api/admin/documents",
+      const postDocReq = await axios.put(
+        `https://spda-api.onrender.com/api/admin/documents/${id}`,
         {
-          name: field.name,
           location: field.location,
+          name: field.name,
           photo: photoUrl,
         },
         {
           headers: {
             "Content-Type": "application/json",
-            authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
       const postDocRes = await postDocReq.data;
       setLoading(false);
-
       if (postDocReq.status === 200) {
         setShowSnackbar(true);
-        router.reload();
-
-        console.log(postDocRes);
+        Router.reload();
+        console.log(postDocRes, "ini res post doc edit");
       }
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data);
     }
   }
+  const handleChange = (e: any) => {
+    const { name, value, files } = e.target;
+    setField({
+      ...field,
+      [e.target.name]: e.target.value,
+      photo: name === "photo" ? files[0] : field.photo,
+    });
+  };
 
   return (
     <>
       <button
         type="button"
         onClick={openModal}
-        className="btn btn-sm btn-success mb-3 ml-auto"
+        className="btn btn-sm btn-warning mb-3 ml-auto"
       >
-        Tambah Dokumen
+        Ubah Dokumen
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -130,7 +157,6 @@ export default function AddDocument(this: any) {
             {showSnackbar && (
               <SuccessInfo message="Dokumen berhasil ditambahkan" />
             )}
-
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -142,16 +168,16 @@ export default function AddDocument(this: any) {
             >
               <Dialog.Panel className="modal-box m-5">
                 <Dialog.Title className="font-bold text-lg">
-                  Tambah Dokumen
+                  Ubah Dokumen
                 </Dialog.Title>
                 <Dialog.Description className="py-4 mb-4">
-                  Masukkan nama, lokasi, dan foto dokumen yang ingin anda
-                  tambahkan disini
+                  Masukkan nama, lokasi, dan foto dokumen yang ingin anda ubah
+                  disini
                   <label className="input-group mb-5">
                     <span>Nama Dokumen</span>
                     <input
                       type="text"
-                      placeholder="nama dokumen"
+                      placeholder={data.name}
                       className="input input-bordered"
                       name="name"
                       onChange={handleChange}
@@ -161,8 +187,8 @@ export default function AddDocument(this: any) {
                     <span>Lokasi Dokumen</span>
                     <input
                       type="text"
-                      placeholder="Lokasi dokumen"
                       className="input input-bordered"
+                      placeholder={data.location}
                       name="location"
                       onChange={handleChange}
                     />
@@ -176,6 +202,7 @@ export default function AddDocument(this: any) {
                     type="file"
                     className="file-input w-full max-w-xs"
                     name="photo"
+                    placeholder={data.photo}
                   />
                 </Dialog.Description>
                 <button
@@ -183,26 +210,25 @@ export default function AddDocument(this: any) {
                     handleFileUpload();
                     setLoading(true);
                   }}
-                  className="btn btn-success mr-3"
+                  className="btn btn-warning mr-3"
                 >
                   {loading ? (
-                    <div className="flex flex-wrap">
+                    <div className="flex flex-row items-center">
                       <TailSpin
                         height="20"
                         width="20"
                         color="#ffffff"
                         ariaLabel="tail-spin-loading"
                         radius="1"
-                        // wrapperClass="mr-2 btn btn-sm "
+                        visible={true}
                       />
-                      <button className="btn btn-success btn-sm">
-                        Menambahkan data...
-                      </button>
+                      <span className="btn btn-warning">Mengubah data...</span>
                     </div>
                   ) : (
-                    "Tambahkan Dokumen"
+                    "Ubah Dokumen"
                   )}
                 </button>
+
                 <button onClick={closeModal} className="btn">
                   Batal
                 </button>
