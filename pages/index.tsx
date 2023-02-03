@@ -4,29 +4,29 @@ import "tailwindcss/tailwind.css";
 import HomeUser from "./users/homeuser";
 import Cookie from "js-cookie";
 import Router from "next/router";
+import { TailSpin } from "react-loader-spinner";
 
 export default function Home() {
   useEffect(() => {
     const token = Cookie.get("token") as string;
+    const role = Cookie.get("role");
     if (!token) {
       Router.push("/auth/login");
+    } else if (token && role === "1") {
+      Router.push("/admin/dashboard");
+    } else if (token && role === "2") {
+      Router.push("/users/homeuser");
     }
   }, []);
 
   return (
     <>
-      <p>
-        <Link href="/admin" passHref>
-          Go to about page (will redirect)
-        </Link>
-      </p>
-      <p>
-        <Link href="/users" passHref>
-          Go to another page (will rewrite)
-        </Link>
-      </p>
-
-      <HomeUser />
+      <div className="container">
+        <div className="flex mx-auto text-center justify-center items-center">
+          <TailSpin color="#4B5563" height={40} width={40} />
+          <p className="ml-5 text-lg">Loading...</p>
+        </div>
+      </div>
     </>
   );
 }

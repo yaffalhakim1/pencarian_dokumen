@@ -1,4 +1,4 @@
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useContext, useEffect, useState } from "react";
 import Router from "next/router";
 import Cookie from "js-cookie";
 import CrudDocument from "./documents";
@@ -16,25 +16,42 @@ export default function DashboardAdmin() {
 
   function logoutHandler() {
     Cookie.remove("token");
+    Cookie.remove("name");
+    Cookie.remove("role");
     setLoading(false);
     Router.replace("/auth/login");
   }
 
+  const name = Cookie.get("name");
+
   return (
-    <div>
+    <>
       <Head>
         <title>Dashboard Admin</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="text-white font-semibold ml-8 mt-5">
-        <div className="flex flex-row container items-center">
+      <div className="text-white font-semibold ml-8 mt-5 mr-8">
+        <div className="flex  items-center">
           <label
             htmlFor="my-drawer-2"
             className="btn btn-sm btn-primary drawer-button lg:hidden mr-4"
           >
             Menu
           </label>
-          <h1>Dashboard Admin</h1>
+          <h1 className="hidden md:flex">Dashboard Admin</h1>
+
+          <div className="flex-col ml-auto">
+            {/* <div className="avatar">
+              <div className="w-4 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1">
+                <img src="/favicon.ico" />
+              </div>
+            </div> */}
+            {name ? (
+              <h1 className="ml-auto">Welcome, {name}</h1>
+            ) : (
+              <p>Loading...</p>
+            )}
+          </div>
         </div>
       </div>
       <div className="drawer drawer-mobile">
@@ -72,6 +89,6 @@ export default function DashboardAdmin() {
           </ul>
         </div>
       </div>
-    </div>
+    </>
   );
 }
