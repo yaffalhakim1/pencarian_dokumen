@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext, createContext } from "react";
 import { AxiosError } from "axios";
-import AuthContext from "../../context/AuthProvider";
 import axios from "axios";
 import Router, { useRouter } from "next/router";
 import Cookie from "js-cookie";
