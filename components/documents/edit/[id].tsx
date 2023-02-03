@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import axios, { AxiosError } from "axios";
 import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
@@ -35,7 +35,7 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
   };
 };
 
-export default function EditId(this: any, props: Data) {
+export default function EditButton(this: any, props: Data) {
   const data = props;
   const [field, setField] = React.useState({
     name: data.name,
@@ -113,13 +113,13 @@ export default function EditId(this: any, props: Data) {
       if (postDocReq.status === 200) {
         setShowSnackbar(true);
         Router.reload();
-        console.log(postDocRes, "ini res post doc edit");
       }
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data);
     }
   }
+
   const handleChange = (e: any) => {
     const { name, value, files } = e.target;
     setField({
@@ -207,8 +207,8 @@ export default function EditId(this: any, props: Data) {
                 </Dialog.Description>
                 <button
                   onClick={() => {
-                    handleFileUpload();
                     setLoading(true);
+                    handleFileUpload();
                   }}
                   className="btn btn-warning mr-3"
                 >

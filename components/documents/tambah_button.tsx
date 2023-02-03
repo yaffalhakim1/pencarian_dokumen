@@ -193,7 +193,6 @@ export default function AddDocument(this: any) {
                         color="#ffffff"
                         ariaLabel="tail-spin-loading"
                         radius="1"
-                        // wrapperClass="mr-2 btn btn-sm "
                       />
                       <button className="btn btn-success btn-sm">
                         Menambahkan data...

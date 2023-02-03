@@ -1,8 +1,6 @@
-import Cookie from "js-cookie";
 import axios, { AxiosError } from "axios";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
-import Router from "next/router";
 import SuccessInfo from "../success_toast";
 
 interface Props {
