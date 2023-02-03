@@ -1,6 +1,5 @@
 import axios, { AxiosError } from "axios";
 import { useState, Fragment } from "react";
-import SuccessInfo from "../success_toast";
 import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
@@ -127,9 +126,9 @@ export default function AddDocument(this: any) {
           </Transition.Child>
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            {showSnackbar && (
+            {/* {showSnackbar && (
               <SuccessInfo message="Dokumen berhasil ditambahkan" />
-            )}
+            )} */}
 
             <Transition.Child
               as={Fragment}

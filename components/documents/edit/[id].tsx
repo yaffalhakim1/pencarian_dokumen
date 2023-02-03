@@ -5,7 +5,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import Router from "next/router";
 import { TailSpin } from "react-loader-spinner";
 import { GetServerSideProps } from "next";
-import SuccessInfo from "../../success_toast";
 
 type Data = {
   name: string;
@@ -154,9 +153,9 @@ export default function EditButton(this: any, props: Data) {
           </Transition.Child>
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            {showSnackbar && (
+            {/* {showSnackbar && (
               <SuccessInfo message="Dokumen berhasil ditambahkan" />
-            )}
+            )} */}
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"

@@ -5,6 +5,7 @@ import CrudDocument from "./documents";
 import CrudAlat from "./tools";
 import Head from "next/head";
 import { MoonLoader } from "react-spinners";
+import SwitchTheme from "../../components/Switcher";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
@@ -46,6 +47,7 @@ export default function DashboardAdmin() {
                 <img src="/favicon.ico" />
               </div>
             </div> */}
+            {/* <SwitchTheme /> */}
             {name ? (
               <h1 className="ml-auto">Welcome, {name}</h1>
             ) : (
