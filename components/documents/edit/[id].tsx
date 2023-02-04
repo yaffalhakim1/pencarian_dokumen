@@ -111,7 +111,7 @@ export default function EditButton(this: any, props: Data) {
       setLoading(false);
       if (postDocReq.status === 200) {
         setShowSnackbar(true);
-        Router.reload();
+        closeModal();
       }
     } catch (error) {
       const err = error as AxiosError;

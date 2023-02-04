@@ -91,9 +91,7 @@ export default function AddDocument(this: any) {
 
       if (postDocReq.status === 200) {
         setShowSnackbar(true);
-        router.reload();
-
-        console.log(postDocRes);
+        closeModal();
       }
     } catch (error) {
       const err = error as AxiosError;

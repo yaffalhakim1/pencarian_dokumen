@@ -6,6 +6,7 @@ import CrudAlat from "./tools";
 import Head from "next/head";
 import { MoonLoader } from "react-spinners";
 import SwitchTheme from "../../components/Switcher";
+import { AuthRedirect } from "../../hooks/useAuthRedirect";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
@@ -23,19 +24,11 @@ export default function DashboardAdmin() {
     Router.replace("/auth/login");
   }
 
-  const name = Cookie.get("name");
-
   useEffect(() => {
-    const token = Cookie.get("token") as string;
-    const role = Cookie.get("role");
-    if (!token) {
-      Router.push("/auth/login");
-    } else if (token && role === "1") {
-      Router.push("/admin/dashboard");
-    } else if (token && role === "2") {
-      Router.push("/users/homeuser");
-    }
+    AuthRedirect();
   }, []);
+
+  const name = Cookie.get("name");
 
   return (
     <>
@@ -51,21 +44,20 @@ export default function DashboardAdmin() {
           >
             Menu
           </label>
-          <h1 className="hidden md:flex">Dashboard Admin</h1>
-
+          <div>
+            <h1 className="hidden md:flex">Dashboard Admin</h1>
+          </div>
+          {/* this is problematic, still looking how to fix it */}
+          {/* 
           <div className="flex-col ml-auto">
-            {/* <div className="avatar">
-              <div className="w-4 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1">
-                <img src="/favicon.ico" />
-              </div>
-            </div> */}
-            {/* <SwitchTheme /> */}
             {name ? (
-              <h1 className="ml-auto">Welcome, {name}</h1>
+              <div>
+                <h1 className="ml-auto">Welcome, {name}</h1>
+              </div>
             ) : (
               <p>Loading...</p>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="drawer drawer-mobile">

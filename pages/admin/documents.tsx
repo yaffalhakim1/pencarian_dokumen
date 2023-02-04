@@ -31,7 +31,10 @@ export default function CrudDocument() {
         console.log(err);
         setLoading(false);
       });
-  }, []);
+    setLoading(false);
+  }, [data]);
+
+  // edit
 
   // delete
 
