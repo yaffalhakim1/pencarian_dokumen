@@ -3,10 +3,9 @@ import type { NextRequest } from "next/server";
 import Cookie from "js-cookie";
 
 // This function can be marked `async` if using `await` inside
-export function middleware(request: NextRequest) {
+export function middleware(request: NextRequest, response: NextResponse) {
   //get token from cookie
-  let token = request.headers.get("cookie");
-
+  const token = request.headers.get("cookie");
   if (request.nextUrl.pathname === "/" && !token) {
     return NextResponse.rewrite(new URL("/auth/login", request.url));
   }
