@@ -7,6 +7,7 @@ import Cookie from "js-cookie";
 import { TailSpin } from "react-loader-spinner";
 import Head from "next/head";
 import Image from "next/image";
+import Alert from "../../components/Alert";
 
 function LoginForm(this: any) {
   const router = useRouter();
@@ -23,24 +24,20 @@ function LoginForm(this: any) {
 
   async function handleLogin(event: React.SyntheticEvent) {
     event.preventDefault();
+    const baseUrl = "https://spdaapp.000webhostapp.com/api";
     try {
-      const loginReq = await axios.post(
-        "https://spda-api.onrender.com/api/auth/login",
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          username: field.username,
-          password: field.password,
-        }
-      );
+      const loginReq = await axios.post(`${baseUrl}/auth/login`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        username: field.username,
+        password: field.password,
+      });
       const loginResp = await loginReq.data;
       setLoading(false);
       if (loginReq.status === 200) {
-        Cookie.set("name", loginResp.data.name);
-        Cookie.set("token", loginResp.token);
-        Cookie.set("role", loginResp.data.role_id);
-        console.log(loginResp);
+        Cookie.set("token", loginResp.access_token);
+        Cookie.set("role", loginResp.status);
         router.push("/admin/dashboard");
       }
     } catch (error) {
@@ -58,31 +55,7 @@ function LoginForm(this: any) {
       </Head>
       <section className="h-screen">
         <div className="container px-6 py-12 h-full">
-          <div className=" md:w-8/12 lg:w-6/12 mb-12 md:mb-0">
-            {showSnackbar && (
-              <div className="alert alert-error shadow-md">
-                <div>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="stroke-current flex-shrink-0 h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span>
-                    Login gagal, silakan masukkan username dan password dengan
-                    benar
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
+          <div className=" md:w-8/12 lg:w-6/12 mb-12 md:mb-0"></div>
           <div className="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
             <div className="md:w-8/12 lg:w-6/12 mb-12 md:mb-0">
               <Image
@@ -139,6 +112,12 @@ function LoginForm(this: any) {
                     "Sign In"
                   )}
                 </button>
+                {showSnackbar && (
+                  <Alert
+                    message="Email atau password anda salah, silakan coba lagi"
+                    errorType="error"
+                  />
+                )}
               </form>
             </div>
           </div>

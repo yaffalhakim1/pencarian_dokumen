@@ -6,7 +6,7 @@ import CrudAlat from "./tools";
 import Head from "next/head";
 import { MoonLoader } from "react-spinners";
 import SwitchTheme from "../../components/Switcher";
-import { AuthRedirect } from "../../hooks/useAuthRedirect";
+import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
@@ -24,10 +24,7 @@ export default function DashboardAdmin() {
     Router.replace("/auth/login");
   }
 
-  useEffect(() => {
-    AuthRedirect();
-  }, []);
-
+  useAuthRedirect();
   const name = Cookie.get("name");
 
   return (

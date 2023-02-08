@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { TailSpin } from "react-loader-spinner";
 import DeleteButton from "../../components/documents/delete_button";
 import EditButton from "../../components/documents/edit/[id]";
+import LoadingTable from "../../components/loading_anim";
 
 export default function CrudDocument() {
   const url = "https://spda-api.onrender.com/api/admin/documents";

@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
+import { TailSpin } from "react-loader-spinner";
 
 interface Props {
   onClick: () => void;
@@ -9,6 +10,7 @@ interface Props {
 export default function DeleteButton(this: any, props: Props) {
   let [isOpen, setIsOpen] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   function closeModal() {
     setIsOpen(false);
@@ -57,15 +59,33 @@ export default function DeleteButton(this: any, props: Props) {
                 <Dialog.Title className="font-bold text-lg">
                   Hapus Dokumen
                 </Dialog.Title>
-                <Dialog.Description className="py-4 mb-4">
+                <Dialog.Description className="py-4">
                   Apakah anda yakin ingin menghapus dokumen ini? setelah
                   menghapus dokumen ini, anda tidak dapat mengembalikannya lagi.
                 </Dialog.Description>
                 <button
-                  onClick={() => props.onClick && props.onClick()}
-                  className="btn btn-error mr-3"
+                  onClick={() => {
+                    props.onClick && props.onClick();
+                    setLoading(true);
+                  }}
+                  className="btn btn-error mr-3 mb-3 md:mb-0"
                 >
-                  Hapus
+                  {loading ? (
+                    <div className="flex flex-wrap">
+                      <TailSpin
+                        height="20"
+                        width="20"
+                        color="#ffffff"
+                        ariaLabel="tail-spin-loading"
+                        radius="1"
+                      />
+                      <button className="btn btn-error btn-sm">
+                        Menghapus dokumen...
+                      </button>
+                    </div>
+                  ) : (
+                    "Hapus Dokumen"
+                  )}
                 </button>
                 <button onClick={closeModal} className="btn">
                   Batal

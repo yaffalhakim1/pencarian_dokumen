@@ -4,6 +4,7 @@ import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { TailSpin } from "react-loader-spinner";
+import Alert from "../Alert";
 
 export default function AddDocument(this: any) {
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -125,7 +126,10 @@ export default function AddDocument(this: any) {
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
           <div className="fixed inset-0 flex items-center justify-center p-4">
             {/* {showSnackbar && (
-              <SuccessInfo message="Dokumen berhasil ditambahkan" />
+              <Alert
+                message="Dokumen berhasil ditambahkan"
+                errorType="success"
+              />
             )} */}
 
             <Transition.Child
@@ -141,10 +145,10 @@ export default function AddDocument(this: any) {
                 <Dialog.Title className="font-bold text-lg">
                   Tambah Dokumen
                 </Dialog.Title>
-                <Dialog.Description className="py-4 mb-4">
+                <Dialog.Description className="py-4">
                   Masukkan nama, lokasi, dan foto dokumen yang ingin anda
                   tambahkan disini
-                  <label className="input-group mb-5">
+                  <label className="input-group mb-5 mt-5">
                     <span>Nama Dokumen</span>
                     <input
                       type="text"
@@ -180,7 +184,7 @@ export default function AddDocument(this: any) {
                     handleFileUpload();
                     setLoading(true);
                   }}
-                  className="btn btn-success mr-3"
+                  className="btn btn-success mr-3 mb-3 md:mb-0"
                 >
                   {loading ? (
                     <div className="flex flex-wrap">
@@ -192,7 +196,7 @@ export default function AddDocument(this: any) {
                         radius="1"
                       />
                       <button className="btn btn-success btn-sm">
-                        Menambahkan data...
+                        Menambahkan dokumen...
                       </button>
                     </div>
                   ) : (

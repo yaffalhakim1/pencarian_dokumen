@@ -1,8 +1,7 @@
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useState } from "react";
 import axios, { AxiosError } from "axios";
 import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
-import Router from "next/router";
 import { TailSpin } from "react-loader-spinner";
 import { GetServerSideProps } from "next";
 
@@ -169,7 +168,7 @@ export default function EditButton(this: any, props: Data) {
                 <Dialog.Title className="font-bold text-lg">
                   Ubah Dokumen
                 </Dialog.Title>
-                <Dialog.Description className="py-4 mb-4">
+                <Dialog.Description className="py-4">
                   Masukkan nama, lokasi, dan foto dokumen yang ingin anda ubah
                   disini
                   <label className="input-group mb-5">
@@ -209,19 +208,20 @@ export default function EditButton(this: any, props: Data) {
                     setLoading(true);
                     handleFileUpload();
                   }}
-                  className="btn btn-warning mr-3"
+                  className="btn btn-warning mr-3 mb-3 md:mb-0"
                 >
                   {loading ? (
-                    <div className="flex flex-row items-center">
+                    <div className="flex flex-wrap">
                       <TailSpin
                         height="20"
                         width="20"
                         color="#ffffff"
                         ariaLabel="tail-spin-loading"
                         radius="1"
-                        visible={true}
                       />
-                      <span className="btn btn-warning">Mengubah data...</span>
+                      <button className="btn btn-warning btn-sm mb-3 md:mb-0">
+                        Mengubah dokumen...
+                      </button>
                     </div>
                   ) : (
                     "Ubah Dokumen"
