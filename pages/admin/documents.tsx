@@ -8,30 +8,76 @@ import EditButton from "../../components/documents/edit/[id]";
 import LoadingTable from "../../components/loading_anim";
 
 export default function CrudDocument() {
-  const url = "https://spda-api.onrender.com/api/admin/documents";
-  const token = Cookie.get("token") as string;
   const [loading, setLoading] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [data, setData] = useState<
-    { id: string; name: string; location: string; photo: string }[]
+    { uuid: any; name: string; device_id: any; photo: string }[]
   >([]);
 
   useEffect(() => {
-    setLoading(true);
-    axios
-      .get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setData(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
+    const url = "https://spdaapp.000webhostapp.com/api/documents/data";
+    const token = Cookie.get("token") as string;
+    // setLoading(true);
+    // axios
+    //   .get("https://spdaapp.000webhostapp.com/api/documents/data", {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //     withCredentials: true,
+    //   })
+    //   .then((res) => {
+    //     setData(res.data.data);
+    //     console.log(res.data.data, "data");
+    //     setLoading(false);
+    //   })
+    //   .catch(function (error) {
+    //     if (error.response) {
+    //       console.log(error.response.data, "data");
+    //       console.log(error.response.status, "status");
+    //       console.log(error.response.headers, "headers");
+    //     } else if (error.request) {
+    //       console.log(error.request, "request");
+    //     } else {
+    //       console.log("Error", error.message, "error message");
+    //     }
+
+    //     console.log(error.config, "config");
+    //   });
+    // axios.getUri({
+    //   url: "/documents/data",
+    //   method: "get", // default
+    //   baseURL: "https://spdaapp.000webhostapp.com/api",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // });
+
+    const fetchData = async () => {
+      // setError(null);
+      setLoading(true);
+      try {
+        const result = await fetch(
+          "https://spdaapp.000webhostapp.com/api/documents/data",
+          {
+            method: "get",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const json = await result.json();
+        console.log(json, "json");
+        setData(json);
+      } catch (e) {
+        console.log(e, "error");
+      }
+    };
+
+    fetchData();
+
     setLoading(false);
   }, [data]);
 
@@ -53,7 +99,7 @@ export default function CrudDocument() {
           setShowSnackbar(true);
 
           setData((prevData) =>
-            prevData.filter((item) => item.id !== id && data)
+            prevData.filter((item) => item.uuid !== id && data)
           );
         });
     } catch (error) {
@@ -88,24 +134,24 @@ export default function CrudDocument() {
                 </thead>
                 <tbody>
                   {data.map((item: any) => (
-                    <tr key={item.id}>
+                    <tr key={item.uuid}>
                       <th></th>
                       <td>{item.name}</td>
-                      <td>{item.location}</td>
+                      <td>{item.device_id}</td>
                       <td>
                         <img src={item.photo} alt="" width={100} />
                       </td>
 
                       <td>
-                        <EditButton
+                        {/* <EditButton
                           id={item.id}
                           name={item.name}
                           location={item.location}
                           photo={item.photo}
-                        />
+                        /> */}
                         <DeleteButton
                           onClick={() => {
-                            deleteDoc(item.id);
+                            deleteDoc(item.uuid);
                           }}
                         />
                       </td>

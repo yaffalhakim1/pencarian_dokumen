@@ -10,8 +10,9 @@ export default function AddDocument(this: any) {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [field, setField] = useState({
     name: "",
-    location: "",
+    device_id: "",
     photo: "",
+    uuid: "",
   });
   const [photoUrl, setPhotoUrl] = useState("");
   let [isOpen, setIsOpen] = useState(false);
@@ -41,6 +42,7 @@ export default function AddDocument(this: any) {
     ) as HTMLInputElement;
     const formData = new FormData();
     formData.append("file", input.files![0]);
+
     const token = Cookie.get("token") as string;
     const options = {
       headers: {
@@ -48,11 +50,23 @@ export default function AddDocument(this: any) {
         Authorization: `Bearer ${token}`,
       },
     };
+
     try {
-      const postFileReq = await axios.post(
-        "https://spda-api.onrender.com/api/file/upload",
-        formData,
-        options
+      const postFileReq = await axios.postForm(
+        "http://spdaapp.000webhostapp.com/api/documents/data",
+
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            accept: "*/*",
+            Authorization: `Bearer ${token}`,
+          },
+
+          name: field.name,
+          device_id: field.device_id,
+          uuid: field.uuid,
+          photo: formData,
+        }
       );
       const postFileRes = await postFileReq.data.image;
       setLoading(false);
@@ -62,7 +76,9 @@ export default function AddDocument(this: any) {
           return postFileRes;
         });
 
-        handleDocSubmit(postFileRes);
+        console.log(postFileRes);
+
+        // handleDocSubmit(postFileRes);
       }
     } catch (error) {
       const err = error as AxiosError;
@@ -70,35 +86,35 @@ export default function AddDocument(this: any) {
     }
   }
 
-  async function handleDocSubmit(photoUrl: string) {
-    const token = Cookie.get("token") as string;
-    try {
-      const postDocReq = await axios.post(
-        "https://spda-api.onrender.com/api/admin/documents",
-        {
-          name: field.name,
-          location: field.location,
-          photo: photoUrl,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const postDocRes = await postDocReq.data;
-      setLoading(false);
+  // async function handleDocSubmit(photoUrl: string) {
+  //   const token = Cookie.get("token") as string;
+  //   try {
+  //     const postDocReq = await axios.post(
+  //       "https://spda-api.onrender.com/api/admin/documents",
+  //       {
+  //         name: field.name,
+  //         location: field.location,
+  //         photo: photoUrl,
+  //       },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     const postDocRes = await postDocReq.data;
+  //     setLoading(false);
 
-      if (postDocReq.status === 200) {
-        setShowSnackbar(true);
-        closeModal();
-      }
-    } catch (error) {
-      const err = error as AxiosError;
-      console.log(err.response?.data);
-    }
-  }
+  //     if (postDocReq.status === 200) {
+  //       setShowSnackbar(true);
+  //       closeModal();
+  //     }
+  //   } catch (error) {
+  //     const err = error as AxiosError;
+  //     console.log(err.response?.data);
+  //   }
+  // }
 
   return (
     <>
@@ -158,13 +174,23 @@ export default function AddDocument(this: any) {
                       onChange={handleChange}
                     />
                   </label>
-                  <label className="input-group mb-3">
-                    <span>Lokasi Dokumen</span>
+                  <label className="input-group mb-5 mt-5">
+                    <span>device id Dokumen</span>
                     <input
                       type="text"
-                      placeholder="Lokasi dokumen"
+                      placeholder="nama dokumen"
                       className="input input-bordered"
-                      name="location"
+                      name="device_id"
+                      onChange={handleChange}
+                    />
+                  </label>
+                  <label className="input-group mb-5 mt-5">
+                    <span>uuid id Dokumen</span>
+                    <input
+                      type="text"
+                      placeholder="nama dokumen"
+                      className="input input-bordered"
+                      name="uuid"
                       onChange={handleChange}
                     />
                   </label>
@@ -195,9 +221,9 @@ export default function AddDocument(this: any) {
                         ariaLabel="tail-spin-loading"
                         radius="1"
                       />
-                      <button className="btn btn-success btn-sm">
+                      {/* <button className="btn btn-success btn-sm">
                         Menambahkan dokumen...
-                      </button>
+                      </button> */}
                     </div>
                   ) : (
                     "Tambahkan Dokumen"

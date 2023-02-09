@@ -14,24 +14,24 @@ export default function CrudAlat() {
   >([]);
 
   useEffect(() => {
-    const url = "https://spda-api.onrender.com/api/admin/documents";
+    const url = "https://spdaapp.000webhostapp.com/api/documents/data";
     const token = Cookie.get("token") as string;
 
     setLoading(true);
-    axios
-      .get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setData(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
+    // axios
+    //   .get(url, {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   })
+    //   .then((res) => {
+    //     setData(res.data);
+    //     setLoading(false);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     setLoading(false);
+    //   });
   }, []);
 
   async function deleteDoc(id: any) {

@@ -7,6 +7,7 @@ import Head from "next/head";
 import { MoonLoader } from "react-spinners";
 import SwitchTheme from "../../components/Switcher";
 import { useAuthRedirect } from "../../hooks/useAuthRedirect";
+import axios from "axios";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
@@ -16,10 +17,26 @@ export default function DashboardAdmin() {
     setSelectedItem(item);
   };
 
-  function logoutHandler() {
+  async function logoutHandler() {
     Cookie.remove("token");
     Cookie.remove("name");
     Cookie.remove("role");
+
+    const token = Cookie.get("token") as string;
+
+    const logout = await axios
+      .postForm("https://spdaapp.000webhostapp.com/api/auth/logout", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     setLoading(false);
     Router.replace("/auth/login");
   }

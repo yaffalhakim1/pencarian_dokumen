@@ -8,6 +8,7 @@ import { TailSpin } from "react-loader-spinner";
 import Head from "next/head";
 import Image from "next/image";
 import Alert from "../../components/Alert";
+import { METHODS } from "http";
 
 function LoginForm(this: any) {
   const router = useRouter();
@@ -24,25 +25,64 @@ function LoginForm(this: any) {
 
   async function handleLogin(event: React.SyntheticEvent) {
     event.preventDefault();
-    const baseUrl = "https://spdaapp.000webhostapp.com/api";
+
+    // try {
+    //   const loginReq = await axios.postForm(
+    //     "http://spdaapp.000webhostapp.com/api/auth/login",
+    //     {
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         accept: "*/*",
+    //       },
+
+    //       username: field.username,
+    //       password: field.password,
+    //     }
+    //   );
+    //   const loginResp = await loginReq.data;
+    //   setLoading(false);
+    //   if (loginReq.status === 200) {
+    //     console.log(field.username);
+    //     console.log(loginResp);
+
+    //     Cookie.set("token", loginResp.access_token);
+    //     Cookie.set("role", loginResp.status);
+    //     router.push("/admin/dashboard");
+    //   }
+    // } catch (error) {
+    //   const err = error as AxiosError;
+
+    //   setLoading(false);
+    //   setShowSnackbar(true);
+    // }
     try {
-      const loginReq = await axios.post(`${baseUrl}/auth/login`, {
-        headers: {
-          "Content-Type": "application/json",
+      const loginReq = await axios.postForm(
+        "https://spdaapp.000webhostapp.com/api/auth/login",
+        {
+          username: field.username,
+          password: field.password,
         },
-        username: field.username,
-        password: field.password,
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+            accept: "*/*",
+          },
+        }
+      );
       const loginResp = await loginReq.data;
       setLoading(false);
       if (loginReq.status === 200) {
+        console.log(loginResp);
+
         Cookie.set("token", loginResp.access_token);
         Cookie.set("role", loginResp.status);
         router.push("/admin/dashboard");
       }
     } catch (error) {
       const err = error as AxiosError;
-      console.log(err);
+      // console.log(err.response?.status);
+      console.log(err.response?.data);
+
       setLoading(false);
       setShowSnackbar(true);
     }
@@ -66,12 +106,12 @@ function LoginForm(this: any) {
               />
             </div>
             <div className="md:w-8/12 lg:w-5/12 lg:ml-20">
-              <form onSubmit={handleLogin}>
+              <form onSubmit={handleLogin} method="POST">
                 <div className="mb-6">
                   <input
                     type="text"
                     className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                    placeholder="Email address"
+                    placeholder="username"
                     name="username"
                     onChange={fieldHandler}
                     required
@@ -112,12 +152,6 @@ function LoginForm(this: any) {
                     "Sign In"
                   )}
                 </button>
-                {showSnackbar && (
-                  <Alert
-                    message="Email atau password anda salah, silakan coba lagi"
-                    errorType="error"
-                  />
-                )}
               </form>
             </div>
           </div>
