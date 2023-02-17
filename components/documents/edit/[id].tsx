@@ -7,7 +7,8 @@ import { GetServerSideProps } from "next";
 
 type Data = {
   name: string;
-  location: string;
+  device_id: string;
+  uuid: string;
   photo: string;
   id: any;
 };
@@ -18,7 +19,7 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
   const id = context.query.id as string;
   const token = context.req.headers.token;
   const response = await axios.get(
-    "https://spda-api.onrender.com/api/admin/documents/" + id,
+    "https://spda.17management.my.id/api/documents/data" + id,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -35,9 +36,10 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
 
 export default function EditButton(this: any, props: Data) {
   const data = props;
-  const [field, setField] = React.useState({
+  const [field, setField] = useState({
     name: data.name,
-    location: data.location,
+    device_id: data.device_id,
+    uuid: data.uuid,
     photo: data.photo,
   });
   let [isOpen, setIsOpen] = useState(false);
@@ -54,12 +56,17 @@ export default function EditButton(this: any, props: Data) {
   }
 
   async function handleFileUpload() {
+    const id = props.id;
     const token = Cookie.get("token") as string;
     const input = document.querySelector(
       "input[type='file']"
     ) as HTMLInputElement;
     const formData = new FormData();
-    formData.append("file", input.files![0]);
+    // formData.append("file", input.files![0]);
+    formData.append("photo", input.files![0]);
+    formData.append("name", field.name);
+    formData.append("device_id", field.device_id);
+    formData.append("uuid", field.uuid);
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -68,18 +75,14 @@ export default function EditButton(this: any, props: Data) {
     };
     try {
       const postFileReq = await axios.post(
-        "https://spda-api.onrender.com/api/file/upload",
+        `https://spda.17management.my.id/api/documents/update/${id}`,
         formData,
         options
       );
-      const postFileRes = await postFileReq.data.image;
+      const postFileRes = await postFileReq.data;
       setLoading(false);
       if (postFileReq.status === 200) {
-        setPhotoUrl((prev) => {
-          return postFileRes;
-        });
-
-        handleDocSubmitEdit(postFileRes);
+        closeModal();
       }
     } catch (error) {
       const err = error as AxiosError;
@@ -95,7 +98,7 @@ export default function EditButton(this: any, props: Data) {
       const postDocReq = await axios.put(
         `https://spda-api.onrender.com/api/admin/documents/${id}`,
         {
-          location: field.location,
+          device_id: field.device_id,
           name: field.name,
           photo: photoUrl,
         },
@@ -129,13 +132,30 @@ export default function EditButton(this: any, props: Data) {
 
   return (
     <>
-      <button
+      {/* <button
         type="button"
         onClick={openModal}
         className="btn btn-sm btn-warning mb-3 ml-auto"
       >
         Ubah Dokumen
-      </button>
+      </button> */}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#f59e0b"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="feather feather-edit"
+        onClick={openModal}
+        cursor="pointer"
+      >
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+      </svg>
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" onClose={() => closeModal()} className="relative z-50">
@@ -182,11 +202,11 @@ export default function EditButton(this: any, props: Data) {
                     />
                   </label>
                   <label className="input-group mb-3">
-                    <span>Lokasi Dokumen</span>
+                    <span>Device Id Dokumen</span>
                     <input
                       type="text"
                       className="input input-bordered"
-                      placeholder={data.location}
+                      placeholder={data.device_id}
                       name="location"
                       onChange={handleChange}
                     />
@@ -219,9 +239,9 @@ export default function EditButton(this: any, props: Data) {
                         ariaLabel="tail-spin-loading"
                         radius="1"
                       />
-                      <button className="btn btn-warning btn-sm mb-3 md:mb-0">
+                      {/* <button className="btn btn-warning btn-sm mb-3 md:mb-0">
                         Mengubah dokumen...
-                      </button>
+                      </button> */}
                     </div>
                   ) : (
                     "Ubah Dokumen"

@@ -2,7 +2,7 @@ import { SetStateAction, useContext, useEffect, useState } from "react";
 import Router from "next/router";
 import Cookie from "js-cookie";
 import CrudDocument from "./documents";
-import CrudAlat from "./tools";
+import CrudAlat from "./users";
 import Head from "next/head";
 import { MoonLoader } from "react-spinners";
 import SwitchTheme from "../../components/Switcher";
@@ -13,6 +13,9 @@ export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
   const [loading, setLoading] = useState(false);
 
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+
   const handleClick = (item: SetStateAction<number>) => {
     setSelectedItem(item);
   };
@@ -21,20 +24,18 @@ export default function DashboardAdmin() {
     Cookie.remove("token");
     Cookie.remove("name");
     Cookie.remove("role");
-
     const token = Cookie.get("token") as string;
-
     const logout = await axios
-      .postForm("https://spdaapp.000webhostapp.com/api/auth/logout", {
+      .post("https://spda.17management.my.id/api/auth/logout", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
       });
 
     setLoading(false);
@@ -42,7 +43,26 @@ export default function DashboardAdmin() {
   }
 
   useAuthRedirect();
-  const name = Cookie.get("name");
+
+  async function getProfile() {
+    const token = Cookie.get("token") as string;
+    const profile = await axios
+      .get("https://spda.17management.my.id/api/users/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        const data = res.data.data;
+        setUserName(data.name);
+        setEmail(data.email);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  // const name = data.name;
 
   return (
     <>
@@ -59,7 +79,7 @@ export default function DashboardAdmin() {
             Menu
           </label>
           <div>
-            <h1 className="hidden md:flex">Dashboard Admin</h1>
+            <h1 className="hidden md:flex">Dashboard Admin {userName}</h1>
           </div>
           {/* this is problematic, still looking how to fix it */}
           {/* 
@@ -88,7 +108,7 @@ export default function DashboardAdmin() {
               <a onClick={() => handleClick(1)}>Dokumen</a>
             </li>
             <li>
-              <a onClick={() => handleClick(2)}>Alat</a>
+              <a onClick={() => handleClick(2)}>Users</a>
             </li>
             <li>
               <a

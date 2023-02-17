@@ -41,80 +41,36 @@ export default function AddDocument(this: any) {
       "input[type='file']"
     ) as HTMLInputElement;
     const formData = new FormData();
-    formData.append("file", input.files![0]);
-
-    const token = Cookie.get("token") as string;
-    const options = {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${token}`,
-      },
-    };
+    formData.append("photo", input.files![0]);
+    formData.append("name", field.name);
+    formData.append("device_id", field.device_id);
+    formData.append("uuid", field.uuid);
 
     try {
-      const postFileReq = await axios.postForm(
-        "http://spdaapp.000webhostapp.com/api/documents/data",
-
+      const token = Cookie.get("token") as string;
+      const postFileReq = await axios.post(
+        "https://spda.17management.my.id/api/documents/data",
+        formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            accept: "*/*",
-            Authorization: `Bearer ${token}`,
+            Accept: "*/*",
+            authorization: `Bearer ${token}`,
           },
-
-          name: field.name,
-          device_id: field.device_id,
-          uuid: field.uuid,
-          photo: formData,
         }
       );
-      const postFileRes = await postFileReq.data.image;
+
+      const postFileRes = await postFileReq.data;
       setLoading(false);
-
       if (postFileReq.status === 200) {
-        setPhotoUrl((prev) => {
-          return postFileRes;
-        });
-
-        console.log(postFileRes);
-
-        // handleDocSubmit(postFileRes);
+        setShowSnackbar(true);
+        closeModal();
       }
     } catch (error) {
       const err = error as AxiosError;
-      console.log(err.response?.data);
+      console.log(err.response?.data, "error upload");
     }
   }
-
-  // async function handleDocSubmit(photoUrl: string) {
-  //   const token = Cookie.get("token") as string;
-  //   try {
-  //     const postDocReq = await axios.post(
-  //       "https://spda-api.onrender.com/api/admin/documents",
-  //       {
-  //         name: field.name,
-  //         location: field.location,
-  //         photo: photoUrl,
-  //       },
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     const postDocRes = await postDocReq.data;
-  //     setLoading(false);
-
-  //     if (postDocReq.status === 200) {
-  //       setShowSnackbar(true);
-  //       closeModal();
-  //     }
-  //   } catch (error) {
-  //     const err = error as AxiosError;
-  //     console.log(err.response?.data);
-  //   }
-  // }
 
   return (
     <>
@@ -185,7 +141,7 @@ export default function AddDocument(this: any) {
                     />
                   </label>
                   <label className="input-group mb-5 mt-5">
-                    <span>uuid id Dokumen</span>
+                    <span>uuid Dokumen</span>
                     <input
                       type="text"
                       placeholder="nama dokumen"
@@ -201,6 +157,7 @@ export default function AddDocument(this: any) {
                   </label>
                   <input
                     type="file"
+                    placeholder="Masukkan foto ruangan lokasi"
                     className="file-input w-full max-w-xs"
                     name="photo"
                   />

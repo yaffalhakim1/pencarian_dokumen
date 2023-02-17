@@ -12,26 +12,28 @@ export default function CrudAlat() {
   const [data, setData] = useState<
     { id: string; name: string; location: string; photo: string }[]
   >([]);
+  let index = 1;
 
   useEffect(() => {
-    const url = "https://spdaapp.000webhostapp.com/api/documents/data";
+    const url = "https://spda.17management.my.id/api/users/data";
     const token = Cookie.get("token") as string;
 
     setLoading(true);
-    // axios
-    //   .get(url, {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //   })
-    //   .then((res) => {
-    //     setData(res.data);
-    //     setLoading(false);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     setLoading(false);
-    //   });
+    axios
+      .get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setData(res.data.data);
+        console.log(res.data.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
   }, []);
 
   async function deleteDoc(id: any) {
@@ -74,29 +76,31 @@ export default function CrudAlat() {
               <table className="table table-normal lg:10/12 w-full">
                 <thead>
                   <tr>
-                    <th></th>
-                    <th>Nama Dokumen</th>
-                    <th>Lokasi Dokumen</th>
-                    <th>Foto Dokumen</th>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>Username </th>
+                    <th>Email </th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   {data.map((item: any) => (
                     <tr key={item.id}>
-                      <th></th>
+                      <th>{index++}</th>
                       <td>{item.name}</td>
-                      <td>{item.location}</td>
-                      <td>
+                      <td>{item.username}</td>
+                      <td>{item.email}</td>
+                      {/* <td>
                         <img src={item.photo} alt="" width={100} />
-                      </td>
+                      </td> */}
 
                       <td>
                         <EditButton
+                          uuid={item.uuid}
                           id={item.id}
                           name={item.name}
-                          location={item.location}
                           photo={item.photo}
+                          device_id={item.device_id}
                         />
                         <DeleteButton
                           onClick={() => {

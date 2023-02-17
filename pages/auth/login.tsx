@@ -8,7 +8,6 @@ import { TailSpin } from "react-loader-spinner";
 import Head from "next/head";
 import Image from "next/image";
 import Alert from "../../components/Alert";
-import { METHODS } from "http";
 
 function LoginForm(this: any) {
   const router = useRouter();
@@ -26,38 +25,9 @@ function LoginForm(this: any) {
   async function handleLogin(event: React.SyntheticEvent) {
     event.preventDefault();
 
-    // try {
-    //   const loginReq = await axios.postForm(
-    //     "http://spdaapp.000webhostapp.com/api/auth/login",
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         accept: "*/*",
-    //       },
-
-    //       username: field.username,
-    //       password: field.password,
-    //     }
-    //   );
-    //   const loginResp = await loginReq.data;
-    //   setLoading(false);
-    //   if (loginReq.status === 200) {
-    //     console.log(field.username);
-    //     console.log(loginResp);
-
-    //     Cookie.set("token", loginResp.access_token);
-    //     Cookie.set("role", loginResp.status);
-    //     router.push("/admin/dashboard");
-    //   }
-    // } catch (error) {
-    //   const err = error as AxiosError;
-
-    //   setLoading(false);
-    //   setShowSnackbar(true);
-    // }
     try {
-      const loginReq = await axios.postForm(
-        "https://spdaapp.000webhostapp.com/api/auth/login",
+      const loginReq = await axios.post(
+        "https://spda.17management.my.id/api/auth/login",
         {
           username: field.username,
           password: field.password,
@@ -72,17 +42,13 @@ function LoginForm(this: any) {
       const loginResp = await loginReq.data;
       setLoading(false);
       if (loginReq.status === 200) {
-        console.log(loginResp);
-
         Cookie.set("token", loginResp.access_token);
         Cookie.set("role", loginResp.status);
         router.push("/admin/dashboard");
       }
     } catch (error) {
       const err = error as AxiosError;
-      // console.log(err.response?.status);
-      console.log(err.response?.data);
-
+      console.log(err.response?.data, "error login");
       setLoading(false);
       setShowSnackbar(true);
     }
