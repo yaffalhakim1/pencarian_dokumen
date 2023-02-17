@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
   };
 };
 
-export default function EditButton(this: any, props: Data) {
+export default function EditUser(this: any, props: Data) {
   const data = props;
   const [field, setField] = useState({
     name: data.name,
@@ -145,7 +145,7 @@ export default function EditButton(this: any, props: Data) {
         height="24"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="currentColor"
+        stroke="#f59e0b"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -191,7 +191,7 @@ export default function EditButton(this: any, props: Data) {
                 <Dialog.Description className="py-4">
                   Masukkan nama, lokasi, dan foto dokumen yang ingin anda ubah
                   disini
-                  <label className="input-group-vertical md:input-group mb-5">
+                  <label className="input-group mb-5">
                     <span>Nama Dokumen</span>
                     <input
                       type="text"
@@ -201,22 +201,12 @@ export default function EditButton(this: any, props: Data) {
                       onChange={handleChange}
                     />
                   </label>
-                  <label className="input-group-vertical md:input-group mb-3 ">
+                  <label className="input-group mb-3">
                     <span>Device Id Dokumen</span>
                     <input
                       type="text"
                       className="input input-bordered"
                       placeholder={data.device_id}
-                      name="location"
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label className="input-group-vertical md:input-group mb-3 ">
-                    <span>UUID Dokumen</span>
-                    <input
-                      type="text"
-                      className="input input-bordered"
-                      placeholder={data.uuid}
                       name="location"
                       onChange={handleChange}
                     />

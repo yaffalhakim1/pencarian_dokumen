@@ -12,7 +12,7 @@ export default function Home() {
     const role = Cookie.get("role");
     if (!token) {
       Router.push("/auth/login");
-    } else if (token && role === "1") {
+    } else if (token) {
       Router.push("/admin/dashboard");
     } else if (token && role === "2") {
       Router.push("/users/homeuser");
@@ -24,7 +24,7 @@ export default function Home() {
       <div className="container">
         <div className="flex mx-auto text-center justify-center items-center">
           <TailSpin color="#4B5563" height={40} width={40} />
-          <p className="ml-5 text-lg">Loading...</p>
+          <p className="ml-5 text-lg">Sedang memeriksa....</p>
         </div>
       </div>
     </>

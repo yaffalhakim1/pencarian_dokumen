@@ -7,7 +7,7 @@ interface Props {
   onClick: () => void;
 }
 
-export default function DeleteButton(this: any, props: Props) {
+export default function DeleteUser(this: any, props: Props) {
   let [isOpen, setIsOpen] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -28,7 +28,7 @@ export default function DeleteButton(this: any, props: Props) {
         height="24"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="currentColor"
+        stroke="#dc2626"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"

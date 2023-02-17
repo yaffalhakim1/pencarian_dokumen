@@ -8,18 +8,59 @@ import { TailSpin } from "react-loader-spinner";
 import Head from "next/head";
 import Image from "next/image";
 import Alert from "../../components/Alert";
+import { AuthContext } from "../../hooks/AuthContext";
 
 function LoginForm(this: any) {
   const router = useRouter();
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [field, setField] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState(null);
+  const [expirationTime, setExpirationTime] = useState<any>(null);
+  const authCtx = useContext(AuthContext);
 
   function fieldHandler(e: any) {
     setField({
       ...field,
       [e.target.name]: e.target.value,
     });
+  }
+
+  // useEffect(() => {
+  //   if (token && expirationTime) {
+  //     const intervalId = setInterval(() => {
+  //       if (Date.now() >= expirationTime) {
+  //         // token has expired, log out the user
+  //         logoutHandler();
+  //       }
+  //     }, 1000); // check every second
+
+  //     return () => clearInterval(intervalId); // cleanup on unmount
+  //   }
+  // }, [token, expirationTime]);
+
+  async function logoutHandler() {
+    Cookie.remove("token");
+    Cookie.remove("name");
+    Cookie.remove("role");
+    const token = Cookie.get("token") as string;
+    const logout = await axios
+      .post("https://spda.17management.my.id/api/auth/logout", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    setLoading(false);
+    setToken(null);
+    setExpirationTime(null);
+    Router.replace("/auth/login");
   }
 
   async function handleLogin(event: React.SyntheticEvent) {
@@ -39,11 +80,12 @@ function LoginForm(this: any) {
           },
         }
       );
+      const expirationTime = Date.now() + loginReq.data.expired_in * 1000;
+      authCtx.login(loginReq.data.access_token, expirationTime);
       const loginResp = await loginReq.data;
       setLoading(false);
       if (loginReq.status === 200) {
         Cookie.set("token", loginResp.access_token);
-        Cookie.set("role", loginResp.status);
         router.push("/admin/dashboard");
       }
     } catch (error) {

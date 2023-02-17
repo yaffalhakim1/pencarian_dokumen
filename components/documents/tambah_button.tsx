@@ -61,6 +61,7 @@ export default function AddDocument(this: any) {
       );
 
       const postFileRes = await postFileReq.data;
+
       setLoading(false);
       if (postFileReq.status === 200) {
         setShowSnackbar(true);
@@ -77,7 +78,7 @@ export default function AddDocument(this: any) {
       <button
         type="button"
         onClick={openModal}
-        className="btn btn-sm btn-success mb-3 ml-auto"
+        className="btn btn-sm btn-success mb-3 mr-auto capitalize"
       >
         Tambah Dokumen
       </button>

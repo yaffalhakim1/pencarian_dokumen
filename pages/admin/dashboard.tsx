@@ -20,6 +20,8 @@ export default function DashboardAdmin() {
     setSelectedItem(item);
   };
 
+  useAuthRedirect();
+
   async function logoutHandler() {
     Cookie.remove("token");
     Cookie.remove("name");
@@ -41,8 +43,6 @@ export default function DashboardAdmin() {
     setLoading(false);
     Router.replace("/auth/login");
   }
-
-  useAuthRedirect();
 
   async function getProfile() {
     const token = Cookie.get("token") as string;
