@@ -1,19 +1,23 @@
 import AddDocument from "../../components/documents/tambah_button";
 import axios, { AxiosError } from "axios";
 import Cookie from "js-cookie";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import EditButton from "../../components/documents/edit/[id]";
 import DeleteButton from "../../components/documents/delete_button";
 import { TailSpin } from "react-loader-spinner";
 import AddUser from "../../components/users/tambah_user";
 import DeleteUser from "../../components/users/delete_user";
 import EditUser from "../../components/users/edit/[id]";
+import _ from "lodash";
 
 export default function CrudAlat() {
   const [loading, setLoading] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [data, setData] = useState<
-    { id: string; name: string; location: string; photo: string }[]
+    { id: any; name: string; username: string; email: string }[]
+  >([]);
+  const prevDataRef = useRef<
+    { username: string; name: string; email: any; id: any }[]
   >([]);
   let index = 1;
 
@@ -29,19 +33,23 @@ export default function CrudAlat() {
         },
       })
       .then((res) => {
-        setData(res.data.data);
-
+        const newData = res.data.data;
+        if (!_.isEqual(newData, prevDataRef.current)) {
+          setData(newData);
+        }
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response?.data);
         setLoading(false);
       });
-  }, []);
+    setLoading(false);
+    prevDataRef.current = data;
+  }, [prevDataRef]);
 
   async function deleteDoc(id: any) {
     const token = Cookie.get("token") as string;
-    const url = "https://spda-api.onrender.com/api/admin/documents";
+    const url = "https://spda.17management.my.id/api/users/delete";
     try {
       const res = await axios
         .delete(`${url}/${id}`, {
@@ -64,19 +72,19 @@ export default function CrudAlat() {
 
   return (
     <>
-      <div className="container px-6 py-6 h-full">
+      <div className="container px-6 pt-2 pb-6 h-full">
         <p className="text-2xl font-semibold mb-2">Dashboard User</p>
-        <p className="text-md font-normal mb-8">
+        <p className="text-md font-normal mb-4">
           Lakukan perubahan data user disini
         </p>
-        <div className="flex justify-between">
-          <AddUser />
+        <div className="md:flex md:justify-between ">
+          {/* <AddUser /> */}
           <div className="form-control">
-            <div className="input-group input-group-sm ">
+            <div className="input-group input-group-sm mb-3">
               <input
                 type="text"
                 placeholder="Search…"
-                className="input input-bordered  input-sm w-full max-w-xs"
+                className="input input-bordered input-sm w-full max-w-xs"
               />
               <button className="btn btn-square btn-sm">
                 <svg
@@ -132,13 +140,13 @@ export default function CrudAlat() {
 
                       <td>
                         <EditUser
-                          uuid={item.uuid}
+                          email={item.email}
                           id={item.id}
                           name={item.name}
-                          photo={item.photo}
-                          device_id={item.device_id}
+                          username={item.username}
+                          // device_id={item.device_id}
                         />
-                        <br />
+                        {/* <br /> */}
                         <DeleteUser
                           onClick={() => {
                             deleteDoc(item.id);

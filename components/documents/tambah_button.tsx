@@ -78,7 +78,7 @@ export default function AddDocument(this: any) {
       <button
         type="button"
         onClick={openModal}
-        className="btn btn-sm btn-success mb-3 mr-auto capitalize"
+        className="btn btn-sm btn-accent mb-3 mr-auto capitalize text-white"
       >
         Tambah Dokumen
       </button>
@@ -115,13 +115,13 @@ export default function AddDocument(this: any) {
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="modal-box m-5">
-                <Dialog.Title className="font-bold text-lg">
+                <Dialog.Title className="font-bold text-xl">
                   Tambah Dokumen
                 </Dialog.Title>
-                <Dialog.Description className="py-4">
-                  Masukkan nama, lokasi, dan foto dokumen yang ingin anda
-                  tambahkan disini
-                  <label className="input-group mb-5 mt-5">
+                <Dialog.Description className="mt-1 mb-4 text-md">
+                  Masukkan nama, id alat, uuid, dan foto dokumen yang ingin anda
+                  tambahkan disini.
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Nama Dokumen</span>
                     <input
                       type="text"
@@ -131,21 +131,21 @@ export default function AddDocument(this: any) {
                       onChange={handleChange}
                     />
                   </label>
-                  <label className="input-group mb-5 mt-5">
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>device id Dokumen</span>
                     <input
                       type="text"
-                      placeholder="nama dokumen"
+                      placeholder="device id dokumen"
                       className="input input-bordered"
                       name="device_id"
                       onChange={handleChange}
                     />
                   </label>
-                  <label className="input-group mb-5 mt-5">
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>uuid Dokumen</span>
                     <input
                       type="text"
-                      placeholder="nama dokumen"
+                      placeholder="uuid dokumen"
                       className="input input-bordered"
                       name="uuid"
                       onChange={handleChange}
@@ -168,7 +168,7 @@ export default function AddDocument(this: any) {
                     handleFileUpload();
                     setLoading(true);
                   }}
-                  className="btn btn-success mr-3 mb-3 md:mb-0"
+                  className="btn btn-accent mr-3 mb-3 md:mb-0"
                 >
                   {loading ? (
                     <div className="flex flex-wrap">
@@ -184,7 +184,7 @@ export default function AddDocument(this: any) {
                       </button> */}
                     </div>
                   ) : (
-                    "Tambahkan Dokumen"
+                    "Simpan"
                   )}
                 </button>
                 <button onClick={closeModal} className="btn">

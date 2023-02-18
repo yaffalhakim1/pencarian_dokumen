@@ -70,7 +70,7 @@ export default function DashboardAdmin() {
         <title>Dashboard Admin</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="text-white font-semibold ml-8 mt-5 mr-8">
+      <div className=" font-semibold ml-8 mt-5 mr-8">
         <div className="flex  items-center">
           <label
             htmlFor="my-drawer-2"
@@ -79,7 +79,8 @@ export default function DashboardAdmin() {
             Menu
           </label>
           <div>
-            <h1 className="hidden md:flex">Dashboard Admin {userName}</h1>
+            <h1 className="hidden md:flex mb-5">Dashboard Admin</h1>
+            <SwitchTheme />
           </div>
           {/* this is problematic, still looking how to fix it */}
           {/* 
@@ -105,14 +106,24 @@ export default function DashboardAdmin() {
           <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
           <ul className="menu p-4 w-80 bg-base-100 text-base-content">
             <li>
-              <a onClick={() => handleClick(1)}>Dokumen</a>
-            </li>
-            <li>
-              <a onClick={() => handleClick(2)}>Users</a>
+              <a
+                className={selectedItem === 1 ? "active" : ""}
+                onClick={() => handleClick(1)}
+              >
+                Dokumen
+              </a>
             </li>
             <li>
               <a
-                className="btn btn-error text-black mt-5 py-3"
+                className={selectedItem === 2 ? "active" : ""}
+                onClick={() => handleClick(2)}
+              >
+                Users
+              </a>
+            </li>
+            <li className="">
+              <a
+                className="btn btn-error text-white mt-5 py-3"
                 //setloading true onclick
                 onClick={logoutHandler}
               >

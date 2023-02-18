@@ -9,6 +9,11 @@ import LoadingTable from "../../components/loading_anim";
 import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import _ from "lodash";
 
+interface Item {
+  id: number;
+  name: string;
+}
+
 export default function CrudDocument() {
   const [loading, setLoading] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -26,6 +31,9 @@ export default function CrudDocument() {
   const [lastPageUrl, setLastPageUrl] = useState("");
   const [nextPageUrl, setNextPageUrl] = useState("");
   const [prevPageUrl, setPrevPageUrl] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredItems, setFilteredItems] = useState<any>([]);
+  const [items, setItems] = useState<Item[]>([]);
   useAuthRedirect();
   let index = 1;
 
@@ -116,23 +124,32 @@ export default function CrudDocument() {
     }
   }
 
+  function handleSearch() {
+    const filteredItems = items.filter((item: { name: string }) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredItems(filteredItems);
+  }
+
   return (
     <>
-      <div className="container px-6 py-6 h-full">
+      <div className="container px-6  pt-2 pb-6 h-full">
         <p className="text-2xl font-semibold mb-2">Dashboard Dokumen</p>
         <p className="text-md font-normal mb-8">
           Lakukan perubahan data dokumen disini
         </p>
-        <div className="flex justify-between">
+        <div className="md:flex md:justify-between">
           <AddDocument />
           <div className="form-control">
-            <div className="input-group input-group-sm ">
+            <div className="input-group input-group-sm mb-3">
               <input
                 type="text"
                 placeholder="Search…"
                 className="input input-bordered  input-sm w-full max-w-xs"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
               />
-              <button className="btn btn-square btn-sm">
+              <button onClick={handleSearch} className="btn btn-square btn-sm">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
@@ -196,7 +213,7 @@ export default function CrudDocument() {
                           device_id={item.device_id}
                           photo={item.photo}
                         />
-                        <br />
+                        {/* <br /> */}
                         <DeleteButton
                           onClick={() => {
                             deleteDoc(item.id);

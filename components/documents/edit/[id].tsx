@@ -132,14 +132,14 @@ export default function EditButton(this: any, props: Data) {
 
   return (
     <>
-      {/* <button
+      <button
         type="button"
         onClick={openModal}
-        className="btn btn-sm btn-warning mb-3 ml-auto"
+        className="btn btn-sm btn-warning mb-3 ml-auto capitalize text-white mr-3"
       >
-        Ubah Dokumen
-      </button> */}
-      <svg
+        Edit
+      </button>
+      {/* <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
         height="24"
@@ -155,7 +155,7 @@ export default function EditButton(this: any, props: Data) {
       >
         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-      </svg>
+      </svg> */}
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" onClose={() => closeModal()} className="relative z-50">
@@ -185,13 +185,13 @@ export default function EditButton(this: any, props: Data) {
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="modal-box m-5">
-                <Dialog.Title className="font-bold text-lg">
+                <Dialog.Title className="font-bold text-xl">
                   Ubah Dokumen
                 </Dialog.Title>
-                <Dialog.Description className="py-4">
-                  Masukkan nama, lokasi, dan foto dokumen yang ingin anda ubah
-                  disini
-                  <label className="input-group-vertical md:input-group mb-5">
+                <Dialog.Description className="mt-1 mb-4 text-md">
+                  Masukkan nama, id alat, uuid, dan foto dokumen yang ingin anda
+                  ubah disini.
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Nama Dokumen</span>
                     <input
                       type="text"
@@ -201,23 +201,23 @@ export default function EditButton(this: any, props: Data) {
                       onChange={handleChange}
                     />
                   </label>
-                  <label className="input-group-vertical md:input-group mb-3 ">
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Device Id Dokumen</span>
                     <input
                       type="text"
                       className="input input-bordered"
                       placeholder={data.device_id}
-                      name="location"
+                      name="device_id"
                       onChange={handleChange}
                     />
                   </label>
-                  <label className="input-group-vertical md:input-group mb-3 ">
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>UUID Dokumen</span>
                     <input
                       type="text"
                       className="input input-bordered"
                       placeholder={data.uuid}
-                      name="location"
+                      name="uuid"
                       onChange={handleChange}
                     />
                   </label>
@@ -238,7 +238,7 @@ export default function EditButton(this: any, props: Data) {
                     setLoading(true);
                     handleFileUpload();
                   }}
-                  className="btn btn-warning mr-3 mb-3 md:mb-0"
+                  className="btn btn-accent mr-3 mb-3 md:mb-0 capitalize"
                 >
                   {loading ? (
                     <div className="flex flex-wrap">
@@ -254,11 +254,11 @@ export default function EditButton(this: any, props: Data) {
                       </button> */}
                     </div>
                   ) : (
-                    "Ubah Dokumen"
+                    "Simpan"
                   )}
                 </button>
 
-                <button onClick={closeModal} className="btn">
+                <button onClick={closeModal} className="btn capitalize">
                   Batal
                 </button>
               </Dialog.Panel>

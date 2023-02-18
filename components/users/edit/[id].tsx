@@ -7,9 +7,9 @@ import { GetServerSideProps } from "next";
 
 type Data = {
   name: string;
-  device_id: string;
-  uuid: string;
-  photo: string;
+  username: string;
+  email: string;
+  // photo: string;
   id: any;
 };
 
@@ -19,7 +19,7 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
   const id = context.query.id as string;
   const token = context.req.headers.token;
   const response = await axios.get(
-    "https://spda.17management.my.id/api/documents/data" + id,
+    `https://spda.17management.my.id/api/users/update/${id}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -38,9 +38,9 @@ export default function EditUser(this: any, props: Data) {
   const data = props;
   const [field, setField] = useState({
     name: data.name,
-    device_id: data.device_id,
-    uuid: data.uuid,
-    photo: data.photo,
+    username: data.username,
+    email: data.email,
+    // photo: data.photo,
   });
   let [isOpen, setIsOpen] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -63,10 +63,10 @@ export default function EditUser(this: any, props: Data) {
     ) as HTMLInputElement;
     const formData = new FormData();
     // formData.append("file", input.files![0]);
-    formData.append("photo", input.files![0]);
+    // formData.append("photo", input.files![0]);
     formData.append("name", field.name);
-    formData.append("device_id", field.device_id);
-    formData.append("uuid", field.uuid);
+    formData.append("username", field.username);
+    formData.append("email", field.email);
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -74,14 +74,17 @@ export default function EditUser(this: any, props: Data) {
       },
     };
     try {
-      const postFileReq = await axios.post(
-        `https://spda.17management.my.id/api/documents/update/${id}`,
+      const postUserReq = await axios.post(
+        `https://spda.17management.my.id/api/users/update/${id}`,
         formData,
         options
       );
-      const postFileRes = await postFileReq.data;
+      const postUserRes = await postUserReq.data;
+      console.log(formData);
+      console.log(postUserRes);
       setLoading(false);
-      if (postFileReq.status === 200) {
+      if (postUserRes.status === 200) {
+        console.log(postUserRes);
         closeModal();
       }
     } catch (error) {
@@ -90,72 +93,55 @@ export default function EditUser(this: any, props: Data) {
     }
   }
 
-  async function handleDocSubmitEdit(photoUrl: string) {
-    const token = Cookie.get("token") as string;
-    const id = props.id;
+  // async function handleDocSubmitEdit(photoUrl: string) {
+  //   const token = Cookie.get("token") as string;
+  //   const id = props.id;
 
-    try {
-      const postDocReq = await axios.put(
-        `https://spda-api.onrender.com/api/admin/documents/${id}`,
-        {
-          device_id: field.device_id,
-          name: field.name,
-          photo: photoUrl,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const postDocRes = await postDocReq.data;
-      setLoading(false);
-      if (postDocReq.status === 200) {
-        setShowSnackbar(true);
-        closeModal();
-      }
-    } catch (error) {
-      const err = error as AxiosError;
-      console.log(err.response?.data);
-    }
-  }
+  //   try {
+  //     const postDocReq = await axios.put(
+  //       `https://spda-api.onrender.com/api/admin/documents/${id}`,
+  //       {
+  //         device_id: field.device_id,
+  //         name: field.name,
+  //         photo: photoUrl,
+  //       },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     const postDocRes = await postDocReq.data;
+  //     setLoading(false);
+  //     if (postDocReq.status === 200) {
+  //       setShowSnackbar(true);
+  //       closeModal();
+  //     }
+  //   } catch (error) {
+  //     const err = error as AxiosError;
+  //     console.log(err.response?.data);
+  //   }
+  // }
 
   const handleChange = (e: any) => {
     const { name, value, files } = e.target;
     setField({
       ...field,
       [e.target.name]: e.target.value,
-      photo: name === "photo" ? files[0] : field.photo,
+      // photo: name === "photo" ? files[0] : field.photo,
     });
   };
 
   return (
     <>
-      {/* <button
+      <button
         type="button"
         onClick={openModal}
-        className="btn btn-sm btn-warning mb-3 ml-auto"
+        className="btn btn-sm btn-warning mb-3 ml-auto capitalize text-white mr-3"
       >
-        Ubah Dokumen
-      </button> */}
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="#f59e0b"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="feather feather-edit"
-        onClick={openModal}
-        cursor="pointer"
-      >
-        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-      </svg>
+        Edit
+      </button>
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" onClose={() => closeModal()} className="relative z-50">
@@ -185,72 +171,84 @@ export default function EditUser(this: any, props: Data) {
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="modal-box m-5">
-                <Dialog.Title className="font-bold text-lg">
-                  Ubah Dokumen
+                <Dialog.Title className="font-semibold text-xl">
+                  Ubah Data User
                 </Dialog.Title>
-                <Dialog.Description className="py-4">
-                  Masukkan nama, lokasi, dan foto dokumen yang ingin anda ubah
+                <Dialog.Description className="mt-1 mb-4 text-md">
+                  Masukkan nama, username, dan email user yang ingin anda ubah
                   disini
-                  <label className="input-group mb-5">
-                    <span>Nama Dokumen</span>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span className="pr-12">Nama</span>
                     <input
                       type="text"
                       placeholder={data.name}
-                      className="input input-bordered"
+                      className="input input-bordered w-full"
                       name="name"
                       onChange={handleChange}
                     />
                   </label>
-                  <label className="input-group mb-3">
-                    <span>Device Id Dokumen</span>
+                  <label className=" md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Username</span>
                     <input
                       type="text"
-                      className="input input-bordered"
-                      placeholder={data.device_id}
-                      name="location"
+                      className="input input-bordered w-full"
+                      placeholder={data.username}
+                      name="username"
                       onChange={handleChange}
                     />
                   </label>
-                  <label className="label">
+                  <label className=" md:mb-9 mt-5 mb-6 input-group input-group-vertical">
+                    <span className="pr-12">Email</span>
+                    <input
+                      type="text"
+                      className="input input-bordered w-full"
+                      placeholder={data.email}
+                      name="email"
+                      onChange={handleChange}
+                    />
+                  </label>
+                  {/* <label className="label">
                     <span className="label-text">
                       Masukkan foto ruangan lokasi
                     </span>
-                  </label>
-                  <input
+                  </label> */}
+                  {/* <input
                     type="file"
                     className="file-input w-full max-w-xs"
                     name="photo"
-                    placeholder={data.photo}
-                  />
+                    placeholder={data.email}
+                  /> */}
                 </Dialog.Description>
-                <button
-                  onClick={() => {
-                    setLoading(true);
-                    handleFileUpload();
-                  }}
-                  className="btn btn-warning mr-3 mb-3 md:mb-0"
-                >
-                  {loading ? (
-                    <div className="flex flex-wrap">
-                      <TailSpin
-                        height="20"
-                        width="20"
-                        color="#ffffff"
-                        ariaLabel="tail-spin-loading"
-                        radius="1"
-                      />
-                      {/* <button className="btn btn-warning btn-sm mb-3 md:mb-0">
+                <div className="">
+                  <button
+                    onClick={() => {
+                      setLoading(true);
+                      handleFileUpload();
+                    }}
+                    className="btn btn-accent  mr-3 mb-3 md:mb-0 capitalize text-white"
+                  >
+                    {loading ? (
+                      <div className="flex flex-wrap">
+                        <TailSpin
+                          height="20"
+                          width="20"
+                          color="#ffffff"
+                          ariaLabel="tail-spin-loading"
+                          radius="1"
+                        />
+                        {/* <button className="btn btn-warning btn-sm mb-3 md:mb-0">
                         Mengubah dokumen...
                       </button> */}
-                    </div>
-                  ) : (
-                    "Ubah Dokumen"
-                  )}
-                </button>
+                      </div>
+                    ) : (
+                      "Simpan"
+                    )}
+                  </button>
 
-                <button onClick={closeModal} className="btn">
-                  Batal
-                </button>
+                  <button onClick={closeModal} className="btn capitalize">
+                    Batal
+                  </button>
+                </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

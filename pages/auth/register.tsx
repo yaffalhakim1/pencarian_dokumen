@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect, useContext, createContext } from "react";
 import { AxiosError } from "axios";
 import axios from "axios";
@@ -10,10 +11,17 @@ import Image from "next/image";
 import Alert from "../../components/Alert";
 import { AuthContext } from "../../hooks/AuthContext";
 
-function LoginForm(this: any) {
+export default function Register() {
   const router = useRouter();
   const [showSnackbar, setShowSnackbar] = useState(false);
-  const [field, setField] = useState({ username: "", password: "" });
+  const [field, setField] = useState({
+    name: "",
+    email: "",
+    username: "",
+    password: "",
+    password_confirmation: "",
+    role: [],
+  });
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState(null);
   const [expirationTime, setExpirationTime] = useState<any>(null);
@@ -25,19 +33,6 @@ function LoginForm(this: any) {
       [e.target.name]: e.target.value,
     });
   }
-
-  // useEffect(() => {
-  //   if (token && expirationTime) {
-  //     const intervalId = setInterval(() => {
-  //       if (Date.now() >= expirationTime) {
-  //         // token has expired, log out the user
-  //         logoutHandler();
-  //       }
-  //     }, 1000); // check every second
-
-  //     return () => clearInterval(intervalId); // cleanup on unmount
-  //   }
-  // }, [token, expirationTime]);
 
   async function logoutHandler() {
     Cookie.remove("token");
@@ -63,15 +58,19 @@ function LoginForm(this: any) {
     Router.replace("/auth/login");
   }
 
-  async function handleLogin(event: React.SyntheticEvent) {
+  async function handleRegister(event: React.SyntheticEvent) {
     event.preventDefault();
 
     try {
-      const loginReq = await axios.post(
-        "https://spda.17management.my.id/api/auth/login",
+      const registerReq = await axios.post(
+        "https://spda.17management.my.id/api/auth/register",
         {
+          name: field.name,
+          email: field.email,
           username: field.username,
           password: field.password,
+          password_confirmation: field.password_confirmation,
+          role: field.role,
         },
         {
           headers: {
@@ -80,17 +79,16 @@ function LoginForm(this: any) {
           },
         }
       );
-      const expirationTime = Date.now() + loginReq.data.expired_in * 1000;
-      authCtx.login(loginReq.data.access_token, expirationTime);
-      const loginResp = await loginReq.data;
+      //   const expirationTime = Date.now() + loginReq.data.expired_in * 1000;
+      //   authCtx.login(loginReq.data.access_token, expirationTime);
+      const registerResp = await registerReq.data;
       setLoading(false);
-      if (loginReq.status === 200) {
-        Cookie.set("token", loginResp.access_token);
-        router.push("/admin/dashboard");
+      if (registerReq.status === 200) {
+        router.push("/auth/login");
       }
     } catch (error) {
       const err = error as AxiosError;
-      console.log(err.response?.data, "error login");
+      console.log(err.response?.data, "error register");
       setLoading(false);
       setShowSnackbar(true);
     }
@@ -99,7 +97,7 @@ function LoginForm(this: any) {
   return (
     <>
       <Head>
-        <title>Login</title>
+        <title>Register</title>
       </Head>
       <section className="h-screen">
         <div className="container px-6 py-12 h-full">
@@ -114,15 +112,35 @@ function LoginForm(this: any) {
               />
             </div>
             <div className="md:w-8/12 lg:w-5/12 lg:ml-20">
-              <form onSubmit={handleLogin} method="POST">
+              <form onSubmit={handleRegister} method="POST">
                 <h1 className="text-white font-bold text-xl text-center mb-6">
-                  Login
+                  Register
                 </h1>
                 <div className="mb-6">
                   <input
                     type="text"
                     className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                    placeholder="username"
+                    placeholder="Name"
+                    name="name"
+                    onChange={fieldHandler}
+                    required
+                  />
+                </div>
+                <div className="mb-6">
+                  <input
+                    type="text"
+                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    placeholder="Email"
+                    name="email"
+                    onChange={fieldHandler}
+                    required
+                  />
+                </div>
+                <div className="mb-6">
+                  <input
+                    type="text"
+                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    placeholder="Username"
                     name="username"
                     onChange={fieldHandler}
                     required
@@ -135,6 +153,27 @@ function LoginForm(this: any) {
                     className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                     placeholder="Password"
                     name="password"
+                    onChange={fieldHandler}
+                    required
+                  />
+                </div>
+                <div className="mb-6">
+                  <input
+                    type="password"
+                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    placeholder="Confirm your password"
+                    name="password_confirmation"
+                    onChange={fieldHandler}
+                    required
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <input
+                    type="text"
+                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    placeholder="Role"
+                    name="role"
                     onChange={fieldHandler}
                     required
                   />
@@ -160,15 +199,9 @@ function LoginForm(this: any) {
                       <span className="text-white">Signing you in...</span>
                     </div>
                   ) : (
-                    "Sign In"
+                    "Daftar"
                   )}
                 </button>
-
-                <div onClick={() => router.push("/auth/register")}>
-                  <p className="text-slate-400 mt-3 text-sm text-center underline">
-                    Belum memiliki akun? Daftar disini
-                  </p>
-                </div>
               </form>
             </div>
           </div>
@@ -176,6 +209,6 @@ function LoginForm(this: any) {
       </section>
     </>
   );
-}
 
-export default LoginForm;
+  return <div>Register</div>;
+}

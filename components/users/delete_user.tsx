@@ -22,7 +22,7 @@ export default function DeleteUser(this: any, props: Props) {
 
   return (
     <>
-      <svg
+      {/* <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
         height="24"
@@ -40,14 +40,14 @@ export default function DeleteUser(this: any, props: Props) {
         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
         <line x1="10" y1="11" x2="10" y2="17"></line>
         <line x1="14" y1="11" x2="14" y2="17"></line>
-      </svg>
-      {/* <button
+      </svg> */}
+      <button
         type="button"
         onClick={openModal}
-        className="btn btn-sm btn-error mt-3"
+        className="btn btn-sm bg-red-700 mb-3 ml-auto capitalize text-white border border-red-700"
       >
-        Hapus Dokumen
-      </button> */}
+        Hapus
+      </button>
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" onClose={() => closeModal()} className="relative z-50">
@@ -76,18 +76,18 @@ export default function DeleteUser(this: any, props: Props) {
             >
               <Dialog.Panel className="modal-box m-5">
                 <Dialog.Title className="font-bold text-lg">
-                  Hapus Dokumen
+                  Hapus User
                 </Dialog.Title>
-                <Dialog.Description className="py-4">
-                  Apakah anda yakin ingin menghapus dokumen ini? setelah
-                  menghapus dokumen ini, anda tidak dapat mengembalikannya lagi.
+                <Dialog.Description className="mt-1 mb-8">
+                  Apakah anda yakin ingin menghapus user ini? Aksi ini tidak
+                  bisa dibatalkan.
                 </Dialog.Description>
                 <button
                   onClick={() => {
                     props.onClick && props.onClick();
                     setLoading(true);
                   }}
-                  className="btn btn-error mr-3 mb-3 md:mb-0"
+                  className="btn btn-error mr-3 mb-3 md:mb-0 capitalize text-white"
                 >
                   {loading ? (
                     <div className="flex flex-wrap">
@@ -103,10 +103,10 @@ export default function DeleteUser(this: any, props: Props) {
                       </button> */}
                     </div>
                   ) : (
-                    "Hapus Dokumen"
+                    "Hapus"
                   )}
                 </button>
-                <button onClick={closeModal} className="btn">
+                <button onClick={closeModal} className="btn capitalize">
                   Batal
                 </button>
               </Dialog.Panel>

@@ -16,13 +16,13 @@ export default function SwitchTheme({}) {
 
   return (
     <div className="flex gap-2">
-      <Sun />
+      <Moon />
       <input
         type="checkbox"
         className="toggle"
-        data-toggle-theme="light,dark"
+        data-toggle-theme="corporate,forest"
       />
-      <Moon />
+      <Sun />
     </div>
   );
 }
