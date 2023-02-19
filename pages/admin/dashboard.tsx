@@ -1,13 +1,15 @@
 import { SetStateAction, useContext, useEffect, useState } from "react";
 import Router from "next/router";
 import Cookie from "js-cookie";
-import CrudDocument from "./documents";
-import CrudAlat from "./users";
+
 import Head from "next/head";
 import { MoonLoader } from "react-spinners";
 import SwitchTheme from "../../components/Switcher";
 import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import axios from "axios";
+import CrudDocument from "./documents";
+import CrudAlat from "./users";
+import { GetServerSideProps } from "next";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
@@ -21,6 +23,12 @@ export default function DashboardAdmin() {
   };
 
   useAuthRedirect();
+
+  // get profile
+
+  useEffect(() => {
+    getProfile();
+  }, []);
 
   async function logoutHandler() {
     Cookie.remove("token");
@@ -70,17 +78,29 @@ export default function DashboardAdmin() {
         <title>Dashboard Admin</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className=" font-semibold ml-8 mt-5 mr-8">
+      <div className=" font-semibold ml-4 mt-5 mr-4">
         <div className="flex  items-center">
           <label
             htmlFor="my-drawer-2"
-            className="btn btn-sm btn-primary drawer-button lg:hidden mr-4"
+            className="btn btn-sm btn-primary drawer-button lg:hidden mr-4 capitalize"
           >
             Menu
           </label>
           <div>
             <h1 className="hidden md:flex mb-5">Dashboard Admin</h1>
-            <SwitchTheme />
+            <div className="flex items-center space-x-3 mr-4 md:mr-0">
+              <div className="avatar placeholder">
+                <div className="mask mask-squircle w-10 h-10 text-center bg-neutral-focus text-neutral-content">
+                  {/* <img src="/tailwind-css-component-profile-2@56w.png" alt="Avatar Tailwind CSS Component" /> */}
+                  {userName.charAt(0)}
+                </div>
+              </div>
+              <div>
+                <div className="font-bold">{userName}</div>
+                <div className="text-sm opacity-50">{email}</div>
+              </div>
+            </div>
+            {/* <SwitchTheme /> */}
           </div>
           {/* this is problematic, still looking how to fix it */}
           {/* 
@@ -107,7 +127,9 @@ export default function DashboardAdmin() {
           <ul className="menu p-4 w-80 bg-base-100 text-base-content">
             <li>
               <a
-                className={selectedItem === 1 ? "active" : ""}
+                className={
+                  selectedItem === 1 ? "active font-semibold text-white" : ""
+                }
                 onClick={() => handleClick(1)}
               >
                 Dokumen
@@ -115,7 +137,9 @@ export default function DashboardAdmin() {
             </li>
             <li>
               <a
-                className={selectedItem === 2 ? "active" : ""}
+                className={
+                  selectedItem === 2 ? "active font-semibold text-white" : ""
+                }
                 onClick={() => handleClick(2)}
               >
                 Users

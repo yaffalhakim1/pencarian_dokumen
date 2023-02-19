@@ -113,13 +113,25 @@ export default function Register() {
             </div>
             <div className="md:w-8/12 lg:w-5/12 lg:ml-20">
               <form onSubmit={handleRegister} method="POST">
-                <h1 className="text-white font-bold text-xl text-center mb-6">
-                  Register
-                </h1>
+                <Image
+                  src="/images/Undip.png"
+                  alt="Undip"
+                  width={150}
+                  height={150}
+                  className="flex mx-auto mb-4"
+                />
+                <h1 className="font-bold text-xl text-center mb-2">Register</h1>
+                <p className="font-normal text-md text-center mb-4 text-slate-400">
+                  Silakan daftarkan akun anda terlebih dahulu
+                </p>
                 <div className="mb-6">
+                  <div className="text-lg font-bold text-gray-700 tracking-wide">
+                    Name
+                  </div>
                   <input
                     type="text"
-                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
                     placeholder="Name"
                     name="name"
                     onChange={fieldHandler}
@@ -127,9 +139,13 @@ export default function Register() {
                   />
                 </div>
                 <div className="mb-6">
+                  <div className="text-lg font-bold text-gray-700 tracking-wide">
+                    Email
+                  </div>
                   <input
                     type="text"
-                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
                     placeholder="Email"
                     name="email"
                     onChange={fieldHandler}
@@ -137,9 +153,13 @@ export default function Register() {
                   />
                 </div>
                 <div className="mb-6">
+                  <div className="text-lg font-bold text-gray-700 tracking-wide">
+                    Username
+                  </div>
                   <input
                     type="text"
-                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
                     placeholder="Username"
                     name="username"
                     onChange={fieldHandler}
@@ -148,9 +168,13 @@ export default function Register() {
                 </div>
 
                 <div className="mb-6">
+                  <div className="text-lg font-bold text-gray-700 tracking-wide">
+                    Password
+                  </div>
                   <input
                     type="password"
-                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
                     placeholder="Password"
                     name="password"
                     onChange={fieldHandler}
@@ -158,10 +182,14 @@ export default function Register() {
                   />
                 </div>
                 <div className="mb-6">
+                  <div className="text-lg font-bold text-gray-700 tracking-wide">
+                    Confirm your password
+                  </div>
                   <input
                     type="password"
-                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                    placeholder="Confirm your password"
+                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
+                    placeholder="Password"
                     name="password_confirmation"
                     onChange={fieldHandler}
                     required
@@ -169,10 +197,14 @@ export default function Register() {
                 </div>
 
                 <div className="mb-6">
+                  <div className="text-lg font-bold text-gray-700 tracking-wide">
+                    Role
+                  </div>
                   <input
                     type="text"
-                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                    placeholder="Role"
+                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
+                    placeholder="Password"
                     name="role"
                     onChange={fieldHandler}
                     required
@@ -181,7 +213,7 @@ export default function Register() {
 
                 <button
                   type="submit"
-                  className="btn btn-primary w-full"
+                  className="btn btn-primary w-full capitalize text-white"
                   onClick={() => setLoading(true)}
                 >
                   {loading ? (
@@ -196,7 +228,7 @@ export default function Register() {
                         wrapperClass="mr-3"
                         visible={true}
                       />
-                      <span className="text-white">Signing you in...</span>
+                      <span className="text-white">Silakan tunggu...</span>
                     </div>
                   ) : (
                     "Daftar"

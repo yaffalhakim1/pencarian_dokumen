@@ -10,6 +10,6 @@ module.exports = {
   plugins: [require("daisyui")],
   darkMode: ["class", '[data-theme="dark"]'],
   daisyui: {
-    themes: ["corporate", "forest"],
+    themes: ["corporate"],
   },
 };

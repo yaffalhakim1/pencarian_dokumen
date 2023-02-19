@@ -26,19 +26,6 @@ function LoginForm(this: any) {
     });
   }
 
-  // useEffect(() => {
-  //   if (token && expirationTime) {
-  //     const intervalId = setInterval(() => {
-  //       if (Date.now() >= expirationTime) {
-  //         // token has expired, log out the user
-  //         logoutHandler();
-  //       }
-  //     }, 1000); // check every second
-
-  //     return () => clearInterval(intervalId); // cleanup on unmount
-  //   }
-  // }, [token, expirationTime]);
-
   async function logoutHandler() {
     Cookie.remove("token");
     Cookie.remove("name");
@@ -86,6 +73,7 @@ function LoginForm(this: any) {
       setLoading(false);
       if (loginReq.status === 200) {
         Cookie.set("token", loginResp.access_token);
+        Cookie.set("expired_in", loginResp.expired_in);
         router.push("/admin/dashboard");
       }
     } catch (error) {
@@ -103,26 +91,38 @@ function LoginForm(this: any) {
       </Head>
       <section className="h-screen">
         <div className="container px-6 py-12 h-full">
-          <div className=" md:w-8/12 lg:w-6/12 mb-12 md:mb-0"></div>
           <div className="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
             <div className="md:w-8/12 lg:w-6/12 mb-12 md:mb-0">
               <Image
                 src="/images/login.svg"
                 alt="Phone image"
-                width={700}
-                height={700}
+                width={600}
+                height={600}
+                className="hidden  md:block"
               />
             </div>
-            <div className="md:w-8/12 lg:w-5/12 lg:ml-20">
+            <div className="md:w-8/12 lg:w-5/12 lg:ml-10">
               <form onSubmit={handleLogin} method="POST">
-                <h1 className="text-white font-bold text-xl text-center mb-6">
-                  Login
-                </h1>
+                <Image
+                  src="/images/Undip.png"
+                  alt="Undip"
+                  width={150}
+                  height={150}
+                  className="flex mx-auto mb-4"
+                />
+                <h1 className="font-bold text-xl text-center mb-2">Login</h1>
+                <p className="font-normal text-md text-center mb-6 text-slate-400">
+                  Untuk masuk ke aplikasi anda
+                </p>
                 <div className="mb-6">
+                  <div className="text-lg font-bold text-gray-700 tracking-wide">
+                    Username
+                  </div>
                   <input
                     type="text"
-                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                    placeholder="username"
+                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
+                    placeholder="Username"
                     name="username"
                     onChange={fieldHandler}
                     required
@@ -130,9 +130,13 @@ function LoginForm(this: any) {
                 </div>
 
                 <div className="mb-6">
+                  <div className="text-lg font-bold text-gray-700 tracking-wide">
+                    Password
+                  </div>
                   <input
                     type="password"
-                    className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                    className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
                     placeholder="Password"
                     name="password"
                     onChange={fieldHandler}
@@ -142,7 +146,7 @@ function LoginForm(this: any) {
 
                 <button
                   type="submit"
-                  className="btn btn-primary w-full"
+                  className="btn btn-primary w-full capitalize text-white"
                   onClick={() => setLoading(true)}
                 >
                   {loading ? (
@@ -157,10 +161,10 @@ function LoginForm(this: any) {
                         wrapperClass="mr-3"
                         visible={true}
                       />
-                      <span className="text-white">Signing you in...</span>
+                      <span className="capitalize">Signing you in...</span>
                     </div>
                   ) : (
-                    "Sign In"
+                    "Login"
                   )}
                 </button>
 

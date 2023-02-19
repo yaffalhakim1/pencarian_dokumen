@@ -1,11 +1,11 @@
-import AddDocument from "../../components/documents/tambah_button";
+import AddDocument from "../../components/documents/AddDocs";
 import Cookie from "js-cookie";
 import axios, { AxiosError } from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { TailSpin } from "react-loader-spinner";
-import DeleteButton from "../../components/documents/delete_button";
+import DeleteButton from "../../components/documents/DeleteDocs";
 import EditButton from "../../components/documents/edit/[id]";
-import LoadingTable from "../../components/loading_anim";
+import LoadingTable from "../../components/SkeletonTable";
 import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import _ from "lodash";
 
@@ -42,7 +42,6 @@ export default function CrudDocument() {
     const url = "https://spda.17management.my.id/api/documents/data";
     const token = Cookie.get("token") as string;
     setLoading(true);
-
     axios
       .get(`${url}`, {
         headers: {
@@ -68,7 +67,7 @@ export default function CrudDocument() {
         setLoading(false);
         setError(err.response?.data || error.message);
       });
-    setLoading(false);
+    // setLoading(false);
     prevDataRef.current = data;
   }, [prevDataRef]);
 
@@ -168,25 +167,27 @@ export default function CrudDocument() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col h-full w-full  ">
+        <div className="flex flex-col h-full w-full">
           <div className="overflow-x-auto">
             {loading ? (
-              <div className="flex text-center justify-center items-center">
-                <TailSpin color="#4B5563" height={40} width={40} />
-                {/* <p className="ml-5 text-lg">Loading...</p> */}
+              <div className="mx-auto container">
+                <div className="flex mx-auto text-center justify-center items-center">
+                  <TailSpin color="#4B5563" height={40} width={40} />
+                  <p className="ml-5 text-lg text-black">Loading...</p>
+                </div>
               </div>
             ) : error ? (
               <div className="container mx-auto">
                 <div className="flex text-center justify-center items-center">
-                  {/* <p className="ml-5 text-lg">
-                    An error occurred: {error}, silakan refresh halaman ini
-                  </p> */}
+                  <p className="ml-5 text-lg">
+                    silakan refresh halaman ini atau login kembali
+                  </p>
                 </div>
               </div>
             ) : (
               <table className="table table-compact lg:10/12 w-full whitespace-normal">
                 <thead>
-                  <tr>
+                  <tr className="[&_th]:font-semibold [&_th]:capitalize">
                     <th>No</th>
                     <th>Name Dokumen</th>
                     <th>Device Id</th>

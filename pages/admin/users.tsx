@@ -1,14 +1,15 @@
-import AddDocument from "../../components/documents/tambah_button";
+import AddDocument from "../../components/documents/AddDocs";
 import axios, { AxiosError } from "axios";
 import Cookie from "js-cookie";
 import { useEffect, useRef, useState } from "react";
 import EditButton from "../../components/documents/edit/[id]";
-import DeleteButton from "../../components/documents/delete_button";
+import DeleteButton from "../../components/documents/DeleteDocs";
 import { TailSpin } from "react-loader-spinner";
 import AddUser from "../../components/users/tambah_user";
-import DeleteUser from "../../components/users/delete_user";
+import DeleteUser from "../../components/users/DeleteUser";
 import EditUser from "../../components/users/edit/[id]";
 import _ from "lodash";
+import LoadingTable from "../../components/SkeletonTable";
 
 export default function CrudAlat() {
   const [loading, setLoading] = useState(false);
@@ -20,6 +21,7 @@ export default function CrudAlat() {
     { username: string; name: string; email: any; id: any }[]
   >([]);
   let index = 1;
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const url = "https://spda.17management.my.id/api/users/data";
@@ -40,10 +42,12 @@ export default function CrudAlat() {
         setLoading(false);
       })
       .catch((err) => {
+        const error = err as AxiosError;
         console.log(err.response?.data);
         setLoading(false);
+        setError(err.response?.data || error.message);
       });
-    setLoading(false);
+    // setLoading(false);
     prevDataRef.current = data;
   }, [prevDataRef]);
 
@@ -105,19 +109,27 @@ export default function CrudAlat() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col h-full w-full  ">
+        <div className="flex flex-col h-full w-full">
           <div className="overflow-x-auto">
             {loading ? (
               <div className="container mx-auto">
-                <div className="flex text-center justify-center items-center">
+                <div className="flex mx-auto text-center justify-center items-center">
                   <TailSpin color="#4B5563" height={40} width={40} />
-                  <p className="ml-5 text-lg">Loading...</p>
+                  <p className="ml-5 text-lg text-black">Loading...</p>
+                </div>
+              </div>
+            ) : error ? (
+              <div className="container mx-auto">
+                <div className="flex text-center justify-center items-center">
+                  <p className="ml-5 text-lg">
+                    silakan refresh halaman ini atau login kembali
+                  </p>
                 </div>
               </div>
             ) : (
               <table className="table table-compact whitespace-normal lg:10/12 w-full">
                 <thead>
-                  <tr className="[&_th]:font-semibold [&_th]:capitalize ">
+                  <tr className="[&_th]:font-semibold [&_th]:capitalize">
                     <th>No</th>
                     <th>Nama</th>
                     <th>Username </th>
