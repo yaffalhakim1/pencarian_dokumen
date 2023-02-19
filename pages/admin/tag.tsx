@@ -11,22 +11,20 @@ import _ from "lodash";
 import DeleteHardware from "../../components/hardware/DeleteHardware";
 import AddHardware from "../../components/hardware/AddHardware";
 import EditHardware from "../../components/hardware/edit/[id]";
+import EditTags from "../../components/tags/edit/[id]";
+import DeleteTags from "../../components/tags/DeleteTags";
 
 interface Item {
   id: number;
   name: string;
 }
 
-export default function CrudDevices() {
+export default function CrudTags() {
   const [loading, setLoading] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
-  const [data, setData] = useState<
-    { uuid: any; name: string; tag_id: any; photo: any; id: any }[]
-  >([]);
+  const [data, setData] = useState<{ name: string; id: any }[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const prevDataRef = useRef<
-    { uuid: any; name: string; tag_id: any; photo: any; id: any }[]
-  >([]);
+  const prevDataRef = useRef<{ name: string; id: any }[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [lastPage, setLastPage] = useState<any>();
@@ -42,7 +40,7 @@ export default function CrudDevices() {
 
   ///get data with pagination
   useEffect(() => {
-    const url = "https://spda.17management.my.id/api/devices/data";
+    const url = "https://spda.17management.my.id/api/tags/data";
     const token = Cookie.get("token") as string;
     setLoading(true);
     axios
@@ -102,7 +100,7 @@ export default function CrudDevices() {
 
   async function deleteDoc(id: any) {
     const token = Cookie.get("token") as string;
-    const url = "https://spda.17management.my.id/api/devices/delete";
+    const url = "https://spda.17management.my.id/api/tags/delete";
     try {
       const res = await axios
         .post(
@@ -136,9 +134,9 @@ export default function CrudDevices() {
   return (
     <>
       <div className="container px-6  pt-2 pb-6 h-full">
-        <p className="text-2xl font-semibold mb-2">Dashboard Alat</p>
+        <p className="text-2xl font-semibold mb-2">Dashboard Tag</p>
         <p className="text-md font-normal mb-8">
-          Lakukan perubahan data perangkat keras disini
+          Lakukan perubahan data tag atau penanda disini
         </p>
         <div className="md:flex md:justify-between">
           <AddHardware />
@@ -192,8 +190,7 @@ export default function CrudDevices() {
                 <thead>
                   <tr className="[&_th]:font-semibold [&_th]:capitalize">
                     <th>No</th>
-                    <th>Name Alat</th>
-                    <th>Tag Id</th>
+                    <th>Name Tag</th>
 
                     <th></th>
                   </tr>
@@ -203,16 +200,12 @@ export default function CrudDevices() {
                     <tr key={item.id}>
                       <th>{index++}</th>
                       <td>{item.name}</td>
-                      <td>{item.tag_id}</td>
+                      <td>{item.id}</td>
 
                       <td>
-                        <EditHardware
-                          id={item.id}
-                          name={item.name}
-                          tag_id={item.tag_id}
-                        />
+                        <EditTags id={item.id} name={item.name} />
                         {/* <br /> */}
-                        <DeleteHardware
+                        <DeleteTags
                           onClick={() => {
                             deleteDoc(item.id);
                           }}
@@ -233,7 +226,7 @@ export default function CrudDevices() {
                   }`}
                   onClick={() =>
                     handlePageClick(
-                      `https://spda.17management.my.id/api/devices/data?page=${page}`
+                      `https://spda.17management.my.id/api/tags/data?page=${page}`
                     )
                   }
                   key={page}

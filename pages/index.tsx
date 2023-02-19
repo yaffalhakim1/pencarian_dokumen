@@ -11,6 +11,7 @@ export default function Home() {
   const loginTime = Date.now();
   Cookie.set("login_time", loginTime.toString());
   const token = Cookie.get("token") as string;
+  const role = Cookie.get("role") as string;
 
   async function logoutHandler() {
     Cookie.remove("token");
@@ -44,8 +45,18 @@ export default function Home() {
       Cookie.remove("login_time");
       logoutHandler();
       Router.push("/auth/login");
-    } else if (token && Date.now() < Number(expired) * 1000) {
+    } else if (
+      token &&
+      Date.now() < Number(expired) * 1000 &&
+      role === "Super Admin"
+    ) {
       Router.push("/admin/dashboard");
+    } else if (
+      token &&
+      Date.now() < Number(expired) * 1000 &&
+      role === "User"
+    ) {
+      Router.push("/users/homeuser");
     }
   }, [token]);
 

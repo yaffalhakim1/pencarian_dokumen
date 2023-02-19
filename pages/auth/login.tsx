@@ -74,6 +74,7 @@ function LoginForm(this: any) {
       if (loginReq.status === 200) {
         Cookie.set("token", loginResp.access_token);
         Cookie.set("expired_in", loginResp.expired_in);
+        Cookie.set("role", loginResp.role);
         router.push("/admin/dashboard");
       }
     } catch (error) {

@@ -12,6 +12,7 @@ import CrudAlat from "./users";
 import { GetServerSideProps } from "next";
 import CrudDevices from "./devices";
 import CrudUsers from "./users";
+import CrudTags from "./tag";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
@@ -122,6 +123,7 @@ export default function DashboardAdmin() {
           {selectedItem === 1 && <CrudDocument />}
           {selectedItem === 2 && <CrudUsers />}
           {selectedItem === 3 && <CrudDevices />}
+          {selectedItem === 4 && <CrudTags />}
         </div>
 
         <div className="drawer-side">
@@ -155,6 +157,16 @@ export default function DashboardAdmin() {
                 onClick={() => handleClick(3)}
               >
                 Alat
+              </a>
+            </li>
+            <li>
+              <a
+                className={
+                  selectedItem === 4 ? "active font-semibold text-white" : ""
+                }
+                onClick={() => handleClick(4)}
+              >
+                Tags
               </a>
             </li>
             <li className="">
