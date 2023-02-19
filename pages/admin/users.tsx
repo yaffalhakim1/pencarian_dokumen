@@ -11,7 +11,7 @@ import EditUser from "../../components/users/edit/[id]";
 import _ from "lodash";
 import LoadingTable from "../../components/SkeletonTable";
 
-export default function CrudAlat() {
+export default function CrudUsers() {
   const [loading, setLoading] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [data, setData] = useState<
@@ -21,12 +21,11 @@ export default function CrudAlat() {
     { username: string; name: string; email: any; id: any }[]
   >([]);
   let index = 1;
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<any | null>(null);
 
   useEffect(() => {
     const url = "https://spda.17management.my.id/api/users/data";
     const token = Cookie.get("token") as string;
-
     setLoading(true);
     axios
       .get(url, {
@@ -39,13 +38,13 @@ export default function CrudAlat() {
         if (!_.isEqual(newData, prevDataRef.current)) {
           setData(newData);
         }
+
         setLoading(false);
       })
       .catch((err) => {
-        const error = err as AxiosError;
-        console.log(err.response?.data);
+        const error = err.response?.data || "An error occurred";
         setLoading(false);
-        setError(err.response?.data || error.message);
+        setError(error);
       });
     // setLoading(false);
     prevDataRef.current = data;
@@ -139,34 +138,34 @@ export default function CrudAlat() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.map((item: any) => (
-                    <tr key={item.id}>
-                      <th>{index++}</th>
-                      <td>{item.name}</td>
-                      <td>{item.username}</td>
-                      <td>{item.email}</td>
-                      <td>{item.role.join(", ")}</td>
-                      {/* <td>
+                  {data &&
+                    data.map((item: any) => (
+                      <tr key={item.id}>
+                        <th>{index++}</th>
+                        <td>{item.name}</td>
+                        <td>{item.username}</td>
+                        <td>{item.email}</td>
+                        <td>{item.role.join(", ")}</td>
+                        {/* <td>
                         <img src={item.photo} alt="" width={100} />
                       </td> */}
-
-                      <td>
-                        <EditUser
-                          email={item.email}
-                          id={item.id}
-                          name={item.name}
-                          username={item.username}
-                          // device_id={item.device_id}
-                        />
-                        {/* <br /> */}
-                        <DeleteUser
-                          onClick={() => {
-                            deleteDoc(item.id);
-                          }}
-                        />
-                      </td>
-                    </tr>
-                  ))}
+                        <td>
+                          <EditUser
+                            email={item.email}
+                            id={item.id}
+                            name={item.name}
+                            username={item.username}
+                            // device_id={item.device_id}
+                          />
+                          {/* <br /> */}
+                          <DeleteUser
+                            onClick={() => {
+                              deleteDoc(item.id);
+                            }}
+                          />
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             )}

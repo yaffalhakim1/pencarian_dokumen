@@ -10,6 +10,8 @@ import axios from "axios";
 import CrudDocument from "./documents";
 import CrudAlat from "./users";
 import { GetServerSideProps } from "next";
+import CrudDevices from "./devices";
+import CrudUsers from "./users";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
@@ -32,8 +34,7 @@ export default function DashboardAdmin() {
 
   async function logoutHandler() {
     Cookie.remove("token");
-    Cookie.remove("name");
-    Cookie.remove("role");
+    Cookie.remove("expired_in");
     const token = Cookie.get("token") as string;
     const logout = await axios
       .post("https://spda.17management.my.id/api/auth/logout", {
@@ -119,7 +120,8 @@ export default function DashboardAdmin() {
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content flex flex-col items-center justify-center">
           {selectedItem === 1 && <CrudDocument />}
-          {selectedItem === 2 && <CrudAlat />}
+          {selectedItem === 2 && <CrudUsers />}
+          {selectedItem === 3 && <CrudDevices />}
         </div>
 
         <div className="drawer-side">
@@ -143,6 +145,16 @@ export default function DashboardAdmin() {
                 onClick={() => handleClick(2)}
               >
                 Users
+              </a>
+            </li>
+            <li>
+              <a
+                className={
+                  selectedItem === 3 ? "active font-semibold text-white" : ""
+                }
+                onClick={() => handleClick(3)}
+              >
+                Alat
               </a>
             </li>
             <li className="">

@@ -8,13 +8,16 @@ import EditButton from "../../components/documents/edit/[id]";
 import LoadingTable from "../../components/SkeletonTable";
 import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import _ from "lodash";
+import DeleteHardware from "../../components/hardware/DeleteHardware";
+import AddHardware from "../../components/hardware/AddHardware";
+import EditHardware from "../../components/hardware/edit/[id]";
 
 interface Item {
   id: number;
   name: string;
 }
 
-export default function CrudDocument() {
+export default function CrudDevices() {
   const [loading, setLoading] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [data, setData] = useState<
@@ -39,7 +42,7 @@ export default function CrudDocument() {
 
   ///get data with pagination
   useEffect(() => {
-    const url = "https://spda.17management.my.id/api/documents/data";
+    const url = "https://spda.17management.my.id/api/devices/data";
     const token = Cookie.get("token") as string;
     setLoading(true);
     axios
@@ -49,17 +52,17 @@ export default function CrudDocument() {
         },
       })
       .then((res) => {
-        const newData = res.data.data.data;
+        const newData = res.data.data;
 
         if (!_.isEqual(newData, prevDataRef.current)) {
           setData(newData);
         }
-        setCurrentPage(res.data.data.current_page);
+        setCurrentPage(res.data.current_page);
         setLastPage(res.data.data.last_page);
-        setFirstPageUrl(res.data.data.first_page_url);
-        setPrevPageUrl(res.data.data.prev_page_url);
-        setNextPageUrl(res.data.data.next_page_url);
-        setLastPageUrl(res.data.data.last_page_url);
+        setFirstPageUrl(res.data.first_page_url);
+        setPrevPageUrl(res.data.prev_page_url);
+        setNextPageUrl(res.data.next_page_url);
+        setLastPageUrl(res.data.last_page_url);
         setLoading(false);
       })
       .catch((err) => {
@@ -80,14 +83,14 @@ export default function CrudDocument() {
         },
       })
       .then((res) => {
-        const newData = res.data.data.data;
+        const newData = res.data.data;
         setData(newData);
-        setNextPageUrl(res.data.data.next_page_url);
-        setPrevPageUrl(res.data.data.prev_page_url);
-        setCurrentPage(res.data.data.current_page);
-        setLastPage(res.data.data.last_page);
-        setFirstPageUrl(res.data.data.first_page_url);
-        setLastPageUrl(res.data.data.last_page_url);
+        setNextPageUrl(res.data.next_page_url);
+        setPrevPageUrl(res.data.prev_page_url);
+        setCurrentPage(res.data.current_page);
+        setLastPage(res.data.last_page);
+        setFirstPageUrl(res.data.first_page_url);
+        setLastPageUrl(res.data.last_page_url);
         setLoading(false);
       })
       .catch((err) => {
@@ -133,12 +136,12 @@ export default function CrudDocument() {
   return (
     <>
       <div className="container px-6  pt-2 pb-6 h-full">
-        <p className="text-2xl font-semibold mb-2">Dashboard Dokumen</p>
+        <p className="text-2xl font-semibold mb-2">Dashboard Alat</p>
         <p className="text-md font-normal mb-8">
-          Lakukan perubahan data dokumen disini
+          Lakukan perubahan data perangkat keras disini
         </p>
         <div className="md:flex md:justify-between">
-          <AddDocument />
+          <AddHardware />
           <div className="form-control">
             <div className="input-group input-group-sm mb-3">
               <input
@@ -189,9 +192,9 @@ export default function CrudDocument() {
                 <thead>
                   <tr className="[&_th]:font-semibold [&_th]:capitalize">
                     <th>No</th>
-                    <th>Name Dokumen</th>
-                    <th>Device Id</th>
-                    <th>Foto Dokumen</th>
+                    <th>Name Alat</th>
+                    <th>Tag Id</th>
+
                     <th></th>
                   </tr>
                 </thead>
@@ -200,21 +203,16 @@ export default function CrudDocument() {
                     <tr key={item.id}>
                       <th>{index++}</th>
                       <td>{item.name}</td>
-                      <td>{item.device_id}</td>
-                      <td>
-                        <img src={item.photo} alt="" width={100} />
-                      </td>
+                      <td>{item.tag_id}</td>
 
                       <td>
-                        <EditButton
+                        <EditHardware
                           id={item.id}
-                          uuid={item.uuid}
                           name={item.name}
-                          device_id={item.device_id}
-                          photo={item.photo}
+                          tag_id={item.tag_id}
                         />
                         {/* <br /> */}
-                        <DeleteButton
+                        <DeleteHardware
                           onClick={() => {
                             deleteDoc(item.id);
                           }}
@@ -235,7 +233,7 @@ export default function CrudDocument() {
                   }`}
                   onClick={() =>
                     handlePageClick(
-                      `https://spda.17management.my.id/api/documents/data?page=${page}`
+                      `https://spda.17management.my.id/api/devices/data?page=${page}`
                     )
                   }
                   key={page}
