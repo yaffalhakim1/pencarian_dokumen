@@ -46,15 +46,15 @@ export default function Home() {
       logoutHandler();
       Router.push("/auth/login");
     } else if (
+      role === "Super Admin" &&
       token &&
-      Date.now() < Number(expired) * 1000 &&
-      role === "Super Admin"
+      Date.now() < Number(expired) * 1000
     ) {
       Router.push("/admin/dashboard");
     } else if (
+      role === "User" &&
       token &&
-      Date.now() < Number(expired) * 1000 &&
-      role === "User"
+      Date.now() < Number(expired) * 1000
     ) {
       Router.push("/users/homeuser");
     }

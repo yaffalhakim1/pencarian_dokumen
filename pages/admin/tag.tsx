@@ -191,7 +191,7 @@ export default function CrudTags() {
                   <tr className="[&_th]:font-semibold [&_th]:capitalize">
                     <th>No</th>
                     <th>Name Tag</th>
-
+                    <th>Id Tag</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -201,6 +201,8 @@ export default function CrudTags() {
                       <th>{index++}</th>
                       <td>{item.name}</td>
                       <td>{item.id}</td>
+                      <td></td>
+                      <td></td>
 
                       <td>
                         <EditTags id={item.id} name={item.name} />

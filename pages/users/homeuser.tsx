@@ -1,34 +1,41 @@
 import { useEffect } from "react";
 import Router from "next/router";
 import Cookie from "js-cookie";
+import { useAuthRedirect } from "../../hooks/useAuthRedirect";
+import axios from "axios";
 
 export default function HomeUser() {
   // create a logout
 
-  function logoutHandler(e: { preventDefault: () => void }) {
+  async function logoutHandler(e: { preventDefault: () => void }) {
     e.preventDefault();
-    Cookie.remove("token");
-    Cookie.remove("name");
     Cookie.remove("role");
+    Cookie.remove("token");
+    Cookie.remove("expired_in");
+    Cookie.remove("login_time");
+    const token = Cookie.get("token") as string;
+    const logout = await axios
+      .post("https://spda.17management.my.id/api/auth/logout", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        // console.log(res);
+      })
+      .catch((err) => {
+        // console.log(err);
+      });
+
     Router.replace("/auth/login");
   }
 
-  useEffect(() => {
-    const token = Cookie.get("token") as string;
-    const role = Cookie.get("role");
-    if (!token) {
-      Router.push("/auth/login");
-    } else if (token && role === "1") {
-      Router.push("/admin/dashboard");
-    } else if (token && role === "2") {
-      Router.push("/users/homeuser");
-    }
-  }, []);
+  useAuthRedirect();
 
   return (
     <section>
       <div>
-        <h1 className="text-white">Home</h1>
+        <h1 className="">Home user</h1>
         <button onClick={logoutHandler}>logout</button>
       </div>
     </section>

@@ -74,8 +74,13 @@ function LoginForm(this: any) {
       if (loginReq.status === 200) {
         Cookie.set("token", loginResp.access_token);
         Cookie.set("expired_in", loginResp.expired_in);
-        Cookie.set("role", loginResp.role);
-        router.push("/admin/dashboard");
+        Cookie.set("role", loginResp.data.role[0]);
+        console.log(loginResp.data.role[0], " : role after login");
+        if (loginResp.data.role[0] === "Super Admin") {
+          router.push("/admin/dashboard");
+        } else if (loginResp.data.role[0] === "User") {
+          router.push("/users/homeuser");
+        }
       }
     } catch (error) {
       const err = error as AxiosError;
