@@ -13,6 +13,10 @@ type Data = {
   id: any;
 };
 
+interface EditButtonProps {
+  datas: Data;
+  onSuccess: () => void;
+}
 export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
   context
 ) => {
@@ -34,8 +38,8 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
   };
 };
 
-export default function EditUser(this: any, props: Data) {
-  const data = props;
+export default function EditUser({ datas, onSuccess }: EditButtonProps) {
+  const data = datas;
   const [field, setField] = useState({
     name: data.name,
     username: data.username,
@@ -56,7 +60,7 @@ export default function EditUser(this: any, props: Data) {
   }
 
   async function handleFileUpload() {
-    const id = props.id;
+    const id = datas.id;
     const token = Cookie.get("token") as string;
     const input = document.querySelector(
       "input[type='file']"
@@ -83,10 +87,8 @@ export default function EditUser(this: any, props: Data) {
       console.log(formData);
       console.log(postUserRes);
       setLoading(false);
-      if (postUserRes.status === 200) {
-        console.log(postUserRes);
-        closeModal();
-      }
+      onSuccess();
+      closeModal();
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data);

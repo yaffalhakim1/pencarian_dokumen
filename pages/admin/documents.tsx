@@ -8,6 +8,9 @@ import EditButton from "../../components/documents/edit/[id]";
 import LoadingTable from "../../components/SkeletonTable";
 import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import _ from "lodash";
+import useSWR, { mutate } from "swr";
+import DeleteDocs from "../../components/documents/DeleteDocs";
+import EditDocs from "../../components/documents/edit/[id]";
 
 interface Item {
   id: number;
@@ -17,111 +20,162 @@ interface Item {
 export default function CrudDocument() {
   const [loading, setLoading] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
-  const [data, setData] = useState<
-    { uuid: any; name: string; device_id: any; photo: any; id: any }[]
-  >([]);
-  const [error, setError] = useState<string | null>(null);
-  const prevDataRef = useRef<
-    { uuid: any; name: string; device_id: any; photo: any; id: any }[]
-  >([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
-  const [lastPage, setLastPage] = useState<any>();
-  const [firstPageUrl, setFirstPageUrl] = useState("");
-  const [lastPageUrl, setLastPageUrl] = useState("");
-  const [nextPageUrl, setNextPageUrl] = useState("");
-  const [prevPageUrl, setPrevPageUrl] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState<any>([]);
   const [items, setItems] = useState<Item[]>([]);
   useAuthRedirect();
   let index = 1;
+  const [page, setPage] = useState(1);
 
   ///get data with pagination
-  useEffect(() => {
-    const url = "https://spda.17management.my.id/api/documents/data";
+  // useEffect(() => {
+  //   const url = "https://spda.17management.my.id/api/documents/data";
+  //   const token = Cookie.get("token") as string;
+  //   setLoading(true);
+  //   axios
+  //     .get(`${url}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       const newData = res.data.data.data;
+
+  //       if (!_.isEqual(newData, prevDataRef.current)) {
+  //         setData(newData);
+  //       }
+  //       setCurrentPage(res.data.data.current_page);
+  //       setLastPage(res.data.data.last_page);
+  //       setFirstPageUrl(res.data.data.first_page_url);
+  //       setPrevPageUrl(res.data.data.prev_page_url);
+  //       setNextPageUrl(res.data.data.next_page_url);
+  //       setLastPageUrl(res.data.data.last_page_url);
+  //       setLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       const error = err as AxiosError;
+  //       setLoading(false);
+  //       setError(err.response?.data || error.message);
+  //     });
+  //   // setLoading(false);
+  //   prevDataRef.current = data;
+  // }, [prevDataRef]);
+
+  // function handlePageClick(url: string) {
+  //   setLoading(true);
+  //   axios
+  //     .get(`${url}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${Cookie.get("token") as string}`,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       const newData = res.data.data.data;
+  //       setData(newData);
+  //       setNextPageUrl(res.data.data.next_page_url);
+  //       setPrevPageUrl(res.data.data.prev_page_url);
+  //       setCurrentPage(res.data.data.current_page);
+  //       setLastPage(res.data.data.last_page);
+  //       setFirstPageUrl(res.data.data.first_page_url);
+  //       setLastPageUrl(res.data.data.last_page_url);
+  //       setLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       const error = err as AxiosError;
+  //       setLoading(false);
+  //       setError(err.response?.data || error.message);
+  //     });
+  // }
+
+  // async function deleteDoc(id: any) {
+  //   const token = Cookie.get("token") as string;
+  //   const url = "https://spda.17management.my.id/api/documents/delete";
+  //   try {
+  //     const res = await axios
+  //       .post(
+  //         url + `/${id}`,
+  //         {},
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       )
+  //       .then((res) => {
+  //         setData((prevData) =>
+  //           prevData.filter((item) => item.id !== id && data)
+  //         );
+  //       });
+  //   } catch (error) {
+  //     const err = error as AxiosError;
+  //     console.log(err.message);
+  //     console.log(err.response?.data, err.response?.status, "error delete");
+  //   }
+  // }
+
+  const fetcher = async (url: string) => {
     const token = Cookie.get("token") as string;
-    setLoading(true);
-    axios
-      .get(`${url}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        const newData = res.data.data.data;
+    const res = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data.data;
+  };
 
-        if (!_.isEqual(newData, prevDataRef.current)) {
-          setData(newData);
-        }
-        setCurrentPage(res.data.data.current_page);
-        setLastPage(res.data.data.last_page);
-        setFirstPageUrl(res.data.data.first_page_url);
-        setPrevPageUrl(res.data.data.prev_page_url);
-        setNextPageUrl(res.data.data.next_page_url);
-        setLastPageUrl(res.data.data.last_page_url);
-        setLoading(false);
-      })
-      .catch((err) => {
-        const error = err as AxiosError;
-        setLoading(false);
-        setError(err.response?.data || error.message);
-      });
-    // setLoading(false);
-    prevDataRef.current = data;
-  }, [prevDataRef]);
+  const { data, error, mutate } = useSWR(
+    `https://spda.17management.my.id/api/documents/data?page=${page}`,
 
-  function handlePageClick(url: string) {
-    setLoading(true);
-    axios
-      .get(`${url}`, {
-        headers: {
-          Authorization: `Bearer ${Cookie.get("token") as string}`,
-        },
-      })
-      .then((res) => {
-        const newData = res.data.data.data;
-        setData(newData);
-        setNextPageUrl(res.data.data.next_page_url);
-        setPrevPageUrl(res.data.data.prev_page_url);
-        setCurrentPage(res.data.data.current_page);
-        setLastPage(res.data.data.last_page);
-        setFirstPageUrl(res.data.data.first_page_url);
-        setLastPageUrl(res.data.data.last_page_url);
-        setLoading(false);
-      })
-      .catch((err) => {
-        const error = err as AxiosError;
-        setLoading(false);
-        setError(err.response?.data || error.message);
-      });
-  }
+    fetcher
+  );
+  if (error)
+    return (
+      <div className="container mx-auto">
+        <div className="flex text-center justify-center items-center">
+          <p className="ml-5 text-lg">
+            silakan refresh halaman ini atau login kembali
+          </p>
+        </div>
+      </div>
+    );
+  if (!data)
+    return (
+      <div className="mx-auto container">
+        <div className="flex mx-auto text-center justify-center items-center">
+          <TailSpin color="#4B5563" height={40} width={40} />
+          <p className="ml-5 text-lg text-black">Loading...</p>
+        </div>
+      </div>
+    );
+  const handleNextPage = () => {
+    // Increment the page number and fetch the next page of data
+    setPage((prevPage) => prevPage + 1);
+  };
 
-  async function deleteDoc(id: any) {
+  const handlePrevPage = () => {
+    // Decrement the page number and fetch the previous page of data
+    setPage((prevPage) => prevPage - 1);
+  };
+
+  const pageNumbers = Array.from({ length: data.last_page }, (_, i) => i + 1);
+
+  const handleDelete = async (id: any) => {
     const token = Cookie.get("token") as string;
-    const url = "https://spda.17management.my.id/api/documents/delete";
     try {
-      const res = await axios
-        .post(
-          url + `/${id}`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
-        .then((res) => {
-          setData((prevData) =>
-            prevData.filter((item) => item.id !== id && data)
-          );
-        });
+      await axios.post(
+        `https://spda.17management.my.id/api/documents/delete/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      mutate(data);
     } catch (error) {
-      const err = error as AxiosError;
-      console.log(err.message);
-      console.log(err.response?.data, err.response?.status, "error delete");
+      console.error(error);
     }
-  }
+  };
 
   function handleSearch() {
     const filteredItems = items.filter((item: { name: string }) =>
@@ -138,7 +192,7 @@ export default function CrudDocument() {
           Lakukan perubahan data dokumen disini
         </p>
         <div className="md:flex md:justify-between">
-          <AddDocument />
+          <AddDocument onSuccess={mutate} />
           <div className="form-control">
             <div className="input-group input-group-sm mb-3">
               <input
@@ -169,81 +223,82 @@ export default function CrudDocument() {
         </div>
         <div className="flex flex-col h-full w-full">
           <div className="overflow-x-auto">
-            {loading ? (
-              <div className="mx-auto container">
-                <div className="flex mx-auto text-center justify-center items-center">
-                  <TailSpin color="#4B5563" height={40} width={40} />
-                  <p className="ml-5 text-lg text-black">Loading...</p>
-                </div>
-              </div>
-            ) : error ? (
-              <div className="container mx-auto">
-                <div className="flex text-center justify-center items-center">
-                  <p className="ml-5 text-lg">
-                    silakan refresh halaman ini atau login kembali
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <table className="table table-compact lg:10/12 w-full whitespace-normal">
-                <thead>
-                  <tr className="[&_th]:font-semibold [&_th]:capitalize">
-                    <th>No</th>
-                    <th>Name Dokumen</th>
-                    <th>Device Id</th>
-                    <th>Foto Dokumen</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.map((item: any) => (
-                    <tr key={item.id}>
-                      <th>{index++}</th>
-                      <td>{item.name}</td>
-                      <td>{item.device_id}</td>
-                      <td>
-                        <img src={item.photo} alt="" width={100} />
-                      </td>
+            <table className="table table-compact lg:10/12 w-full whitespace-normal">
+              <thead>
+                <tr className="[&_th]:font-semibold [&_th]:capitalize">
+                  <th>No</th>
+                  <th>Name Dokumen</th>
+                  <th>Device Id</th>
+                  <th>Foto Dokumen</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.data.map((item: any) => (
+                  <tr key={item.id}>
+                    <th>{index++}</th>
+                    <td>{item.name}</td>
+                    <td>{item.device_id}</td>
+                    <td>
+                      <img src={item.photo} alt="" width={100} />
+                    </td>
 
-                      <td>
-                        <EditButton
-                          id={item.id}
-                          uuid={item.uuid}
-                          name={item.name}
-                          device_id={item.device_id}
-                          photo={item.photo}
-                        />
-                        {/* <br /> */}
-                        <DeleteButton
-                          onClick={() => {
-                            deleteDoc(item.id);
-                          }}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+                    <td>
+                      <EditDocs
+                        datas={{
+                          name: item.name,
+                          device_id: item.device_id,
+                          uuid: item.uuid,
+                          photo: item.photo,
+                          id: item.id,
+                        }}
+                        onSuccess={() => mutate()}
+                      />
+
+                      {/* <br /> */}
+                      <DeleteDocs
+                        id={item.id}
+                        onSuccess={() => mutate()}
+                        onClick={() => handleDelete(item.id)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <div className="container flex mx-auto items-center justify-center mt-5">
-            <div className="btn-group">
-              {Array.from({ length: lastPage }, (_, i) => i + 1).map((page) => (
-                <button
-                  className={`btn btn-primary ${
-                    currentPage === page ? "active" : ""
-                  }`}
-                  onClick={() =>
-                    handlePageClick(
-                      `https://spda.17management.my.id/api/documents/data?page=${page}`
-                    )
-                  }
-                  key={page}
-                >
-                  {page}
-                </button>
-              ))}
+          <div className="flex space-x-1 mt-5 mx-auto">
+            {page >= 1 && (
+              <button
+                className="btn btn-primary btn-sm capitalize"
+                onClick={handlePrevPage}
+              >
+                Previous
+              </button>
+            )}
+            <div className=" mx-auto items-center justify-center ">
+              <div className="btn-group">
+                {pageNumbers.map((pageNumber) => (
+                  <button
+                    key={pageNumber}
+                    onClick={() => setPage(pageNumber)}
+                    disabled={pageNumber === page}
+                    className={`btn btn-outline btn-primary btn-sm ${
+                      pageNumber === page ? "btn-active" : ""
+                    }`}
+                  >
+                    {pageNumber}
+                  </button>
+                ))}
+              </div>
             </div>
+
+            <button
+              onClick={handleNextPage}
+              className="btn btn-primary btn-sm capitalize"
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>

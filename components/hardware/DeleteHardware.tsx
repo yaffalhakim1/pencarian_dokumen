@@ -4,10 +4,13 @@ import { Fragment, useState } from "react";
 import { TailSpin } from "react-loader-spinner";
 
 interface Props {
-  onClick: () => void;
+  id: any;
+  onDeleteSuccess?: () => {};
+  onSuccess: () => void;
+  onClick?: () => void;
 }
 
-export default function DeleteHardware(this: any, props: Props) {
+export default function DeleteHardware(props: Props) {
   let [isOpen, setIsOpen] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -79,9 +82,6 @@ export default function DeleteHardware(this: any, props: Props) {
                         ariaLabel="tail-spin-loading"
                         radius="1"
                       />
-                      {/* <button className="btn btn-error btn-sm">
-                        Menghapus dokumen...
-                      </button> */}
                     </div>
                   ) : (
                     "Hapus"

@@ -10,68 +10,66 @@ import DeleteUser from "../../components/users/DeleteUser";
 import EditUser from "../../components/users/edit/[id]";
 import _ from "lodash";
 import LoadingTable from "../../components/SkeletonTable";
+import useSWR, { mutate } from "swr";
 
 export default function CrudUsers() {
   const [loading, setLoading] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
-  const [data, setData] = useState<
-    { id: any; name: string; username: string; email: string }[]
-  >([]);
-  const prevDataRef = useRef<
-    { username: string; name: string; email: any; id: any }[]
-  >([]);
+
   let index = 1;
-  const [error, setError] = useState<any | null>(null);
 
-  useEffect(() => {
-    const url = "https://spda.17management.my.id/api/users/data";
+  const fetcher = async (url: string) => {
     const token = Cookie.get("token") as string;
-    setLoading(true);
-    axios
-      .get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        const newData = res.data.data;
-        if (!_.isEqual(newData, prevDataRef.current)) {
-          setData(newData);
-        }
+    const res = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data.data;
+  };
 
-        setLoading(false);
-      })
-      .catch((err) => {
-        const error = err.response?.data || "An error occurred";
-        setLoading(false);
-        setError(error);
-      });
-    // setLoading(false);
-    prevDataRef.current = data;
-  }, [prevDataRef]);
+  const { data, error, mutate } = useSWR(
+    "https://spda.17management.my.id/api/users/data",
+    fetcher
+  );
 
-  async function deleteDoc(id: any) {
+  if (error)
+    return (
+      <div className="container mx-auto">
+        <div className="flex text-center justify-center items-center">
+          <p className="ml-5 text-lg">
+            silakan refresh halaman ini atau login kembali
+          </p>
+        </div>
+      </div>
+    );
+  if (!data)
+    return (
+      <div className="mx-auto container">
+        <div className="flex mx-auto text-center justify-center items-center">
+          <TailSpin color="#4B5563" height={40} width={40} />
+          <p className="ml-5 text-lg text-black">Loading...</p>
+        </div>
+      </div>
+    );
+
+  const handleDelete = async (id: any) => {
     const token = Cookie.get("token") as string;
-    const url = "https://spda.17management.my.id/api/users/delete";
     try {
-      const res = await axios
-        .delete(`${url}/${id}`, {
+      await axios.post(
+        `https://spda.17management.my.id/api/users/delete/${id}`,
+        {},
+        {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        })
-        .then(() => {
-          setShowSnackbar(true);
-
-          setData((prevData) =>
-            prevData.filter((item) => item.id !== id && data)
-          );
-        });
+        }
+      );
+      mutate(data);
     } catch (error) {
-      const err = error as AxiosError;
-      console.log(err.response?.data);
+      console.error(error);
     }
-  }
+  };
 
   return (
     <>
@@ -110,65 +108,50 @@ export default function CrudUsers() {
         </div>
         <div className="flex flex-col h-full w-full">
           <div className="overflow-x-auto">
-            {loading ? (
-              <div className="container mx-auto">
-                <div className="flex mx-auto text-center justify-center items-center">
-                  <TailSpin color="#4B5563" height={40} width={40} />
-                  <p className="ml-5 text-lg text-black">Loading...</p>
-                </div>
-              </div>
-            ) : error ? (
-              <div className="container mx-auto">
-                <div className="flex text-center justify-center items-center">
-                  <p className="ml-5 text-lg">
-                    silakan refresh halaman ini atau login kembali
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <table className="table table-compact whitespace-normal lg:10/12 w-full">
-                <thead>
-                  <tr className="[&_th]:font-semibold [&_th]:capitalize">
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Username </th>
-                    <th>Email </th>
-                    <th>Role</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data &&
-                    data.map((item: any) => (
-                      <tr key={item.id}>
-                        <th>{index++}</th>
-                        <td>{item.name}</td>
-                        <td>{item.username}</td>
-                        <td>{item.email}</td>
-                        <td>{item.role.join(", ")}</td>
-                        {/* <td>
+            <table className="table table-compact whitespace-normal lg:10/12 w-full">
+              <thead>
+                <tr className="[&_th]:font-semibold [&_th]:capitalize">
+                  <th>No</th>
+                  <th>Nama</th>
+                  <th>Username </th>
+                  <th>Email </th>
+                  <th>Role</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((item: any) => (
+                  <tr key={item.id}>
+                    <th>{index++}</th>
+                    <td>{item.name}</td>
+                    <td>{item.username}</td>
+                    <td>{item.email}</td>
+                    <td>{item.role.join(", ")}</td>
+                    {/* <td>
                         <img src={item.photo} alt="" width={100} />
                       </td> */}
-                        <td>
-                          <EditUser
-                            email={item.email}
-                            id={item.id}
-                            name={item.name}
-                            username={item.username}
-                            // device_id={item.device_id}
-                          />
-                          {/* <br /> */}
-                          <DeleteUser
-                            onClick={() => {
-                              deleteDoc(item.id);
-                            }}
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            )}
+                    <td>
+                      <EditUser
+                        datas={{
+                          name: item.name,
+                          username: item.username,
+                          email: item.email,
+                          id: item.id,
+                        }}
+                        onSuccess={() => mutate()}
+                        // device_id={item.device_id}
+                      />
+                      {/* <br /> */}
+                      <DeleteUser
+                        id={item.id}
+                        onSuccess={() => mutate()}
+                        onClick={() => handleDelete(item.id)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

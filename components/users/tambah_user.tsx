@@ -62,10 +62,6 @@ export default function AddUser(this: any) {
 
       const postFileRes = await postFileReq.data;
       setLoading(false);
-      if (postFileReq.status === 200) {
-        setShowSnackbar(true);
-        closeModal();
-      }
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data, "error upload");

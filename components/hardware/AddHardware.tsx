@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { TailSpin } from "react-loader-spinner";
 import Alert from "../Alert";
 
-export default function AddHardware(this: any) {
+export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [field, setField] = useState({
     name: "",
@@ -59,12 +59,9 @@ export default function AddHardware(this: any) {
       );
 
       const postFileRes = await postFileReq.data;
-
+      onSuccess();
       setLoading(false);
-      if (postFileReq.status === 200) {
-        setShowSnackbar(true);
-        closeModal();
-      }
+      closeModal();
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data, "error upload");

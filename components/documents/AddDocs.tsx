@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { TailSpin } from "react-loader-spinner";
 import Alert from "../Alert";
 
-export default function AddDocument(this: any) {
+export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [field, setField] = useState({
     name: "",
@@ -36,7 +36,7 @@ export default function AddDocument(this: any) {
     });
   };
 
-  async function handleFileUpload() {
+  async function handleAddDoc() {
     const input = document.querySelector(
       "input[type='file']"
     ) as HTMLInputElement;
@@ -60,13 +60,9 @@ export default function AddDocument(this: any) {
         }
       );
 
-      const postFileRes = await postFileReq.data;
-
+      onSuccess();
       setLoading(false);
-      if (postFileReq.status === 200) {
-        setShowSnackbar(true);
-        closeModal();
-      }
+      closeModal();
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data, "error upload");
@@ -78,7 +74,7 @@ export default function AddDocument(this: any) {
       <button
         type="button"
         onClick={openModal}
-        className="btn btn-sm btn-accent mb-3 mr-auto capitalize text-white"
+        className="btn btn-sm btn-accent mb-3 mr-auto capitalize text-white "
       >
         Tambah Dokumen
       </button>
@@ -165,10 +161,10 @@ export default function AddDocument(this: any) {
                 </Dialog.Description>
                 <button
                   onClick={() => {
-                    handleFileUpload();
+                    handleAddDoc();
                     setLoading(true);
                   }}
-                  className="btn btn-accent mr-3 mb-3 md:mb-0"
+                  className="btn btn-accent mr-3 mb-3 md:mb-0 capitalize"
                 >
                   {loading ? (
                     <div className="flex flex-wrap">
@@ -179,15 +175,12 @@ export default function AddDocument(this: any) {
                         ariaLabel="tail-spin-loading"
                         radius="1"
                       />
-                      {/* <button className="btn btn-success btn-sm">
-                        Menambahkan dokumen...
-                      </button> */}
                     </div>
                   ) : (
                     "Simpan"
                   )}
                 </button>
-                <button onClick={closeModal} className="btn">
+                <button onClick={closeModal} className="btn capitalize">
                   Batal
                 </button>
               </Dialog.Panel>
