@@ -13,9 +13,6 @@ import LoadingTable from "../../components/SkeletonTable";
 import useSWR, { mutate } from "swr";
 
 export default function CrudUsers() {
-  const [loading, setLoading] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
-
   let index = 1;
 
   const fetcher = async (url: string) => {

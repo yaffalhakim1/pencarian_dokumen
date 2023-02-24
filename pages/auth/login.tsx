@@ -3,12 +3,15 @@ import { AxiosError } from "axios";
 import axios from "axios";
 import Router, { useRouter } from "next/router";
 import Cookie from "js-cookie";
+import { Toaster, toast } from "sonner";
+
+// ...
 
 import { TailSpin } from "react-loader-spinner";
 import Head from "next/head";
 import Image from "next/image";
 import Alert from "../../components/Alert";
-import { AuthContext } from "../../hooks/AuthContext";
+// import { AuthContext } from "../../hooks/AuthContext";
 
 function LoginForm(this: any) {
   const router = useRouter();
@@ -17,7 +20,7 @@ function LoginForm(this: any) {
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState(null);
   const [expirationTime, setExpirationTime] = useState<any>(null);
-  const authCtx = useContext(AuthContext);
+  // const authCtx = useContext(AuthContext);
 
   function fieldHandler(e: any) {
     setField({
@@ -68,23 +71,26 @@ function LoginForm(this: any) {
         }
       );
       const expirationTime = Date.now() + loginReq.data.expired_in * 1000;
-      authCtx.login(loginReq.data.access_token, expirationTime);
+      // authCtx.login(loginReq.data.access_token, expirationTime);
       const loginResp = await loginReq.data;
       setLoading(false);
       if (loginReq.status === 200) {
         Cookie.set("token", loginResp.access_token);
         Cookie.set("expired_in", loginResp.expired_in);
         Cookie.set("role", loginResp.data.role[0]);
-        console.log(loginResp.data.role[0], " : role after login");
+        console.log(loginResp.data.role[0]);
         if (loginResp.data.role[0] === "Super Admin") {
           router.push("/admin/dashboard");
+          toast.success("Berhasil Masuk");
         } else if (loginResp.data.role[0] === "User") {
-          router.push("/users/homeuser");
+          router.push("/users/main");
+          toast.success("Berhasil Masuk");
         }
       }
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data, "error login");
+      toast.error("Email atau Password salah");
       setLoading(false);
       setShowSnackbar(true);
     }
@@ -104,7 +110,7 @@ function LoginForm(this: any) {
                 alt="Phone image"
                 width={600}
                 height={600}
-                className="hidden  md:block"
+                className="hidden md:block"
               />
             </div>
             <div className="md:w-8/12 lg:w-5/12 lg:ml-10">
