@@ -15,6 +15,7 @@ import EditTags from "../../components/tags/edit/[id]";
 import DeleteTags from "../../components/tags/DeleteTags";
 import useSWR, { mutate } from "swr";
 import AddTags from "../../components/tags/AddTags";
+import { toast } from "sonner";
 
 interface Item {
   id: number;
@@ -22,100 +23,11 @@ interface Item {
 }
 
 export default function CrudTags() {
-  const [loading, setLoading] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState<any>([]);
   useAuthRedirect();
   let index = 1;
   const [page, setPage] = useState(1);
-
-  ///get data with pagination
-  // useEffect(() => {
-  //   const url = "https://spda.17management.my.id/api/tags/data";
-  //   const token = Cookie.get("token") as string;
-  //   setLoading(true);
-  //   axios
-  //     .get(`${url}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       const newData = res.data.data;
-
-  //       if (!_.isEqual(newData, prevDataRef.current)) {
-  //         setData(newData);
-  //       }
-  //       setCurrentPage(res.data.current_page);
-  //       setLastPage(res.data.data.last_page);
-  //       setFirstPageUrl(res.data.first_page_url);
-  //       setPrevPageUrl(res.data.prev_page_url);
-  //       setNextPageUrl(res.data.next_page_url);
-  //       setLastPageUrl(res.data.last_page_url);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       const error = err as AxiosError;
-  //       setLoading(false);
-  //       setError(err.response?.data || error.message);
-  //     });
-  //   // setLoading(false);
-  //   prevDataRef.current = data;
-  // }, [prevDataRef]);
-
-  // function handlePageClick(url: string) {
-  //   setLoading(true);
-  //   axios
-  //     .get(`${url}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${Cookie.get("token") as string}`,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       const newData = res.data.data;
-  //       setData(newData);
-  //       setNextPageUrl(res.data.next_page_url);
-  //       setPrevPageUrl(res.data.prev_page_url);
-  //       setCurrentPage(res.data.current_page);
-  //       setLastPage(res.data.last_page);
-  //       setFirstPageUrl(res.data.first_page_url);
-  //       setLastPageUrl(res.data.last_page_url);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       const error = err as AxiosError;
-  //       setLoading(false);
-  //       setError(err.response?.data || error.message);
-  //     });
-  // }
-
-  // async function deleteDoc(id: any) {
-  //   const token = Cookie.get("token") as string;
-  //   const url = "https://spda.17management.my.id/api/tags/delete";
-  //   try {
-  //     const res = await axios
-  //       .post(
-  //         url + `/${id}`,
-  //         {},
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       )
-  //       .then((res) => {
-  //         setData((prevData) =>
-  //           prevData.filter((item) => item.id !== id && data)
-  //         );
-  //       });
-  //   } catch (error) {
-  //     const err = error as AxiosError;
-  //     console.log(err.message);
-  //     console.log(err.response?.data, err.response?.status, "error delete");
-  //   }
-  // }
 
   const fetcher = async (url: string) => {
     const token = Cookie.get("token") as string;
@@ -175,6 +87,7 @@ export default function CrudTags() {
         }
       );
       mutate(data);
+      toast.success("Tag berhasil dihapus");
     } catch (error) {
       console.error(error);
     }
@@ -231,7 +144,6 @@ export default function CrudTags() {
                 <tr className="[&_th]:font-semibold [&_th]:capitalize">
                   <th>No</th>
                   <th>Name Tag</th>
-                  <th>Id Tag</th>
                   <th></th>
                   <th></th>
                 </tr>
@@ -241,7 +153,6 @@ export default function CrudTags() {
                   <tr key={item.id}>
                     <th>{index++}</th>
                     <td>{item.name}</td>
-                    <td>{item.id}</td>
 
                     <td></td>
                     <td>
@@ -267,7 +178,7 @@ export default function CrudTags() {
           <div className="flex space-x-1 mt-5 mx-auto">
             {page >= 1 && (
               <button
-                className="btn btn-primary btn-sm capitalize"
+                className="btn btn-primary btn-outline btn-sm capitalize"
                 onClick={handlePrevPage}
               >
                 Previous
@@ -292,7 +203,7 @@ export default function CrudTags() {
 
             <button
               onClick={handleNextPage}
-              className="btn btn-primary btn-sm capitalize"
+              className="btn btn-primary btn-outline btn-sm capitalize"
             >
               Next
             </button>

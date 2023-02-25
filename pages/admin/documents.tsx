@@ -11,6 +11,7 @@ import _ from "lodash";
 import useSWR, { mutate } from "swr";
 import DeleteDocs from "../../components/documents/DeleteDocs";
 import EditDocs from "../../components/documents/edit/[id]";
+import { toast } from "sonner";
 
 interface Item {
   id: number;
@@ -18,100 +19,12 @@ interface Item {
 }
 
 export default function CrudDocument() {
-  const [loading, setLoading] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState<any>([]);
   const [items, setItems] = useState<Item[]>([]);
   useAuthRedirect();
   let index = 1;
   const [page, setPage] = useState(1);
-
-  ///get data with pagination
-  // useEffect(() => {
-  //   const url = "https://spda.17management.my.id/api/documents/data";
-  //   const token = Cookie.get("token") as string;
-  //   setLoading(true);
-  //   axios
-  //     .get(`${url}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       const newData = res.data.data.data;
-
-  //       if (!_.isEqual(newData, prevDataRef.current)) {
-  //         setData(newData);
-  //       }
-  //       setCurrentPage(res.data.data.current_page);
-  //       setLastPage(res.data.data.last_page);
-  //       setFirstPageUrl(res.data.data.first_page_url);
-  //       setPrevPageUrl(res.data.data.prev_page_url);
-  //       setNextPageUrl(res.data.data.next_page_url);
-  //       setLastPageUrl(res.data.data.last_page_url);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       const error = err as AxiosError;
-  //       setLoading(false);
-  //       setError(err.response?.data || error.message);
-  //     });
-  //   // setLoading(false);
-  //   prevDataRef.current = data;
-  // }, [prevDataRef]);
-
-  // function handlePageClick(url: string) {
-  //   setLoading(true);
-  //   axios
-  //     .get(`${url}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${Cookie.get("token") as string}`,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       const newData = res.data.data.data;
-  //       setData(newData);
-  //       setNextPageUrl(res.data.data.next_page_url);
-  //       setPrevPageUrl(res.data.data.prev_page_url);
-  //       setCurrentPage(res.data.data.current_page);
-  //       setLastPage(res.data.data.last_page);
-  //       setFirstPageUrl(res.data.data.first_page_url);
-  //       setLastPageUrl(res.data.data.last_page_url);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       const error = err as AxiosError;
-  //       setLoading(false);
-  //       setError(err.response?.data || error.message);
-  //     });
-  // }
-
-  // async function deleteDoc(id: any) {
-  //   const token = Cookie.get("token") as string;
-  //   const url = "https://spda.17management.my.id/api/documents/delete";
-  //   try {
-  //     const res = await axios
-  //       .post(
-  //         url + `/${id}`,
-  //         {},
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       )
-  //       .then((res) => {
-  //         setData((prevData) =>
-  //           prevData.filter((item) => item.id !== id && data)
-  //         );
-  //       });
-  //   } catch (error) {
-  //     const err = error as AxiosError;
-  //     console.log(err.message);
-  //     console.log(err.response?.data, err.response?.status, "error delete");
-  //   }
-  // }
 
   const fetcher = async (url: string) => {
     const token = Cookie.get("token") as string;
@@ -120,7 +33,7 @@ export default function CrudDocument() {
         Authorization: `Bearer ${token}`,
       },
     });
-    return res.data.data;
+    return res.data;
   };
 
   const { data, error, mutate } = useSWR(
@@ -172,6 +85,7 @@ export default function CrudDocument() {
         }
       );
       mutate(data);
+      toast.success("Dokumen berhasil dihapus");
     } catch (error) {
       console.error(error);
     }
@@ -226,10 +140,13 @@ export default function CrudDocument() {
             <table className="table table-compact lg:10/12 w-full whitespace-normal">
               <thead>
                 <tr className="[&_th]:font-semibold [&_th]:capitalize">
+                  {/* tampilkan nama, foto, lokasi, meja,  */}
                   <th>No</th>
                   <th>Name Dokumen</th>
-                  <th>Device Id</th>
-                  <th>Foto Dokumen</th>
+                  <th>Tag</th>
+                  <th>Nama Alat</th>
+                  <th></th>
+                  <th></th>
                   <th></th>
                 </tr>
               </thead>
@@ -238,18 +155,17 @@ export default function CrudDocument() {
                   <tr key={item.id}>
                     <th>{index++}</th>
                     <td>{item.name}</td>
-                    <td>{item.device_id}</td>
-                    <td>
-                      <img src={item.photo} alt="" width={100} />
-                    </td>
+                    <td>{item.tag} </td>
+                    <td>{item.device_name}</td>
+
+                    <td>{/* <img src={item.photo} alt="" width={100} /> */}</td>
 
                     <td>
                       <EditDocs
                         datas={{
                           name: item.name,
                           device_id: item.device_id,
-                          uuid: item.uuid,
-                          photo: item.photo,
+                          // uuid: item.uuid,
                           id: item.id,
                         }}
                         onSuccess={() => mutate()}
@@ -270,7 +186,7 @@ export default function CrudDocument() {
           <div className="flex space-x-1 mt-5 mx-auto">
             {page >= 1 && (
               <button
-                className="btn btn-primary btn-sm capitalize"
+                className="btn btn-primary btn-outline btn-sm capitalize"
                 onClick={handlePrevPage}
               >
                 Previous
@@ -295,7 +211,7 @@ export default function CrudDocument() {
 
             <button
               onClick={handleNextPage}
-              className="btn btn-primary btn-sm capitalize"
+              className="btn btn-primary btn-outline btn-sm capitalize"
             >
               Next
             </button>

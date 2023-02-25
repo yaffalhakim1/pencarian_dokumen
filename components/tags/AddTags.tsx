@@ -10,11 +10,8 @@ export default function AddTags({ onSuccess }: { onSuccess: () => void }) {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [field, setField] = useState({
     name: "",
-    // tag_id: "",
   });
-  const [photoUrl, setPhotoUrl] = useState("");
   let [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   function closeModal() {
@@ -41,7 +38,7 @@ export default function AddTags({ onSuccess }: { onSuccess: () => void }) {
     const formData = new FormData();
     // formData.append("photo", input.files![0]);
     formData.append("name", field.name);
-    // formData.append("tag_id", field.tag_id);
+
     // formData.append("uuid", field.uuid);
 
     try {
@@ -117,10 +114,10 @@ export default function AddTags({ onSuccess }: { onSuccess: () => void }) {
                 <Dialog.Description className="mt-1 mb-4 text-md">
                   Masukkan nama tag yang ingin anda tambahkan disini.
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Nama Ruangan</span>
+                    <span>Nama Tag</span>
                     <input
                       type="text"
-                      placeholder="nama dokumen"
+                      placeholder="nama tag"
                       className="input input-bordered"
                       name="name"
                       onChange={handleChange}
@@ -163,7 +160,7 @@ export default function AddTags({ onSuccess }: { onSuccess: () => void }) {
                     handleFileUpload();
                     setLoading(true);
                   }}
-                  className="btn btn-accent mr-3 mb-3 md:mb-0"
+                  className="btn btn-accent mr-3 mb-3 md:mb-0 capitalize"
                 >
                   {loading ? (
                     <div className="flex flex-wrap">

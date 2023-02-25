@@ -5,16 +5,16 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { TailSpin } from "react-loader-spinner";
 import Alert from "../Alert";
+import { toast } from "sonner";
 
 export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
-  const [showSnackbar, setShowSnackbar] = useState(false);
   const [field, setField] = useState({
     name: "",
-    tag_id: "",
+    table: "",
+    room: "",
+    photo: "",
   });
-  const [photoUrl, setPhotoUrl] = useState("");
   let [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   function closeModal() {
@@ -30,7 +30,7 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
     setField({
       ...field,
       [e.target.name]: e.target.value,
-      // photo: name === "photo" ? files[0] : field.photo,
+      photo: name === "photo" ? files[0] : field.photo,
     });
   };
 
@@ -39,32 +39,35 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
       "input[type='file']"
     ) as HTMLInputElement;
     const formData = new FormData();
-    // formData.append("photo", input.files![0]);
     formData.append("name", field.name);
-    formData.append("tag_id", field.tag_id);
+    formData.append("table", field.table);
+    formData.append("room", field.room);
+    formData.append("photo", input.files![0]);
+    // formData.append("tag_id", field.tag_id);
     // formData.append("uuid", field.uuid);
 
     try {
       const token = Cookie.get("token") as string;
-      const postFileReq = await axios.post(
-        "https://spda.17management.my.id/api/devices/data",
-        formData,
-        {
+      const postFileReq = await axios
+        .post("https://spda.17management.my.id/api/devices/data", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Accept: "*/*",
             authorization: `Bearer ${token}`,
           },
-        }
-      );
+        })
+        .then((res) => {
+          console.log(res.data, "res");
+        });
 
-      const postFileRes = await postFileReq.data;
       onSuccess();
       setLoading(false);
       closeModal();
+      toast.success("Alat berhasil ditambahkan");
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data, "error upload");
+      toast.error("Gagal menambahkan alat");
     }
   }
 
@@ -93,13 +96,6 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
           </Transition.Child>
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            {/* {showSnackbar && (
-              <Alert
-                message="Dokumen berhasil ditambahkan"
-                errorType="success"
-              />
-            )} */}
-
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -117,32 +113,35 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                   Masukkan nama ruangan dan id alat yang ingin anda tambahkan
                   disini.
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Nama Ruangan</span>
+                    <span>Nama</span>
+
+                    {/* supposed to be a dropdown with name and id from api */}
+                    {/* https://react-select.com/home, pakai yang multi select kedua */}
                     <input
                       type="text"
-                      placeholder="nama dokumen"
+                      placeholder="Node 1"
                       className="input input-bordered"
                       name="name"
                       onChange={handleChange}
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Tag Id Alat</span>
+                    <span>Meja</span>
                     <input
                       type="text"
-                      placeholder="device id dokumen"
+                      placeholder="Meja Bu Dania"
                       className="input input-bordered"
-                      name="tag_id"
+                      name="table"
                       onChange={handleChange}
                     />
                   </label>
-                  {/* <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>uuid Dokumen</span>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Ruang</span>
                     <input
                       type="text"
-                      placeholder="uuid dokumen"
+                      placeholder="Ruangan Dosen 2"
                       className="input input-bordered"
-                      name="uuid"
+                      name="room"
                       onChange={handleChange}
                     />
                   </label>
@@ -153,17 +152,18 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                   </label>
                   <input
                     type="file"
-                    placeholder="Masukkan foto ruangan lokasi"
+                    placeholder={field.photo}
                     className="file-input w-full max-w-xs"
                     name="photo"
-                  /> */}
+                    onChange={handleChange}
+                  />
                 </Dialog.Description>
                 <button
                   onClick={() => {
                     handleFileUpload();
                     setLoading(true);
                   }}
-                  className="btn btn-accent mr-3 mb-3 md:mb-0"
+                  className="btn btn-accent mr-3 mb-3 md:mb-0 capitalize"
                 >
                   {loading ? (
                     <div className="flex flex-wrap">
@@ -182,7 +182,7 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                     "Simpan"
                   )}
                 </button>
-                <button onClick={closeModal} className="btn">
+                <button onClick={closeModal} className="btn capitalize">
                   Batal
                 </button>
               </Dialog.Panel>

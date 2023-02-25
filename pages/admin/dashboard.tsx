@@ -104,17 +104,6 @@ export default function DashboardAdmin() {
             </div>
             {/* <SwitchTheme /> */}
           </div>
-          {/* this is problematic, still looking how to fix it */}
-          {/* 
-          <div className="flex-col ml-auto">
-            {name ? (
-              <div>
-                <h1 className="ml-auto">Welcome, {name}</h1>
-              </div>
-            ) : (
-              <p>Loading...</p>
-            )}
-          </div> */}
         </div>
       </div>
       <div className="drawer drawer-mobile">

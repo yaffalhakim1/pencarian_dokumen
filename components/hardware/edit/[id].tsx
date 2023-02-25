@@ -1,13 +1,18 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
 import { TailSpin } from "react-loader-spinner";
 import { GetServerSideProps } from "next";
+import Select from "react-select";
+import { toast } from "sonner";
 
 type Data = {
   name: string;
-  tag_id: string;
+  tag: [];
+  table: string;
+  room: string;
+  photo: string;
   id: any;
 };
 
@@ -41,13 +46,16 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
   const data = datas;
   const [field, setField] = useState({
     name: data.name,
-    tag_id: data.tag_id,
+    table: data.table,
+    room: data.room,
+    photo: data.photo,
+    tag: data.tag,
     id: data.id,
   });
   let [isOpen, setIsOpen] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
-  const [photoUrl, setPhotoUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [options, setOptions] = useState<any>([]);
+  const [selectedValue, setSelectedValue] = useState(null);
 
   function closeModal() {
     setIsOpen(false);
@@ -64,11 +72,12 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
       "input[type='file']"
     ) as HTMLInputElement;
     const formData = new FormData();
-    // formData.append("file", input.files![0]);
-    // formData.append("photo", input.files![0]);
+    formData.append("tag", field.tag.join(","));
     formData.append("name", field.name);
-    formData.append("tag_id", field.tag_id);
-    // formData.append("uuid", field.uuid);
+    formData.append("table", field.table);
+    formData.append("room", field.room);
+    formData.append("photo", input.files![0]);
+
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -82,54 +91,66 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
         options
       );
       const postFileRes = await postFileReq.data;
+      console.log(postFileRes, "edit hardware");
       setLoading(false);
       onSuccess();
       closeModal();
+      toast.success("Detail alat berhasil diubah");
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data);
+      toast.error("Detail alat gagal diubah");
     }
   }
-
-  // async function handleDocSubmitEdit(photoUrl: string) {
-  //   const token = Cookie.get("token") as string;
-  //   const id = props.id;
-
-  //   try {
-  //     const postDocReq = await axios.put(
-  //       `https://spda-api.onrender.com/api/admin/documents/${id}`,
-  //       {
-  //         device_id: field.device_id,
-  //         name: field.name,
-  //         photo: photoUrl,
-  //       },
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     const postDocRes = await postDocReq.data;
-  //     setLoading(false);
-  //     if (postDocReq.status === 200) {
-  //       setShowSnackbar(true);
-  //       closeModal();
-  //     }
-  //   } catch (error) {
-  //     const err = error as AxiosError;
-  //     console.log(err.response?.data);
-  //   }
-  // }
 
   const handleChange = (e: any) => {
     const { name, value, files } = e.target;
     setField({
       ...field,
       [e.target.name]: e.target.value,
-      // photo: name === "photo" ? files[0] : field.photo,
+      photo: name === "photo" ? files[0] : field.photo,
     });
   };
+
+  const handleSelectChange = (selectedOptions: any) => {
+    const options = selectedOptions.map((option: any) => option.label);
+    setField({
+      ...field,
+      tag: options,
+    });
+  };
+
+  useEffect(() => {
+    const getTags = async () => {
+      try {
+        const token = Cookie.get("token") as string;
+        const res = await axios
+          .get("https://spda.17management.my.id/api/tags/list", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            const options = res.data.data.map((item: any) => {
+              return {
+                value: item.id,
+                label: item.name,
+              };
+            });
+
+            // console.log(options, "options");
+            setOptions(options);
+            if (options.length > 0) {
+              setSelectedValue(options[0]);
+            }
+          });
+      } catch (error) {
+        const err = error as AxiosError;
+        console.log(err.response?.data, "error get tags");
+      }
+    };
+    getTags();
+  }, []);
 
   return (
     <>
@@ -175,6 +196,16 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                 <Dialog.Description className="mt-1 mb-4 text-md">
                   Masukkan nama, id alat yang ingin anda ubah disini.
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Tag</span>
+                    <Select
+                      isMulti
+                      options={options}
+                      className="basic-multi-select"
+                      classNamePrefix="select"
+                      onChange={handleSelectChange}
+                    />
+                  </label>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Nama Ruangan</span>
                     <input
                       type="text"
@@ -185,25 +216,35 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Tag Id Dokumen</span>
+                    <span>Meja</span>
                     <input
                       type="text"
+                      placeholder={data.table}
                       className="input input-bordered"
-                      placeholder={data.tag_id}
-                      name="tag_id"
+                      name="table"
+                      onChange={handleChange}
+                    />
+                  </label>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Ruang</span>
+                    <input
+                      type="text"
+                      placeholder={data.room}
+                      className="input input-bordered"
+                      name="room"
                       onChange={handleChange}
                     />
                   </label>
                   {/* <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>UUID Dokumen</span>
+                    <span>Tag Id Dokumen</span>
                     <input
                       type="text"
                       className="input input-bordered"
-                      placeholder={data.uuid}
-                      name="uuid"
+                      // placeholder={data.tag_id.join(",") }
+                      name="id"
                       onChange={handleChange}
                     />
-                  </label>
+                  </label> */}
                   <label className="label">
                     <span className="label-text">
                       Masukkan foto ruangan lokasi
@@ -214,7 +255,8 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                     className="file-input w-full max-w-xs"
                     name="photo"
                     placeholder={data.photo}
-                  /> */}
+                    onChange={handleChange}
+                  />
                 </Dialog.Description>
                 <button
                   onClick={() => {

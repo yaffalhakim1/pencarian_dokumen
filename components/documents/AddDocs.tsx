@@ -1,19 +1,22 @@
 import axios, { AxiosError } from "axios";
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { TailSpin } from "react-loader-spinner";
 import Alert from "../Alert";
+import Select from "react-select";
+import { toast } from "sonner";
 
 export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [field, setField] = useState({
     name: "",
     device_id: "",
-    photo: "",
+    tag: [],
     uuid: "",
   });
+
   const [photoUrl, setPhotoUrl] = useState("");
   let [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
@@ -27,48 +30,88 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
     setIsOpen(true);
   }
 
-  const handleChange = (e: any) => {
-    const { name, value, files } = e.target;
-    setField({
-      ...field,
-      [e.target.name]: e.target.value,
-      photo: name === "photo" ? files[0] : field.photo,
-    });
-  };
+  //get list tags from api
+  const [options, setOptions] = useState<any>([]);
+  const [selectedValue, setSelectedValue] = useState(null);
+
+  useEffect(() => {
+    const getTags = async () => {
+      try {
+        const token = Cookie.get("token") as string;
+        const res = await axios
+          .get("https://spda.17management.my.id/api/tags/list", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            const options = res.data.data.map((item: any) => {
+              return {
+                value: item.id,
+                label: item.name,
+              };
+            });
+
+            // console.log(options, "options");
+            setOptions(options);
+            if (options.length > 0) {
+              setSelectedValue(options[0]);
+            }
+          });
+      } catch (error) {
+        const err = error as AxiosError;
+        console.log(err.response?.data, "error get tags");
+      }
+    };
+    getTags();
+  }, []);
 
   async function handleAddDoc() {
-    const input = document.querySelector(
-      "input[type='file']"
-    ) as HTMLInputElement;
     const formData = new FormData();
-    formData.append("photo", input.files![0]);
     formData.append("name", field.name);
     formData.append("device_id", field.device_id);
     formData.append("uuid", field.uuid);
+    formData.append("tag", field.tag.join(","));
 
     try {
       const token = Cookie.get("token") as string;
-      const postFileReq = await axios.post(
-        "https://spda.17management.my.id/api/documents/data",
-        formData,
-        {
+      const postFileReq = await axios
+        .post("https://spda.17management.my.id/api/documents/data", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Accept: "*/*",
             authorization: `Bearer ${token}`,
           },
-        }
-      );
+        })
+        .then((res) => {
+          console.log(res, "res");
+          JSON.stringify(res);
+        });
 
       onSuccess();
       setLoading(false);
       closeModal();
+      toast.success("Dokumen berhasil ditambahkan");
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data, "error upload");
     }
   }
 
+  const handleChange = (e: any) => {
+    setField({
+      ...field,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSelectChange = (selectedOptions: any) => {
+    const options = selectedOptions.map((option: any) => option.label);
+    setField({
+      ...field,
+      tag: options,
+    });
+  };
   return (
     <>
       <button
@@ -94,13 +137,6 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
           </Transition.Child>
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            {/* {showSnackbar && (
-              <Alert
-                message="Dokumen berhasil ditambahkan"
-                errorType="success"
-              />
-            )} */}
-
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -127,18 +163,19 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
                       onChange={handleChange}
                     />
                   </label>
+                  {/* https://react-select.com/home, pakai yang single */}
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>device id Dokumen</span>
+                    <span>device id Dokumen harusnya generate sendiri</span>
                     <input
                       type="text"
-                      placeholder="device id dokumen"
+                      placeholder="Lokasi dokumen"
                       className="input input-bordered"
                       name="device_id"
                       onChange={handleChange}
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>uuid Dokumen</span>
+                    <span>uuid Dokumen generate sendiri</span>
                     <input
                       type="text"
                       placeholder="uuid dokumen"
@@ -147,17 +184,17 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
                       onChange={handleChange}
                     />
                   </label>
-                  <label className="label">
-                    <span className="label-text">
-                      Masukkan foto ruangan lokasi
-                    </span>
+                  {/* https://react-select.com/home, pakai yang multiple */}
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Tag</span>
+                    <Select
+                      isMulti
+                      options={options}
+                      className="basic-multi-select"
+                      classNamePrefix="select"
+                      onChange={handleSelectChange}
+                    />
                   </label>
-                  <input
-                    type="file"
-                    placeholder="Masukkan foto ruangan lokasi"
-                    className="file-input w-full max-w-xs"
-                    name="photo"
-                  />
                 </Dialog.Description>
                 <button
                   onClick={() => {

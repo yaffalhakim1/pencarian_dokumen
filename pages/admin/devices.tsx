@@ -13,6 +13,7 @@ import AddHardware from "../../components/hardware/AddHardware";
 import EditHardware from "../../components/hardware/edit/[id]";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
+import { toast } from "sonner";
 
 interface Item {
   id: number;
@@ -20,108 +21,12 @@ interface Item {
 }
 
 export default function CrudDevices() {
-  const [loading, setLoading] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
-  const [lastPage, setLastPage] = useState<any>();
-  const [firstPageUrl, setFirstPageUrl] = useState("");
-  const [lastPageUrl, setLastPageUrl] = useState("");
-  const [nextPageUrl, setNextPageUrl] = useState("");
-  const [prevPageUrl, setPrevPageUrl] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState<any>([]);
   const [items, setItems] = useState<Item[]>([]);
   useAuthRedirect();
   let index = 1;
   const [page, setPage] = useState(1);
-
-  ///get data with pagination
-  // useEffect(() => {
-  //   const url = "https://spda.17management.my.id/api/devices/data";
-  //   const token = Cookie.get("token") as string;
-  //   setLoading(true);
-  //   axios
-  //     .get(`${url}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       const newData = res.data.data;
-
-  //       if (!_.isEqual(newData, prevDataRef.current)) {
-  //         setData(newData);
-  //       }
-  //       setCurrentPage(res.data.current_page);
-  //       setLastPage(res.data.data.last_page);
-  //       setFirstPageUrl(res.data.first_page_url);
-  //       setPrevPageUrl(res.data.prev_page_url);
-  //       setNextPageUrl(res.data.next_page_url);
-  //       setLastPageUrl(res.data.last_page_url);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       const error = err as AxiosError;
-  //       setLoading(false);
-  //       setError(err.response?.data || error.message);
-  //     });
-  //   // setLoading(false);
-  //   prevDataRef.current = data;
-  // }, [prevDataRef]);
-
-  // function handlePageClick(url: string) {
-  //   setLoading(true);
-  //   axios
-  //     .get(`${url}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${Cookie.get("token") as string}`,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       const newData = res.data.data;
-  //       setData(newData);
-  //       setNextPageUrl(res.data.next_page_url);
-  //       setPrevPageUrl(res.data.prev_page_url);
-  //       setCurrentPage(res.data.current_page);
-  //       setLastPage(res.data.last_page);
-  //       setFirstPageUrl(res.data.first_page_url);
-  //       setLastPageUrl(res.data.last_page_url);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       const error = err as AxiosError;
-  //       setLoading(false);
-  //       setError(err.response?.data || error.message);
-  //     });
-  // }
-
-  // async function deleteDoc(id: any) {
-  //   const token = Cookie.get("token") as string;
-  //   const url = "https://spda.17management.my.id/api/devices/delete";
-  //   try {
-  //     const res = await axios
-  //       .post(
-  //         url + `/${id}`,
-  //         {},
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       )
-  //       .then((res) => {
-  //         setData((prevData) =>
-  //           prevData.filter((item) => item.id !== id && data)
-  //         );
-  //       });
-  //   } catch (error) {
-  //     const err = error as AxiosError;
-  //     console.log(err.message);
-  //     console.log(err.response?.data, err.response?.status, "error delete");
-  //   }
-  // }
 
   const fetcher = async (url: string) => {
     const token = Cookie.get("token") as string;
@@ -181,6 +86,7 @@ export default function CrudDevices() {
         }
       );
       mutate(data);
+      toast.success("Alat berhasil dihapus");
     } catch (error) {
       console.error(error);
     }
@@ -236,9 +142,11 @@ export default function CrudDevices() {
               <thead>
                 <tr className="[&_th]:font-semibold [&_th]:capitalize">
                   <th>No</th>
-                  <th>Name Alat</th>
-                  <th>Tag Id</th>
-
+                  <th>Lokasi</th>
+                  <th>Meja</th>
+                  <th>Ruang</th>
+                  <th>Foto</th>
+                  <th>Tag</th>
                   <th></th>
                 </tr>
               </thead>
@@ -247,14 +155,21 @@ export default function CrudDevices() {
                   <tr key={item.id}>
                     <th>{index++}</th>
                     <td>{item.name}</td>
-                    <td>{item.tag_id}</td>
-
+                    <td>{item.table}</td>
+                    <td>{item.room}</td>
+                    <td>
+                      <img src={item.photo} width={100} alt="" />
+                    </td>
+                    <td>{item.tag}</td>
                     <td>
                       <EditHardware
                         datas={{
                           id: item.id,
                           name: item.name,
-                          tag_id: item.tag_id,
+                          tag: item.tag,
+                          table: item.table,
+                          room: item.room,
+                          photo: item.photo,
                         }}
                         onSuccess={() => mutate()}
                       />
@@ -273,7 +188,7 @@ export default function CrudDevices() {
           <div className="flex space-x-1 mt-5 mx-auto">
             {page >= 1 && (
               <button
-                className="btn btn-primary btn-sm capitalize"
+                className="btn btn-primary btn-outline btn-sm capitalize"
                 onClick={handlePrevPage}
               >
                 Previous
@@ -298,7 +213,7 @@ export default function CrudDevices() {
 
             <button
               onClick={handleNextPage}
-              className="btn btn-primary btn-sm capitalize"
+              className="btn btn-primary btn-outline btn-sm capitalize"
             >
               Next
             </button>

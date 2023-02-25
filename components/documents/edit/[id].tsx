@@ -4,12 +4,14 @@ import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
 import { TailSpin } from "react-loader-spinner";
 import { GetServerSideProps } from "next";
+import { toast } from "sonner";
 
 type Data = {
   name: string;
   device_id: string;
-  uuid: string;
-  photo: string;
+  // uuid: string;
+  // tag_id: [];
+  // tag: [];
   id: any;
 };
 
@@ -41,12 +43,12 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
 
 export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
   const data = datas;
+  console.log(data);
 
   const [field, setField] = useState({
     name: data.name,
     device_id: data.device_id,
-    uuid: data.uuid,
-    photo: data.photo,
+    // uuid: data.uuid,
   });
   let [isOpen, setIsOpen] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -70,9 +72,6 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
     const formData = new FormData();
     formData.append("name", field.name);
     formData.append("device_id", field.device_id);
-    // formData.append("file", input.files![0]);
-    formData.append("photo", input.files![0]);
-    formData.append("uuid", field.uuid);
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -90,6 +89,7 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
       setLoading(false);
       onSuccess();
       closeModal();
+      toast.success("Dokumen berhasil dirubah");
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data);
@@ -132,7 +132,6 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
     setField({
       ...field,
       [e.target.name]: e.target.value,
-      photo: name === "photo" ? files[0] : field.photo,
     });
   };
 
@@ -191,6 +190,7 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    {/* supposed to be dropdown but with one option */}
                     <span>Device Id Dokumen</span>
                     <input
                       type="text"
@@ -200,18 +200,12 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
                       onChange={handleChange}
                     />
                   </label>
-                  <label className="label">
+                  {/* <label className="label">
                     <span className="label-text">
                       Masukkan foto ruangan lokasi
                     </span>
-                  </label>
-                  <input
-                    type="file"
-                    className="file-input w-full max-w-xs"
-                    name="photo"
-                    placeholder={data.photo}
-                  />
-                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                  </label> */}
+                  {/* <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical ">
                     <span>UUID Dokumen</span>
                     <input
                       type="text"
@@ -219,8 +213,15 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
                       placeholder={data.uuid}
                       name="uuid"
                       onChange={handleChange}
+
+                      onClick={() => {
+                        setField({
+                          ...field,
+                          photo: data.photo,
+                        });
+                      }}
                     />
-                  </label>
+                  </label> */}
                 </Dialog.Description>
                 <button
                   onClick={() => {
