@@ -7,6 +7,16 @@ import { TailSpin } from "react-loader-spinner";
 import Alert from "../Alert";
 import Select from "react-select";
 import { toast } from "sonner";
+import { getData } from "../../lib/firebase";
+import "firebase/compat/database";
+import firebase from "firebase/compat/app";
+
+// NOTES
+
+// 1. scan with hardware
+// 2. the uuid and device-id will be saved to the database
+// 3. get the uuid and device-id from the database
+// 4. show the uuid and device-id in the form
 
 export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -16,11 +26,13 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
     tag: [],
     uuid: "",
   });
-
-  const [photoUrl, setPhotoUrl] = useState("");
+  const [options, setOptions] = useState<any>([]);
+  const [uuid, setUuid] = useState("");
+  const [deviceId, setDeviceId] = useState<number>(0);
+  const [selectedValue, setSelectedValue] = useState(null);
   let [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<any>(null);
 
   function closeModal() {
     setIsOpen(false);
@@ -29,10 +41,6 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
   function openModal() {
     setIsOpen(true);
   }
-
-  //get list tags from api
-  const [options, setOptions] = useState<any>([]);
-  const [selectedValue, setSelectedValue] = useState(null);
 
   useEffect(() => {
     const getTags = async () => {
@@ -52,10 +60,9 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
               };
             });
 
-            // console.log(options, "options");
             setOptions(options);
             if (options.length > 0) {
-              setSelectedValue(options[0]);
+              setSelectedValue(options);
             }
           });
       } catch (error) {
@@ -66,28 +73,44 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
     getTags();
   }, []);
 
+  useEffect(() => {
+    const getDatas = async () => {
+      try {
+        const res = await getData();
+        console.log(res, "res");
+        setData(res);
+        setUuid(res.uuid);
+        setDeviceId(res.device_id);
+      } catch (error) {
+        const err = error as AxiosError;
+        console.log(err.response?.data, "error get uuid");
+      }
+    };
+    getDatas();
+  }, []);
+
   async function handleAddDoc() {
     const formData = new FormData();
     formData.append("name", field.name);
     formData.append("device_id", field.device_id);
     formData.append("uuid", field.uuid);
-    formData.append("tag", field.tag.join(","));
-
+    // formData.append("tag[]", field.tag.join(","));
+    field.tag.forEach((tag) => formData.append("tag[]", tag));
     try {
       const token = Cookie.get("token") as string;
-      const postFileReq = await axios
-        .post("https://spda.17management.my.id/api/documents/data", formData, {
+      const postFileReq = await axios.post(
+        "https://spda.17management.my.id/api/documents/data",
+        formData,
+        {
           headers: {
             "Content-Type": "multipart/form-data",
             Accept: "*/*",
             authorization: `Bearer ${token}`,
           },
-        })
-        .then((res) => {
-          console.log(res, "res");
-          JSON.stringify(res);
-        });
-
+        }
+      );
+      const postFileRes = postFileReq.data;
+      console.log(postFileRes, "postFileRes");
       onSuccess();
       setLoading(false);
       closeModal();
@@ -112,6 +135,7 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
       tag: options,
     });
   };
+
   return (
     <>
       <button
@@ -165,20 +189,20 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
                   </label>
                   {/* https://react-select.com/home, pakai yang single */}
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>device id Dokumen harusnya generate sendiri</span>
+                    <span>device id Dokumen</span>
                     <input
                       type="text"
-                      placeholder="Lokasi dokumen"
+                      placeholder={deviceId.toString()}
                       className="input input-bordered"
                       name="device_id"
                       onChange={handleChange}
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>uuid Dokumen generate sendiri</span>
+                    <span>uuid Dokumen</span>
                     <input
                       type="text"
-                      placeholder="uuid dokumen"
+                      placeholder={uuid}
                       className="input input-bordered"
                       name="uuid"
                       onChange={handleChange}

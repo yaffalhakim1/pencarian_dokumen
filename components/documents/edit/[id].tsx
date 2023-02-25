@@ -1,17 +1,16 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
 import { TailSpin } from "react-loader-spinner";
 import { GetServerSideProps } from "next";
 import { toast } from "sonner";
+import Select from "react-select";
 
 type Data = {
   name: string;
   device_id: string;
-  // uuid: string;
-  // tag_id: [];
-  // tag: [];
+  tag: Array<string>;
   id: any;
 };
 
@@ -43,17 +42,15 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
 
 export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
   const data = datas;
-  console.log(data);
-
   const [field, setField] = useState({
     name: data.name,
     device_id: data.device_id,
-    // uuid: data.uuid,
+    tag: data.tag,
   });
   let [isOpen, setIsOpen] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
-  const [photoUrl, setPhotoUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [options, setOptions] = useState<any>([]);
+  const [selectedValue, setSelectedValue] = useState<any>([]);
 
   function closeModal() {
     setIsOpen(false);
@@ -66,12 +63,11 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
   async function handleEdit() {
     const id = datas.id;
     const token = Cookie.get("token") as string;
-    const input = document.querySelector(
-      "input[type='file']"
-    ) as HTMLInputElement;
     const formData = new FormData();
     formData.append("name", field.name);
     formData.append("device_id", field.device_id);
+    // formData.append("tag[]", field.tag.join(""));
+    field.tag.forEach((tag) => formData.append("tag[]", tag));
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -84,8 +80,6 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
         formData,
         options
       );
-
-      const postFileRes = await postFileReq.data;
       setLoading(false);
       onSuccess();
       closeModal();
@@ -96,36 +90,63 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
     }
   }
 
-  // async function handleDocSubmitEdit(photoUrl: string) {
-  //   const token = Cookie.get("token") as string;
-  //   const id = props.id;
+  useEffect(() => {
+    const getTags = async () => {
+      try {
+        const token = Cookie.get("token") as string;
+        const res = await axios
+          .get("https://spda.17management.my.id/api/tags/list", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            const options = res.data.data.map((item: any) => {
+              return {
+                value: item.id,
+                label: item.name,
+              };
+            });
+            setOptions(options);
+            if (options.length > 0) {
+              setSelectedValue(options);
+            }
+          });
+      } catch (error) {
+        const err = error as AxiosError;
+        console.log(err.response?.data, "error get tags");
+      }
+    };
+    getTags();
+  }, []);
 
-  //   try {
-  //     const postDocReq = await axios.put(
-  //       `https://spda-api.onrender.com/api/admin/documents/${id}`,
-  //       {
-  //         device_id: field.device_id,
-  //         name: field.name,
-  //         photo: photoUrl,
-  //       },
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     const postDocRes = await postDocReq.data;
-  //     setLoading(false);
-  //     if (postDocReq.status === 200) {
-  //       setShowSnackbar(true);
-  //       closeModal();
-  //     }
-  //   } catch (error) {
-  //     const err = error as AxiosError;
-  //     console.log(err.response?.data);
-  //   }
-  // }
+  useEffect(() => {
+    const id = datas.id;
+    const postData = async () => {
+      const response = await fetch(
+        `https://spda.17management.my.id/api/documents/update/${id}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: field.name,
+            device_id: field.device_id,
+          }),
+        }
+      );
+      const json = await response.json();
+      console.log(json);
+    };
+    postData();
+  }, []);
+
+  const handleSelectChange = (selectedOptions: any) => {
+    const options = selectedOptions.map((option: any) => option.label);
+    setField({
+      ...field,
+      tag: options,
+    });
+  };
 
   const handleChange = (e: any) => {
     const { name, value, files } = e.target;
@@ -134,6 +155,10 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
       [e.target.name]: e.target.value,
     });
   };
+
+  const defaultValue = data.tag.flatMap((tag) =>
+    tag.split(",").map((label) => ({ label }))
+  );
 
   return (
     <>
@@ -160,9 +185,6 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
           </Transition.Child>
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            {/* {showSnackbar && (
-              <SuccessInfo message="Dokumen berhasil ditambahkan" />
-            )} */}
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -200,28 +222,20 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
                       onChange={handleChange}
                     />
                   </label>
-                  {/* <label className="label">
-                    <span className="label-text">
-                      Masukkan foto ruangan lokasi
-                    </span>
-                  </label> */}
-                  {/* <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical ">
-                    <span>UUID Dokumen</span>
-                    <input
-                      type="text"
-                      className="input input-bordered"
-                      placeholder={data.uuid}
-                      name="uuid"
-                      onChange={handleChange}
-
-                      onClick={() => {
-                        setField({
-                          ...field,
-                          photo: data.photo,
-                        });
-                      }}
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Tag</span>
+                    {/* bug supposed to be show the exisiting value */}
+                    <Select
+                      name="tag[]"
+                      isMulti
+                      options={options}
+                      className="basic-multi-select"
+                      onChange={handleSelectChange}
+                      // placeholder={data.tag}
+                      defaultValue={defaultValue}
+                      classNamePrefix="select"
                     />
-                  </label> */}
+                  </label>
                 </Dialog.Description>
                 <button
                   onClick={() => {
@@ -239,9 +253,6 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
                         ariaLabel="tail-spin-loading"
                         radius="1"
                       />
-                      {/* <button className="btn btn-warning btn-sm mb-3 md:mb-0">
-                        Mengubah dokumen...
-                      </button> */}
                     </div>
                   ) : (
                     "Simpan"

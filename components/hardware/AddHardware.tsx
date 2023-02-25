@@ -43,8 +43,6 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
     formData.append("table", field.table);
     formData.append("room", field.room);
     formData.append("photo", input.files![0]);
-    // formData.append("tag_id", field.tag_id);
-    // formData.append("uuid", field.uuid);
 
     try {
       const token = Cookie.get("token") as string;

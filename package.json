@@ -21,6 +21,8 @@
     "eslint": "8.31.0",
     "eslint-config-next": "13.1.1",
     "feather-icons": "^4.29.0",
+    "firebase": "^9.17.1",
+    "firebase-admin": "^11.5.0",
     "js-cookie": "^3.0.1",
     "lodash": "^4.17.21",
     "next": "13.1.1",

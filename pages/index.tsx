@@ -11,6 +11,7 @@ export default function Home() {
   const loginTime = Date.now();
   const token = Cookie.get("token") as string;
   const role = Cookie.get("role") as string;
+  // const expiredTime = Cookie.get("expired_in") as number;
 
   useEffect(() => {
     if (!token) {

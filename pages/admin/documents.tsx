@@ -157,14 +157,13 @@ export default function CrudDocument() {
                     <td>{item.name}</td>
                     <td>{item.tag} </td>
                     <td>{item.device_name}</td>
-
-                    <td>{/* <img src={item.photo} alt="" width={100} /> */}</td>
-
                     <td>
                       <EditDocs
                         datas={{
                           name: item.name,
                           device_id: item.device_id,
+                          tag: item.tag,
+
                           // uuid: item.uuid,
                           id: item.id,
                         }}

@@ -4,14 +4,9 @@ import axios from "axios";
 import Router, { useRouter } from "next/router";
 import Cookie from "js-cookie";
 import { Toaster, toast } from "sonner";
-
-// ...
-
 import { TailSpin } from "react-loader-spinner";
 import Head from "next/head";
 import Image from "next/image";
-import Alert from "../../components/Alert";
-// import { AuthContext } from "../../hooks/AuthContext";
 
 function LoginForm(this: any) {
   const router = useRouter();
@@ -20,7 +15,6 @@ function LoginForm(this: any) {
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState(null);
   const [expirationTime, setExpirationTime] = useState<any>(null);
-  // const authCtx = useContext(AuthContext);
 
   function fieldHandler(e: any) {
     setField({
@@ -70,8 +64,7 @@ function LoginForm(this: any) {
           },
         }
       );
-      const expirationTime = Date.now() + loginReq.data.expired_in * 1000;
-      // authCtx.login(loginReq.data.access_token, expirationTime);
+      const expirationTime = Date.now() + loginReq.data.expired_in;
       const loginResp = await loginReq.data;
       setLoading(false);
       if (loginReq.status === 200) {

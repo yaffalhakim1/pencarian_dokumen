@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 type Data = {
   name: string;
-  tag: [];
+  tag: Array<string>;
   table: string;
   room: string;
   photo: string;
@@ -44,6 +44,7 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
 
 export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
   const data = datas;
+  console.log(data.tag, "data tag from device");
   const [field, setField] = useState({
     name: data.name,
     table: data.table,
@@ -72,7 +73,7 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
       "input[type='file']"
     ) as HTMLInputElement;
     const formData = new FormData();
-    formData.append("tag", field.tag.join(","));
+    formData.append("tag[]", field.tag.join(","));
     formData.append("name", field.name);
     formData.append("table", field.table);
     formData.append("room", field.room);
@@ -90,8 +91,7 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
         formData,
         options
       );
-      const postFileRes = await postFileReq.data;
-      console.log(postFileRes, "edit hardware");
+
       setLoading(false);
       onSuccess();
       closeModal();
@@ -138,7 +138,6 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
               };
             });
 
-            // console.log(options, "options");
             setOptions(options);
             if (options.length > 0) {
               setSelectedValue(options[0]);
@@ -151,6 +150,8 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
     };
     getTags();
   }, []);
+
+  const defaultValue = data.tag.map((tag) => ({ label: tag }));
 
   return (
     <>
@@ -198,11 +199,13 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Tag</span>
                     <Select
+                      name="tag[]"
                       isMulti
                       options={options}
                       className="basic-multi-select"
                       classNamePrefix="select"
                       onChange={handleSelectChange}
+                      defaultValue={defaultValue}
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
@@ -235,16 +238,6 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                       onChange={handleChange}
                     />
                   </label>
-                  {/* <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Tag Id Dokumen</span>
-                    <input
-                      type="text"
-                      className="input input-bordered"
-                      // placeholder={data.tag_id.join(",") }
-                      name="id"
-                      onChange={handleChange}
-                    />
-                  </label> */}
                   <label className="label">
                     <span className="label-text">
                       Masukkan foto ruangan lokasi
