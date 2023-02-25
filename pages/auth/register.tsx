@@ -9,7 +9,7 @@ import { TailSpin } from "react-loader-spinner";
 import Head from "next/head";
 import Image from "next/image";
 import Alert from "../../components/Alert";
-import { AuthContext } from "../../hooks/AuthContext";
+// import { AuthContext } from "../../hooks/AuthContext";
 
 export default function Register() {
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState(null);
   const [expirationTime, setExpirationTime] = useState<any>(null);
-  const authCtx = useContext(AuthContext);
+  // const authCtx = useContext(AuthContext);
 
   function fieldHandler(e: any) {
     setField({
