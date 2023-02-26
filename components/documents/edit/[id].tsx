@@ -42,6 +42,7 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
 
 export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
   const data = datas;
+  const defaultValue = data.tag.map((tag: any) => ({ value: tag, label: tag }));
   const [field, setField] = useState({
     name: data.name,
     device_id: data.device_id,
@@ -67,7 +68,10 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
     formData.append("name", field.name);
     formData.append("device_id", field.device_id);
     // formData.append("tag[]", field.tag.join(""));
-    field.tag.forEach((tag) => formData.append("tag[]", tag));
+    // field.tag.forEach((tag) => formData.append("tag[]", tag));
+    for (let i = 0; i < field.tag.length; i++) {
+      formData.append("tag[]", field.tag[i]);
+    }
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -80,6 +84,7 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
         formData,
         options
       );
+
       setLoading(false);
       onSuccess();
       closeModal();
@@ -120,26 +125,6 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
     getTags();
   }, []);
 
-  useEffect(() => {
-    const id = datas.id;
-    const postData = async () => {
-      const response = await fetch(
-        `https://spda.17management.my.id/api/documents/update/${id}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: field.name,
-            device_id: field.device_id,
-          }),
-        }
-      );
-      const json = await response.json();
-      console.log(json);
-    };
-    postData();
-  }, []);
-
   const handleSelectChange = (selectedOptions: any) => {
     const options = selectedOptions.map((option: any) => option.label);
     setField({
@@ -156,9 +141,9 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
     });
   };
 
-  const defaultValue = data.tag.flatMap((tag) =>
-    tag.split(",").map((label) => ({ label }))
-  );
+  // const defaultValue = data.tag.flatMap((tag) =>
+  //   tag.split(",").map((label) => ({ label }))
+  // );
 
   return (
     <>

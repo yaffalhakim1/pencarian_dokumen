@@ -9,10 +9,10 @@ import { toast } from "sonner";
 
 type Data = {
   name: string;
-  tag: Array<string>;
+  tag: any;
   table: string;
   room: string;
-  photo: string;
+  photo: any;
   id: any;
 };
 
@@ -45,6 +45,7 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
 export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
   const data = datas;
   console.log(data.tag, "data tag from device");
+  const defaultValue = data.tag.map((tag: any) => ({ value: tag, label: tag }));
   const [field, setField] = useState({
     name: data.name,
     table: data.table,
@@ -66,18 +67,24 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
     setIsOpen(true);
   }
 
-  async function handleFileUpload() {
+  async function handleEdit() {
     const id = datas.id;
     const token = Cookie.get("token") as string;
     const input = document.querySelector(
       "input[type='file']"
     ) as HTMLInputElement;
     const formData = new FormData();
-    formData.append("tag[]", field.tag.join(","));
+    for (let i = 0; i < field.tag.length; i++) {
+      formData.append("tag[]", field.tag[i]);
+    }
     formData.append("name", field.name);
     formData.append("table", field.table);
     formData.append("room", field.room);
-    formData.append("photo", input.files![0]);
+    // formData.append("photo", input.files![0]);
+
+    if (field.photo instanceof File) {
+      formData.append("photo", field.photo);
+    }
 
     const options = {
       headers: {
@@ -103,13 +110,28 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
     }
   }
 
+  // const handleChange = (e: any) => {
+  //   const { name, value, files } = e.target;
+  //   setField({
+  //     ...field,
+  //     [e.target.name]: e.target.value,
+  //     photo: name === "photo" ? files[0] : field.photo,
+  //   });
+  // };
+
   const handleChange = (e: any) => {
     const { name, value, files } = e.target;
-    setField({
-      ...field,
-      [e.target.name]: e.target.value,
-      photo: name === "photo" ? files[0] : field.photo,
-    });
+    if (name === "photo") {
+      setField({
+        ...field,
+        photo: files[0] || field.photo,
+      });
+    } else {
+      setField({
+        ...field,
+        [name]: value,
+      });
+    }
   };
 
   const handleSelectChange = (selectedOptions: any) => {
@@ -151,8 +173,6 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
     getTags();
   }, []);
 
-  const defaultValue = data.tag.map((tag) => ({ label: tag }));
-
   return (
     <>
       <button
@@ -178,9 +198,6 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
           </Transition.Child>
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            {/* {showSnackbar && (
-              <SuccessInfo message="Dokumen berhasil ditambahkan" />
-            )} */}
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -239,13 +256,12 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                     />
                   </label>
                   <label className="label">
-                    <span className="label-text">
-                      Masukkan foto ruangan lokasi
-                    </span>
+                    <span className="label-text">foto ruangan lokasi</span>
                   </label>
+                  <img src={data.photo} alt="Existing Image" width={300} />
                   <input
                     type="file"
-                    className="file-input w-full max-w-xs"
+                    className="file-input w-full max-w-xs mt-2"
                     name="photo"
                     placeholder={data.photo}
                     onChange={handleChange}
@@ -254,7 +270,7 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                 <button
                   onClick={() => {
                     setLoading(true);
-                    handleFileUpload();
+                    handleEdit();
                   }}
                   className="btn btn-accent mr-3 mb-3 md:mb-0 capitalize"
                 >

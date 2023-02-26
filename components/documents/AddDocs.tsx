@@ -59,7 +59,6 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
                 label: item.name,
               };
             });
-
             setOptions(options);
             if (options.length > 0) {
               setSelectedValue(options);
@@ -73,14 +72,21 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
     getTags();
   }, []);
 
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const getDatas = async () => {
       try {
         const res = await getData();
-        console.log(res, "res");
         setData(res);
         setUuid(res.uuid);
         setDeviceId(res.device_id);
+        setField({
+          ...field,
+          uuid: res.uuid,
+          device_id: res.device_id.toString(),
+        });
+        setIsLoading(false); // mark data as loaded
       } catch (error) {
         const err = error as AxiosError;
         console.log(err.response?.data, "error get uuid");
@@ -89,42 +95,19 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
     getDatas();
   }, []);
 
-  async function handleAddDoc() {
-    const formData = new FormData();
-    formData.append("name", field.name);
-    formData.append("device_id", field.device_id);
-    formData.append("uuid", field.uuid);
-    // formData.append("tag[]", field.tag.join(","));
-    field.tag.forEach((tag) => formData.append("tag[]", tag));
-    try {
-      const token = Cookie.get("token") as string;
-      const postFileReq = await axios.post(
-        "https://spda.17management.my.id/api/documents/data",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Accept: "*/*",
-            authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const postFileRes = postFileReq.data;
-      console.log(postFileRes, "postFileRes");
-      onSuccess();
-      setLoading(false);
-      closeModal();
-      toast.success("Dokumen berhasil ditambahkan");
-    } catch (error) {
-      const err = error as AxiosError;
-      console.log(err.response?.data, "error upload");
-    }
-  }
-
   const handleChange = (e: any) => {
-    setField({
-      ...field,
-      [e.target.name]: e.target.value,
+    const { name, value } = e.target;
+    setField((prevField) => {
+      const updatedField = {
+        ...prevField,
+        [name]: value,
+      };
+      if (name === "uuid") {
+        setUuid(value);
+      } else if (name === "device_id") {
+        setDeviceId(value);
+      }
+      return updatedField;
     });
   };
 
@@ -135,6 +118,46 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
       tag: options,
     });
   };
+
+  async function handleAddDoc() {
+    const token = Cookie.get("token") as string;
+    const formData = new FormData();
+    formData.append("name", field.name);
+    formData.append("device_id", field.device_id);
+    formData.append("uuid", field.uuid);
+    // formData.append("tag[]", field.tag.join(","));
+    // field.tag.forEach((tag) => formData.append("tag[]", tag));
+    for (let i = 0; i < field.tag.length; i++) {
+      formData.append("tag[]", field.tag[i]);
+    }
+    console.log(field.device_id);
+    console.log(field.uuid);
+    console.log(field.tag);
+    const options = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    axios
+      .post(
+        "https://spda.17management.my.id/api/documents/data",
+        formData,
+        options
+      )
+      .then((postFileReq) => {
+        console.log(postFileReq, "postfile req");
+        console.log(formData, "formdata handel add doc");
+        onSuccess();
+        setLoading(false);
+        closeModal();
+        toast.success("Dokumen berhasil ditambahkan");
+      })
+      .catch((error) => {
+        const err = error as AxiosError;
+        console.log(err.response?.data, "error upload");
+      });
+  }
 
   return (
     <>
@@ -192,7 +215,8 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
                     <span>device id Dokumen</span>
                     <input
                       type="text"
-                      placeholder={deviceId.toString()}
+                      // placeholder={data.device_id}
+                      defaultValue={deviceId}
                       className="input input-bordered"
                       name="device_id"
                       onChange={handleChange}
@@ -203,6 +227,7 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
                     <input
                       type="text"
                       placeholder={uuid}
+                      defaultValue={uuid}
                       className="input input-bordered"
                       name="uuid"
                       onChange={handleChange}
@@ -217,6 +242,7 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
                       className="basic-multi-select"
                       classNamePrefix="select"
                       onChange={handleSelectChange}
+                      name="tag"
                     />
                   </label>
                 </Dialog.Description>

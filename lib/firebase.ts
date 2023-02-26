@@ -29,6 +29,7 @@ export const getData = async () => {
   const dataRef = firebase.database().ref("Dummy");
   const snapshot = await dataRef.once("value");
   const data = snapshot.val();
+  console.log(data, "data fb geData");
   return data;
   // const dataRef = firebase.database().ref("Dummy");
   // const onDataUpdate = (snapshot: { val: () => any }) => {
