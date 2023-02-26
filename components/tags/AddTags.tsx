@@ -5,6 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { TailSpin } from "react-loader-spinner";
 import Alert from "../Alert";
+import { toast } from "sonner";
 
 export default function AddTags({ onSuccess }: { onSuccess: () => void }) {
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -27,7 +28,6 @@ export default function AddTags({ onSuccess }: { onSuccess: () => void }) {
     setField({
       ...field,
       [e.target.name]: e.target.value,
-      // photo: name === "photo" ? files[0] : field.photo,
     });
   };
 
@@ -38,7 +38,6 @@ export default function AddTags({ onSuccess }: { onSuccess: () => void }) {
     const formData = new FormData();
     // formData.append("photo", input.files![0]);
     formData.append("name", field.name);
-
     // formData.append("uuid", field.uuid);
 
     try {
@@ -54,15 +53,17 @@ export default function AddTags({ onSuccess }: { onSuccess: () => void }) {
           },
         }
       );
-
       const postFileRes = await postFileReq.data;
-
       onSuccess();
       setLoading(false);
       closeModal();
+      toast.success("Berhasil menambahkan tags");
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data, "error upload");
+      toast.error("Gagal menambah alat");
+      setLoading(false);
+      closeModal();
     }
   }
 

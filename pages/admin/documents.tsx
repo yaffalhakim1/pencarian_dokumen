@@ -22,6 +22,7 @@ export default function CrudDocument() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState<any>([]);
   const [items, setItems] = useState<Item[]>([]);
+
   useAuthRedirect();
   let index = 1;
   const [page, setPage] = useState(1);
@@ -38,7 +39,6 @@ export default function CrudDocument() {
 
   const { data, error, mutate } = useSWR(
     `https://spda.17management.my.id/api/documents/data?page=${page}`,
-
     fetcher
   );
   if (error)
@@ -60,6 +60,7 @@ export default function CrudDocument() {
         </div>
       </div>
     );
+
   const handleNextPage = () => {
     // Increment the page number and fetch the next page of data
     setPage((prevPage) => prevPage + 1);

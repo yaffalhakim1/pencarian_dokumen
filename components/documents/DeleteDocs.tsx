@@ -2,8 +2,6 @@ import axios, { AxiosError } from "axios";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import { TailSpin } from "react-loader-spinner";
-import Cookie from "js-cookie";
-import { mutate } from "swr";
 
 interface Props {
   id: any;
@@ -50,7 +48,6 @@ export default function DeleteDocs(props: Props) {
           </Transition.Child>
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            {/* {showSnackbar && <SuccessInfo message="Dokumen berhasil dihapus" />} */}
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -71,7 +68,6 @@ export default function DeleteDocs(props: Props) {
                 <button
                   onClick={() => {
                     props.onClick && props.onClick();
-                    // handleDelete();
                     setLoading(true);
                   }}
                   className="btn btn-error mr-3 mb-3 md:mb-0 capitalize text-white"

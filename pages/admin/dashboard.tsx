@@ -1,37 +1,26 @@
-import { SetStateAction, useContext, useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import Router from "next/router";
 import Cookie from "js-cookie";
-
 import Head from "next/head";
 import { MoonLoader } from "react-spinners";
 import SwitchTheme from "../../components/Switcher";
 import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import axios from "axios";
 import CrudDocument from "./documents";
-import CrudAlat from "./users";
-import { GetServerSideProps } from "next";
 import CrudDevices from "./devices";
 import CrudUsers from "./users";
 import CrudTags from "./tag";
+import useSWR from "swr";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
   const [loading, setLoading] = useState(false);
-
-  const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
 
   const handleClick = (item: SetStateAction<number>) => {
     setSelectedItem(item);
   };
 
   useAuthRedirect();
-
-  // get profile
-
-  useEffect(() => {
-    getProfile();
-  }, []);
 
   async function logoutHandler() {
     Cookie.remove("token");
@@ -54,25 +43,41 @@ export default function DashboardAdmin() {
     Router.replace("/auth/login");
   }
 
-  async function getProfile() {
-    const token = Cookie.get("token") as string;
-    const profile = await axios
-      .get("https://spda.17management.my.id/api/users/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        const data = res.data.data;
-        setUserName(data.name);
-        setEmail(data.email);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+  // async function getProfile() {
+  //   const token = Cookie.get("token") as string;
+  //   const profile = await axios
+  //     .get("https://spda.17management.my.id/api/users/profile", {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       const data = res.data.data;
+  //       setUserName(data.name);
+  //       setEmail(data.email);
+  //     })
+  //     .catch((err) => {
+  // console.log(err);
+  //     });
+  // }
 
-  // const name = data.name;
+  const token = Cookie.get("token") as string;
+  const { data, error } = useSWR(
+    `https://spda.17management.my.id/api/users/profile`,
+    (url) =>
+      axios
+        .get(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => res.data.data)
+  );
+
+  if (error) return <div>Failed to load profile</div>;
+  if (!data) return <div>Loading...</div>;
+
+  const { name, email } = data;
 
   return (
     <>
@@ -93,12 +98,11 @@ export default function DashboardAdmin() {
             <div className="flex items-center space-x-3 mr-4 md:mr-0">
               <div className="avatar placeholder">
                 <div className="mask mask-squircle w-10 h-10 text-center bg-neutral-focus text-neutral-content">
-                  {/* <img src="/tailwind-css-component-profile-2@56w.png" alt="Avatar Tailwind CSS Component" /> */}
-                  {userName.charAt(0)}
+                  {name.charAt(0)}
                 </div>
               </div>
               <div>
-                <div className="font-bold">{userName}</div>
+                <div className="font-bold">{name}</div>
                 <div className="text-sm opacity-50">{email}</div>
               </div>
             </div>

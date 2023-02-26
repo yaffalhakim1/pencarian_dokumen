@@ -66,8 +66,7 @@ export default function EditUser({ datas, onSuccess }: EditButtonProps) {
       "input[type='file']"
     ) as HTMLInputElement;
     const formData = new FormData();
-    // formData.append("file", input.files![0]);
-    // formData.append("photo", input.files![0]);
+
     formData.append("name", field.name);
     formData.append("username", field.username);
     formData.append("email", field.email);

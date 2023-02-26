@@ -66,6 +66,8 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
       const err = error as AxiosError;
       console.log(err.response?.data, "error upload");
       toast.error("Gagal menambahkan alat");
+      setLoading(false);
+      closeModal();
     }
   }
 
@@ -172,9 +174,6 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                         ariaLabel="tail-spin-loading"
                         radius="1"
                       />
-                      {/* <button className="btn btn-success btn-sm">
-                        Menambahkan dokumen...
-                      </button> */}
                     </div>
                   ) : (
                     "Simpan"

@@ -10,9 +10,9 @@ import { toast } from "sonner";
 import { getData } from "../../lib/firebase";
 import "firebase/compat/database";
 import firebase from "firebase/compat/app";
+import useSWR from "swr";
 
 // NOTES
-
 // 1. scan with hardware
 // 2. the uuid and device-id will be saved to the database
 // 3. get the uuid and device-id from the database
@@ -32,7 +32,7 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
   const [selectedValue, setSelectedValue] = useState(null);
   let [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   function closeModal() {
     setIsOpen(false);
@@ -42,6 +42,7 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
     setIsOpen(true);
   }
 
+  //get list tags
   useEffect(() => {
     const getTags = async () => {
       try {
@@ -66,19 +67,19 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
           });
       } catch (error) {
         const err = error as AxiosError;
+        console.log(err);
         console.log(err.response?.data, "error get tags");
       }
     };
     getTags();
   }, []);
 
-  const [isLoading, setIsLoading] = useState(true);
-
+  //get data from rtdb firebase
   useEffect(() => {
     const getDatas = async () => {
       try {
-        const res = await getData();
-        setData(res);
+        const res: any = await getData();
+        // setData(res);
         setUuid(res.uuid);
         setDeviceId(res.device_id);
         setField({
@@ -92,7 +93,27 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
         console.log(err.response?.data, "error get uuid");
       }
     };
+    // Call getDatas initially and attach the listener
     getDatas();
+    // Return a function that detaches the listener when the component unmounts
+    return () => {
+      firebase.database().ref("Daftar").off();
+    };
+  }, []);
+
+  //set data to input element so user can see the changes
+  useEffect(() => {
+    const dataRef = firebase.database().ref("Daftar");
+    const handleDataChange = (snapshot: any) => {
+      const data = snapshot.val();
+      setUuid(data.uuid);
+      setDeviceId(data.device_id);
+    };
+    dataRef.on("value", handleDataChange);
+
+    return () => {
+      dataRef.off("value", handleDataChange);
+    };
   }, []);
 
   const handleChange = (e: any) => {
@@ -125,7 +146,6 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
     formData.append("name", field.name);
     formData.append("device_id", field.device_id);
     formData.append("uuid", field.uuid);
-    // formData.append("tag[]", field.tag.join(","));
     // field.tag.forEach((tag) => formData.append("tag[]", tag));
     for (let i = 0; i < field.tag.length; i++) {
       formData.append("tag[]", field.tag[i]);
@@ -155,7 +175,10 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
       })
       .catch((error) => {
         const err = error as AxiosError;
-        console.log(err.response?.data, "error upload");
+        toast.error("uuid already exist or device id already exist");
+        setLoading(false);
+        closeModal();
+        console.log(err.response, "error upload");
       });
   }
 
@@ -216,7 +239,7 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
                     <input
                       type="text"
                       // placeholder={data.device_id}
-                      defaultValue={deviceId}
+                      value={deviceId}
                       className="input input-bordered"
                       name="device_id"
                       onChange={handleChange}
@@ -226,11 +249,13 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
                     <span>uuid Dokumen</span>
                     <input
                       type="text"
-                      placeholder={uuid}
-                      defaultValue={uuid}
+                      // placeholder={uuid}
+                      // defaultValue={uuid}
+                      value={uuid}
                       className="input input-bordered"
                       name="uuid"
                       onChange={handleChange}
+                      // onChange={(e) => setUuid(e.target.value)}
                     />
                   </label>
                   {/* https://react-select.com/home, pakai yang multiple */}

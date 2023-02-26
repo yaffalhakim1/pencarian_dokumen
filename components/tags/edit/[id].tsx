@@ -4,6 +4,7 @@ import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
 import { TailSpin } from "react-loader-spinner";
 import { GetServerSideProps } from "next";
+import { toast } from "sonner";
 
 type Data = {
   name: string;
@@ -62,11 +63,8 @@ export default function EditTags({ datas, onSuccess }: EditButtonProps) {
       "input[type='file']"
     ) as HTMLInputElement;
     const formData = new FormData();
-    // formData.append("file", input.files![0]);
-    // formData.append("photo", input.files![0]);
     formData.append("name", field.name);
-    // formData.append("tag_id", field.tag_id);
-    // formData.append("uuid", field.uuid);
+
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -81,45 +79,17 @@ export default function EditTags({ datas, onSuccess }: EditButtonProps) {
       );
       const postFileRes = await postFileReq.data;
       setLoading(false);
-
       onSuccess();
+      toast.success("Berhasil mengubah data tag");
       closeModal();
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data);
+      toast.error("Detail tag gagal diubah");
+      setLoading(false);
+      closeModal();
     }
   }
-
-  // async function handleDocSubmitEdit(photoUrl: string) {
-  //   const token = Cookie.get("token") as string;
-  //   const id = props.id;
-
-  //   try {
-  //     const postDocReq = await axios.put(
-  //       `https://spda-api.onrender.com/api/admin/documents/${id}`,
-  //       {
-  //         device_id: field.device_id,
-  //         name: field.name,
-  //         photo: photoUrl,
-  //       },
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     const postDocRes = await postDocReq.data;
-  //     setLoading(false);
-  //     if (postDocReq.status === 200) {
-  //       setShowSnackbar(true);
-  //       closeModal();
-  //     }
-  //   } catch (error) {
-  //     const err = error as AxiosError;
-  //     console.log(err.response?.data);
-  //   }
-  // }
 
   const handleChange = (e: any) => {
     const { name, value, files } = e.target;

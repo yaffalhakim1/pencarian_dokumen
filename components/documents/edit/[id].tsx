@@ -67,7 +67,6 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
     const formData = new FormData();
     formData.append("name", field.name);
     formData.append("device_id", field.device_id);
-    // formData.append("tag[]", field.tag.join(""));
     // field.tag.forEach((tag) => formData.append("tag[]", tag));
     for (let i = 0; i < field.tag.length; i++) {
       formData.append("tag[]", field.tag[i]);
@@ -84,13 +83,15 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
         formData,
         options
       );
-
       setLoading(false);
       onSuccess();
       closeModal();
       toast.success("Dokumen berhasil dirubah");
     } catch (error) {
       const err = error as AxiosError;
+      toast.error("Dokumen gagal dirubah");
+      closeModal();
+      setLoading(false);
       console.log(err.response?.data);
     }
   }
@@ -140,10 +141,6 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
       [e.target.name]: e.target.value,
     });
   };
-
-  // const defaultValue = data.tag.flatMap((tag) =>
-  //   tag.split(",").map((label) => ({ label }))
-  // );
 
   return (
     <>
@@ -197,7 +194,6 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    {/* supposed to be dropdown but with one option */}
                     <span>Device Id Dokumen</span>
                     <input
                       type="text"
@@ -209,14 +205,12 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Tag</span>
-                    {/* bug supposed to be show the exisiting value */}
                     <Select
                       name="tag[]"
                       isMulti
                       options={options}
                       className="basic-multi-select"
                       onChange={handleSelectChange}
-                      // placeholder={data.tag}
                       defaultValue={defaultValue}
                       classNamePrefix="select"
                     />
@@ -242,8 +236,7 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
                   ) : (
                     "Simpan"
                   )}
-                </button>
-
+                </button>{" "}
                 <button onClick={closeModal} className="btn capitalize">
                   Batal
                 </button>

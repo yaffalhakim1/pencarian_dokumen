@@ -25,22 +25,28 @@ const app = initializeApp(firebaseConfig);
 
 export default firebase;
 
-export const getData = async () => {
-  const dataRef = firebase.database().ref("Dummy");
-  const snapshot = await dataRef.once("value");
-  const data = snapshot.val();
-  console.log(data, "data fb geData");
-  return data;
-  // const dataRef = firebase.database().ref("Dummy");
-  // const onDataUpdate = (snapshot: { val: () => any }) => {
-  //   const data = snapshot.val();
-  //   setData(data);
-  // };
-  // dataRef.on("value", onDataUpdate);
-  // return () => dataRef.off("value", onDataUpdate);
-};
-
-// export const addData = async (uuid: string, deviceId: string) => {
-//   const dataRef = firebase.database().ref(`Data/${uuid}`);
-//   await dataRef.set({ device_id: parseInt(deviceId, 10) });
+// export const getData = async () => {
+//   const dataRef = firebase.database().ref("Daftar");
+//   const snapshot = await dataRef.on("value");
+//   const data = snapshot.val();
+//   console.log(data, "data fb geData");
+//   return data;
 // };
+
+export const getData = () => {
+  return new Promise((resolve, reject) => {
+    const dataRef = firebase.database().ref("Daftar");
+    dataRef.on(
+      "value",
+      (snapshot) => {
+        const data = snapshot.val();
+        console.log(data, "data fb geData");
+        resolve(data);
+      },
+      (error) => {
+        console.log(error);
+        reject(error);
+      }
+    );
+  });
+};

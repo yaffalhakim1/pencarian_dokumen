@@ -81,11 +81,9 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
     formData.append("table", field.table);
     formData.append("room", field.room);
     // formData.append("photo", input.files![0]);
-
     if (field.photo instanceof File) {
       formData.append("photo", field.photo);
     }
-
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -98,7 +96,6 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
         formData,
         options
       );
-
       setLoading(false);
       onSuccess();
       closeModal();
@@ -107,17 +104,10 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
       const err = error as AxiosError;
       console.log(err.response?.data);
       toast.error("Detail alat gagal diubah");
+      setLoading(false);
+      closeModal();
     }
   }
-
-  // const handleChange = (e: any) => {
-  //   const { name, value, files } = e.target;
-  //   setField({
-  //     ...field,
-  //     [e.target.name]: e.target.value,
-  //     photo: name === "photo" ? files[0] : field.photo,
-  //   });
-  // };
 
   const handleChange = (e: any) => {
     const { name, value, files } = e.target;
@@ -288,7 +278,6 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                     "Simpan"
                   )}
                 </button>
-
                 <button onClick={closeModal} className="btn capitalize">
                   Batal
                 </button>
