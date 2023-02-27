@@ -151,7 +151,6 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
       >
         Edit
       </button>
-
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" onClose={() => closeModal()} className="relative z-50">
           <Transition.Child
