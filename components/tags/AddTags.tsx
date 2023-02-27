@@ -61,7 +61,7 @@ export default function AddTags({ onSuccess }: { onSuccess: () => void }) {
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data, "error upload");
-      toast.error("Gagal menambah alat");
+      toast.error("Gagal menambah tags");
       setLoading(false);
       closeModal();
     }

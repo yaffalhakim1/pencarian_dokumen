@@ -96,6 +96,7 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
     }
   }
 
+  //get list tags
   useEffect(() => {
     const getTags = async () => {
       try {

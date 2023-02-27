@@ -160,7 +160,7 @@ export default function CrudDevices() {
                     <td>
                       <img src={item.photo} width={100} alt="" />
                     </td>
-                    <td>{item.tag}</td>
+                    <td>{item.tag.join(", ")}</td>
                     <td>
                       <EditHardware
                         datas={{

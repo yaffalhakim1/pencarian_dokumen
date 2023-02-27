@@ -1,11 +1,12 @@
 import axios, { AxiosError } from "axios";
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { TailSpin } from "react-loader-spinner";
 import Alert from "../Alert";
 import { toast } from "sonner";
+import Select from "react-select";
 
 export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
   const [field, setField] = useState({
@@ -13,9 +14,12 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
     table: "",
     room: "",
     photo: "",
+    tag: [],
   });
   let [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [options, setOptions] = useState<any>([]);
+  const [selectedValue, setSelectedValue] = useState(null);
 
   function closeModal() {
     setIsOpen(false);
@@ -43,6 +47,9 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
     formData.append("table", field.table);
     formData.append("room", field.room);
     formData.append("photo", input.files![0]);
+    for (let i = 0; i < field.tag.length; i++) {
+      formData.append("tag[]", field.tag[i]);
+    }
 
     try {
       const token = Cookie.get("token") as string;
@@ -70,6 +77,44 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
       closeModal();
     }
   }
+
+  useEffect(() => {
+    const getTags = async () => {
+      try {
+        const token = Cookie.get("token") as string;
+        const res = await axios
+          .get("https://spda.17management.my.id/api/tags/list", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            const options = res.data.data.map((item: any) => {
+              return {
+                value: item.id,
+                label: item.name,
+              };
+            });
+            setOptions(options);
+            if (options.length > 0) {
+              setSelectedValue(options);
+            }
+          });
+      } catch (error) {
+        const err = error as AxiosError;
+        console.log(err.response?.data, "error get tags");
+      }
+    };
+    getTags();
+  }, []);
+
+  const handleSelectChange = (selectedOptions: any) => {
+    const options = selectedOptions.map((option: any) => option.label);
+    setField({
+      ...field,
+      tag: options,
+    });
+  };
 
   return (
     <>
@@ -143,6 +188,17 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                       className="input input-bordered"
                       name="room"
                       onChange={handleChange}
+                    />
+                  </label>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Tag</span>
+                    <Select
+                      isMulti
+                      options={options}
+                      className="basic-multi-select"
+                      classNamePrefix="select"
+                      onChange={handleSelectChange}
+                      name="tag"
                     />
                   </label>
                   <label className="label">

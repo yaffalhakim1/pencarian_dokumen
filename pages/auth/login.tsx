@@ -69,15 +69,15 @@ function LoginForm(this: any) {
       setLoading(false);
       if (loginReq.status === 200) {
         Cookie.set("token", loginResp.access_token);
-        Cookie.set("expired_in", loginResp.expired_in);
+        // Cookie.set("expired_in", loginResp.expired_in);
         Cookie.set("role", loginResp.data.role[0]);
-        console.log(loginResp.data.role[0]);
+        // console.log(loginResp.data.role[0]);
         if (loginResp.data.role[0] === "Super Admin") {
           router.push("/admin/dashboard");
           toast.success("Berhasil Masuk");
         } else if (loginResp.data.role[0] === "User") {
           router.push("/users/main");
-          toast.success("Berhasil Masuk");
+          toast.success("Berhasil Masuk sebagai user");
         }
       }
     } catch (error) {

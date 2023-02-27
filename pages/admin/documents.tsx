@@ -156,7 +156,7 @@ export default function CrudDocument() {
                   <tr key={item.id}>
                     <th>{index++}</th>
                     <td>{item.name}</td>
-                    <td>{item.tag} </td>
+                    <td>{item.tag.join(", ")} </td>
                     <td>{item.device_name}</td>
                     <td>
                       <EditDocs

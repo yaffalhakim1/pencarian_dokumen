@@ -150,9 +150,9 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
     for (let i = 0; i < field.tag.length; i++) {
       formData.append("tag[]", field.tag[i]);
     }
-    console.log(field.device_id);
-    console.log(field.uuid);
-    console.log(field.tag);
+    // console.log(field.device_id);
+    // console.log(field.uuid);
+    // console.log(field.tag);
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
