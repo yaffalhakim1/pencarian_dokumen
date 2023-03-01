@@ -60,7 +60,7 @@ export default function DeleteHardware(props: Props) {
             >
               <Dialog.Panel className="modal-box m-5">
                 <Dialog.Title className="font-bold text-lg">
-                  Hapus Dokumen
+                  Hapus Alat
                 </Dialog.Title>
                 <Dialog.Description className="mt-1 mb-6">
                   Apakah anda yakin ingin menghapus dokumen ini? Aksi ini tidak

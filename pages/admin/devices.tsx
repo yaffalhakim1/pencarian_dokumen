@@ -27,6 +27,7 @@ export default function CrudDevices() {
   useAuthRedirect();
   let index = 1;
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const fetcher = async (url: string) => {
     const token = Cookie.get("token") as string;
@@ -77,7 +78,7 @@ export default function CrudDevices() {
     const token = Cookie.get("token") as string;
     try {
       await axios.post(
-        `https://spda.17management.my.id/api/devices/delete/${id}`,
+        `https://spda.17management.my.id/api/devices/permanent-delete/${id}`,
         {},
         {
           headers: {
@@ -85,9 +86,11 @@ export default function CrudDevices() {
           },
         }
       );
+      setLoading(false);
       mutate(data);
       toast.success("Alat berhasil dihapus");
     } catch (error) {
+      setLoading(false);
       console.error(error);
     }
   };

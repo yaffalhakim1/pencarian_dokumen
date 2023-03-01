@@ -22,6 +22,7 @@ export default function CrudDocument() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState<any>([]);
   const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useAuthRedirect();
   let index = 1;
@@ -75,9 +76,10 @@ export default function CrudDocument() {
 
   const handleDelete = async (id: any) => {
     const token = Cookie.get("token") as string;
+    setLoading(true);
     try {
       await axios.post(
-        `https://spda.17management.my.id/api/documents/delete/${id}`,
+        `https://spda.17management.my.id/api/documents/permanent-delete/${id}`,
         {},
         {
           headers: {
@@ -85,9 +87,14 @@ export default function CrudDocument() {
           },
         }
       );
+
+      setLoading(false);
       mutate(data);
+      console.log(data);
       toast.success("Dokumen berhasil dihapus");
     } catch (error) {
+      setLoading(false);
+      toast.error("Dokumen gagal dihapus");
       console.error(error);
     }
   };

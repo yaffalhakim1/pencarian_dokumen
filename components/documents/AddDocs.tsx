@@ -22,17 +22,20 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [field, setField] = useState({
     name: "",
-    device_id: "",
+    device_id: "" as any,
     tag: [],
-    uuid: "",
+    uuid: "" as any,
   });
+
+  const [data, setData] = useState<any>([]);
   const [options, setOptions] = useState<any>([]);
   const [uuid, setUuid] = useState("");
-  const [deviceId, setDeviceId] = useState<number>(0);
+  const [deviceId, setDeviceId] = useState<any>(0);
   const [selectedValue, setSelectedValue] = useState(null);
   let [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [formData, setFormData] = useState(new FormData());
 
   function closeModal() {
     setIsOpen(false);
@@ -79,7 +82,7 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
     const getDatas = async () => {
       try {
         const res: any = await getData();
-        // setData(res);
+        setData(res);
         setUuid(res.uuid);
         setDeviceId(res.device_id);
         setField({
@@ -118,13 +121,14 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setField((prevField) => {
+    setField(() => {
       const updatedField = {
-        ...prevField,
+        ...field,
         [name]: value,
       };
       if (name === "uuid") {
         setUuid(value);
+        formData.set("uuid", value);
       } else if (name === "device_id") {
         setDeviceId(value);
       }
@@ -144,15 +148,13 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
     const token = Cookie.get("token") as string;
     const formData = new FormData();
     formData.append("name", field.name);
-    formData.append("device_id", field.device_id);
-    formData.append("uuid", field.uuid);
-    // field.tag.forEach((tag) => formData.append("tag[]", tag));
+    formData.append("device_id", deviceId);
+    formData.append("uuid", uuid);
     for (let i = 0; i < field.tag.length; i++) {
       formData.append("tag[]", field.tag[i]);
     }
-    // console.log(field.device_id);
-    // console.log(field.uuid);
-    // console.log(field.tag);
+    console.log(field.name);
+    console.log(field.uuid);
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -166,8 +168,8 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
         options
       )
       .then((postFileReq) => {
+        console.log(formData.append("uuid", field.uuid), "form data");
         console.log(postFileReq, "postfile req");
-        console.log(formData, "formdata handel add doc");
         onSuccess();
         setLoading(false);
         closeModal();
@@ -175,10 +177,10 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
       })
       .catch((error) => {
         const err = error as AxiosError;
-        toast.error("uuid already exist or device id already exist");
+        toast.error("uuid sudah ada");
         setLoading(false);
         closeModal();
-        console.log(err.response, "error upload");
+        console.log(err.response?.data, "error upload");
       });
   }
 
@@ -249,13 +251,10 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
                     <span>uuid Dokumen</span>
                     <input
                       type="text"
-                      // placeholder={uuid}
-                      // defaultValue={uuid}
+                      name="uuid"
                       value={uuid}
                       className="input input-bordered"
-                      name="uuid"
                       onChange={handleChange}
-                      // onChange={(e) => setUuid(e.target.value)}
                     />
                   </label>
                   {/* https://react-select.com/home, pakai yang multiple */}

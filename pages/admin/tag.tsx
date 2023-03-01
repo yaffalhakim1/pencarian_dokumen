@@ -78,7 +78,7 @@ export default function CrudTags() {
     const token = Cookie.get("token") as string;
     try {
       await axios.post(
-        `https://spda.17management.my.id/api/tags/delete/${id}`,
+        `https://spda.17management.my.id/api/tags/permanent-delete/${id}`,
         {},
         {
           headers: {
