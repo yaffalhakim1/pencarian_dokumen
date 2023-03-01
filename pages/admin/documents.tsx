@@ -163,6 +163,7 @@ export default function CrudDocument() {
                         datas={{
                           name: item.name,
                           device_id: item.device_id,
+                          uuid: item.uuid,
                           tag: item.tag,
 
                           // uuid: item.uuid,

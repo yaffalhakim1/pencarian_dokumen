@@ -28,7 +28,7 @@ export default function DeleteHardware(props: Props) {
       <button
         type="button"
         onClick={openModal}
-        className="btn btn-sm bg-red-700 capitalize text-white border border-red-700"
+        className="btn btn-sm bg-red-500 capitalize text-white border border-transparent hover:border-transparent hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-700"
       >
         Hapus
       </button>

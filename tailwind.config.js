@@ -5,7 +5,11 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        poppins: ["Poppins"],
+      },
+    },
   },
   plugins: [require("daisyui")],
   darkMode: ["class", '[data-theme="dark"]'],

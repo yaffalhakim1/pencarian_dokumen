@@ -52,7 +52,7 @@ export default function DocumentPage({ data }: Props) {
 
   return (
     <>
-      <div className="p-4">
+      {/* <div className="p-4">
         <Link href="/" legacyBehavior>
           <a className=" hover:text-blue-700">Back</a>
         </Link>
@@ -65,6 +65,32 @@ export default function DocumentPage({ data }: Props) {
         <p>Tag : {datas.tag.join(", ")}</p>
         <p>Ruang : {datas.room_name}</p>
         <p>Meja : {datas.table_name}</p>
+      </div> */}
+      <div className="card w-auto bg-base-100 shadow-2xl">
+        <Link href="/" legacyBehavior>
+          <a className=" hover:text-blue-700 ml-10 mt-10">Back</a>
+        </Link>
+
+        <figure className="p-1 rounded-md mx-10 mt-10 shadow-xl bg-warning bg-blend-overlay">
+          <img src={datas.photo} alt="Images" className="rounded-xl" />
+        </figure>
+        <div className="flex justify-center mt-7">
+          {datas.tag.map((item) => (
+            <button
+              className="btn btn-sm btn-success rounded-sm mx-1 shadow-lg text-white"
+              key={item}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+        <div className="card-body items-center text-center">
+          <h1 className="card-title text-2xl">{datas.name}</h1>
+          <p className="font-sans">
+            Dokumen ini berada di Ruang {datas.room_name} tepatnya di Meja{" "}
+            {datas.table_name}
+          </p>
+        </div>
       </div>
     </>
   );

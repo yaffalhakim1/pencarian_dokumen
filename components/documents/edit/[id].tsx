@@ -11,6 +11,7 @@ type Data = {
   name: string;
   device_id: string;
   tag: Array<string>;
+  uuid: any;
   id: any;
 };
 
@@ -46,6 +47,7 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
   const [field, setField] = useState({
     name: data.name,
     device_id: data.device_id,
+    uuid: data.uuid,
     tag: data.tag,
   });
   let [isOpen, setIsOpen] = useState(false);
@@ -67,6 +69,8 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
     const formData = new FormData();
     formData.append("name", field.name);
     formData.append("device_id", field.device_id);
+    formData.append("uuid", field.uuid);
+
     // field.tag.forEach((tag) => formData.append("tag[]", tag));
     for (let i = 0; i < field.tag.length; i++) {
       formData.append("tag[]", field.tag[i]);
@@ -200,6 +204,17 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
                       className="input input-bordered"
                       placeholder={data.device_id}
                       name="device_id"
+                      onChange={handleChange}
+                    />
+                  </label>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>uuid Dokumen</span>
+                    <input
+                      type="text"
+                      className="input input-bordered"
+                      placeholder={data.uuid}
+                      defaultValue={data.uuid}
+                      name="uuid"
                       onChange={handleChange}
                     />
                   </label>

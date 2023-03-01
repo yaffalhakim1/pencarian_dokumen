@@ -99,6 +99,7 @@ function LoginForm(this: any) {
           <div className="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
             <div className="md:w-8/12 lg:w-6/12 mb-12 md:mb-0">
               <Image
+                priority
                 src="/images/login.svg"
                 alt="Phone image"
                 width={600}

@@ -10,6 +10,9 @@ export function useAuthRedirect() {
     if (!token) {
       Router.push("/auth/login");
       return;
+    } else if (token && role === undefined) {
+      Router.push("/auth/login");
+      return;
     }
 
     switch (role) {
@@ -23,6 +26,13 @@ export function useAuthRedirect() {
         break;
       case "User":
         Router.push("/users/main");
+        break;
+      case "User":
+        if (Router.route.startsWith("/admin")) {
+          Router.push("/auth/unauthorized");
+        } else {
+          Router.push("/users/main");
+        }
         break;
       default:
         // Handle unexpected role value

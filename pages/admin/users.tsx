@@ -11,9 +11,11 @@ import EditUser from "../../components/users/edit/[id]";
 import _ from "lodash";
 import LoadingTable from "../../components/SkeletonTable";
 import useSWR, { mutate } from "swr";
+import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 
 export default function CrudUsers() {
   let index = 1;
+  useAuthRedirect();
 
   const fetcher = async (url: string) => {
     const token = Cookie.get("token") as string;

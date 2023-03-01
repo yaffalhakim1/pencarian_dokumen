@@ -4,6 +4,7 @@ import { AxiosError } from "axios";
 import axios from "axios";
 import Router, { useRouter } from "next/router";
 import Cookie from "js-cookie";
+import Select from "react-select";
 
 import { TailSpin } from "react-loader-spinner";
 import Head from "next/head";
@@ -25,12 +26,18 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState(null);
   const [expirationTime, setExpirationTime] = useState<any>(null);
-  // const authCtx = useContext(AuthContext);
 
   function fieldHandler(e: any) {
     setField({
       ...field,
       [e.target.name]: e.target.value,
+    });
+  }
+
+  function handleSelectChange(e: any) {
+    setField({
+      ...field,
+      role: e,
     });
   }
 
@@ -79,8 +86,7 @@ export default function Register() {
           },
         }
       );
-      //   const expirationTime = Date.now() + loginReq.data.expired_in * 1000;
-      //   authCtx.login(loginReq.data.access_token, expirationTime);
+
       const registerResp = await registerReq.data;
       setLoading(false);
       if (registerReq.status === 200) {
@@ -204,11 +210,20 @@ export default function Register() {
                     type="text"
                     // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                     className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
-                    placeholder="Password"
+                    placeholder=""
                     name="role"
                     onChange={fieldHandler}
+                    defaultValue="User"
                     required
                   />
+                  {/* <Select
+                    isMulti
+                    options={options}
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                    onChange={handleSelectChange}
+                    name="role"
+                  /> */}
                 </div>
 
                 <button
@@ -241,6 +256,4 @@ export default function Register() {
       </section>
     </>
   );
-
-  return <div>Register</div>;
 }
