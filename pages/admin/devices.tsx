@@ -78,7 +78,7 @@ export default function CrudDevices() {
     const token = Cookie.get("token") as string;
     try {
       await axios.post(
-        `https://spda.17management.my.id/api/devices/permanent-delete/${id}`,
+        `https://spda.17management.my.id/api/devices/delete/${id}`,
         {},
         {
           headers: {
