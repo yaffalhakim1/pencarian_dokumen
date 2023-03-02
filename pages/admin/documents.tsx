@@ -79,7 +79,7 @@ export default function CrudDocument() {
     setLoading(true);
     try {
       await axios.post(
-        `https://spda.17management.my.id/api/documents/permanent-delete/${id}`,
+        `https://spda.17management.my.id/api/documents/delete/${id}`,
         {},
         {
           headers: {
