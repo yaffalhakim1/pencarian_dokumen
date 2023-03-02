@@ -10,6 +10,7 @@ import { TailSpin } from "react-loader-spinner";
 import Head from "next/head";
 import Image from "next/image";
 import Alert from "../../components/Alert";
+import { toast } from "sonner";
 // import { AuthContext } from "../../hooks/AuthContext";
 
 export default function Register() {
@@ -77,7 +78,7 @@ export default function Register() {
           username: field.username,
           password: field.password,
           password_confirmation: field.password_confirmation,
-          role: field.role,
+          role: "User",
         },
         {
           headers: {
@@ -92,11 +93,15 @@ export default function Register() {
       if (registerReq.status === 200) {
         router.push("/auth/login");
       }
-    } catch (error) {
-      const err = error as AxiosError;
-      console.log(err.response?.data, "error register");
+    } catch (error: any) {
+      if (error.response.status === 400) {
+        toast.error("Email atau username sudah terdaftar");
+      } else {
+        toast.error("Register gagal, silakan coba lagi");
+      }
       setLoading(false);
-      setShowSnackbar(true);
+      const err = error as AxiosError;
+      console.log(err.message, "error register");
     }
   }
 
@@ -136,7 +141,6 @@ export default function Register() {
                   </div>
                   <input
                     type="text"
-                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                     className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
                     placeholder="Name"
                     name="name"
@@ -150,7 +154,6 @@ export default function Register() {
                   </div>
                   <input
                     type="text"
-                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                     className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
                     placeholder="Email"
                     name="email"
@@ -164,7 +167,6 @@ export default function Register() {
                   </div>
                   <input
                     type="text"
-                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                     className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
                     placeholder="Username"
                     name="username"
@@ -179,11 +181,12 @@ export default function Register() {
                   </div>
                   <input
                     type="password"
-                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                     className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
-                    placeholder="Password"
+                    placeholder="Password (minimum 8 characters)"
                     name="password"
                     onChange={fieldHandler}
+                    pattern=".{8,}"
+                    title="Password must be at least 8 characters long"
                     required
                   />
                 </div>
@@ -193,16 +196,15 @@ export default function Register() {
                   </div>
                   <input
                     type="password"
-                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                     className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
-                    placeholder="Password"
+                    placeholder="Re-type your password"
                     name="password_confirmation"
                     onChange={fieldHandler}
                     required
                   />
                 </div>
 
-                <div className="mb-6">
+                {/* <div className="mb-6">
                   <div className="text-lg font-bold text-gray-700 tracking-wide">
                     Role
                   </div>
@@ -216,15 +218,15 @@ export default function Register() {
                     value="User"
                     required
                   />
-                  {/* <Select
+                  <Select
                     isMulti
                     options={options}
                     className="basic-multi-select"
                     classNamePrefix="select"
                     onChange={handleSelectChange}
                     name="role"
-                  /> */}
-                </div>
+                  />
+                </div> */}
 
                 <button
                   type="submit"

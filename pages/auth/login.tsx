@@ -126,7 +126,6 @@ function LoginForm(this: any) {
                   </div>
                   <input
                     type="text"
-                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                     className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
                     placeholder="Username"
                     name="username"
@@ -141,7 +140,6 @@ function LoginForm(this: any) {
                   </div>
                   <input
                     type="password"
-                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                     className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
                     placeholder="Password"
                     name="password"
@@ -149,7 +147,6 @@ function LoginForm(this: any) {
                     required
                   />
                 </div>
-
                 <button
                   type="submit"
                   className="btn btn-primary w-full capitalize text-white"
@@ -174,11 +171,11 @@ function LoginForm(this: any) {
                   )}
                 </button>
 
-                <div onClick={() => router.push("/auth/register")}>
-                  <p className="text-slate-400 mt-3 text-sm text-center underline">
+                <button onClick={() => router.push("/auth/register")}>
+                  <p className="text-slate-400 mt-3 text-sm underline text-center">
                     Belum memiliki akun? Daftar disini
                   </p>
-                </div>
+                </button>
               </form>
             </div>
           </div>
