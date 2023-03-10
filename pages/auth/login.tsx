@@ -78,7 +78,29 @@ function LoginForm(this: any) {
         } else if (loginResp.data.role[0] === "User") {
           router.push("/users/main");
           toast.success("Berhasil Masuk sebagai user");
+        } else if (loginResp.data.role[0] === "Operator") {
+          router.push("/operator/dashboard");
+        } else if (loginResp.data.role[0] === "Manager") {
+          router.push("/manager/dashboard");
+        } else if (loginResp.data.role[0] === "Supervisor") {
+          router.push("/supervisor/dashboard");
         }
+
+        // switch (loginResp.data.role[0]) {
+        //   case "Operator":
+        //     router.push("/operator/dashboard");
+        //     break;
+        //   case "Admin":
+        //     router.push("/admin/dashboard");
+        //   case "User":
+        //     router.push("/users/main");
+        //   case "Manager":
+        //     router.push("/manager/dashboard");
+        //   case "Supervisor":
+        //     router.push("/supervisor/dashboard");
+        //   default:
+        //     break;
+        // }
       }
     } catch (error) {
       const err = error as AxiosError;

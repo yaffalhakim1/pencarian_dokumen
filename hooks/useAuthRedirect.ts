@@ -19,16 +19,23 @@ export function useAuthRedirect() {
     }
     switch (role) {
       case undefined:
-        setTimeout(() => {
-          Router.push("/auth/login");
-        }, 1000);
+        // setTimeout(() => {
+        //   Router.push("/auth/login");
+        // }, 1000);
         break;
-      case "Super Admin":
-        Router.push("/admin/dashboard");
+      case "Operator":
+        Router.push("/operator/dashboard");
         break;
       case "User":
         Router.push("/users/main");
         break;
+      case "Admin":
+        Router.push("/admin/dashboard");
+      case "Manager":
+        Router.push("/manager/dashboard");
+      case "Supervisor":
+        Router.push("/supervisor/dashboard");
+
       case "User":
         if (Router.route.startsWith("/admin")) {
           Router.push("/auth/unauthorized");

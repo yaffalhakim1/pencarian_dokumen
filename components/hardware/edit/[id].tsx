@@ -10,10 +10,11 @@ import { toast } from "sonner";
 type Data = {
   name: string;
   tag: any;
-  table: string;
-  room: string;
+  table: any;
+  room: any;
   photo: any;
   id: any;
+  code: any;
 };
 
 interface EditButtonProps {
@@ -44,8 +45,14 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
 
 export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
   const data = datas;
-  console.log(data.tag, "data tag from device");
-  const defaultValue = data.tag.map((tag: any) => ({ value: tag, label: tag }));
+  console.log(data.table, "data table from device");
+
+  const defaultValueTags = data.tag.map((tag: any) => ({
+    value: tag,
+    label: tag,
+  }));
+  const defaultValueTables = data.table;
+  const defaultValueRooms = data.room;
   const [field, setField] = useState({
     name: data.name,
     table: data.table,
@@ -53,11 +60,16 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
     photo: data.photo,
     tag: data.tag,
     id: data.id,
+    code: data.code,
   });
   let [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState<any>([]);
-  const [selectedValue, setSelectedValue] = useState(null);
+  const [tables, setTables] = useState<any>([]);
+  const [rooms, setRooms] = useState<any>([]);
+  const [selectedValue, setSelectedValue] = useState<any>([]);
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
   function closeModal() {
     setIsOpen(false);
@@ -78,8 +90,9 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
       formData.append("tag[]", field.tag[i]);
     }
     formData.append("name", field.name);
-    formData.append("table", field.table);
-    formData.append("room", field.room);
+    formData.append("table_id", field.table);
+    formData.append("room_id", field.room);
+    formData.append("code", field.code);
     // formData.append("photo", input.files![0]);
     if (field.photo instanceof File) {
       formData.append("photo", field.photo);
@@ -96,6 +109,7 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
         formData,
         options
       );
+      console.log(postFileReq, "post file req");
       setLoading(false);
       onSuccess();
       closeModal();
@@ -126,9 +140,13 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
 
   const handleSelectChange = (selectedOptions: any) => {
     const options = selectedOptions.map((option: any) => option.label);
+    const room_id = selectedOptions.map((option: any) => option.label);
+    const table_id = selectedOptions.map((option: any) => option.label);
     setField({
       ...field,
       tag: options,
+      room: room_id,
+      table: table_id,
     });
   };
 
@@ -161,6 +179,67 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
       }
     };
     getTags();
+  }, []);
+
+  useEffect(() => {
+    const getTableId = async () => {
+      try {
+        const token = Cookie.get("token") as string;
+        const res = await axios
+          .get("https://spda.17management.my.id/api/tables/list", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            const tables = res.data.data.map((item: any) => {
+              return {
+                label: item.id,
+                value: item.name,
+              };
+            });
+            setTables(tables);
+            console.log(tables, "tables");
+            if (tables.length > 0) {
+              setSelectedTable(tables);
+            }
+          });
+      } catch (error) {
+        const err = error as AxiosError;
+        console.log(err.response?.data, "error get table");
+      }
+    };
+    getTableId();
+  }, []);
+
+  useEffect(() => {
+    const getRoomId = async () => {
+      try {
+        const token = Cookie.get("token") as string;
+        const res = await axios
+          .get("https://spda.17management.my.id/api/rooms/list", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            const rooms = res.data.data.map((item: any) => {
+              return {
+                label: item.id,
+                value: item.name,
+              };
+            });
+            setRooms(rooms);
+            if (rooms.length > 0) {
+              setSelectedRoom(rooms);
+            }
+          });
+      } catch (error) {
+        const err = error as AxiosError;
+        console.log(err.response?.data, "error get rooms");
+      }
+    };
+    getRoomId();
   }, []);
 
   return (
@@ -204,18 +283,6 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                 <Dialog.Description className="mt-1 mb-4 text-md">
                   Masukkan nama, id alat yang ingin anda ubah disini.
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Tag</span>
-                    <Select
-                      name="tag[]"
-                      isMulti
-                      options={options}
-                      className="basic-multi-select"
-                      classNamePrefix="select"
-                      onChange={handleSelectChange}
-                      defaultValue={defaultValue}
-                    />
-                  </label>
-                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Nama Ruangan</span>
                     <input
                       type="text"
@@ -226,22 +293,48 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Tag</span>
+                    <Select
+                      name="tag[]"
+                      isMulti
+                      options={options}
+                      className="basic-multi-select"
+                      classNamePrefix="select"
+                      onChange={handleSelectChange}
+                      defaultValue={defaultValueTags}
+                    />
+                  </label>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Meja</span>
-                    <input
-                      type="text"
-                      placeholder={data.table}
-                      className="input input-bordered"
-                      name="table"
-                      onChange={handleChange}
+                    <Select
+                      name="room_id"
+                      isMulti
+                      options={tables}
+                      className="basic-multi-select"
+                      classNamePrefix="select"
+                      onChange={handleSelectChange}
+                      defaultValue={defaultValueTables}
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Ruang</span>
+                    <Select
+                      name="room_id"
+                      isMulti
+                      options={rooms}
+                      className="basic-multi-select"
+                      classNamePrefix="select"
+                      onChange={handleSelectChange}
+                      defaultValue={defaultValueRooms}
+                    />
+                  </label>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Kode</span>
                     <input
                       type="text"
-                      placeholder={data.room}
+                      placeholder={data.name}
                       className="input input-bordered"
-                      name="room"
+                      name="code"
                       onChange={handleChange}
                     />
                   </label>

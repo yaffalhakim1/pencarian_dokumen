@@ -2,24 +2,27 @@ import axios, { AxiosError } from "axios";
 import { useState, Fragment, useEffect } from "react";
 import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
-import { useRouter } from "next/router";
 import { TailSpin } from "react-loader-spinner";
-import Alert from "../Alert";
 import { toast } from "sonner";
 import Select from "react-select";
 
 export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
   const [field, setField] = useState({
     name: "",
-    table: "",
-    room: "",
     photo: "",
     tag: [],
+    code: "" as any,
+    table_id: [] as any,
+    room_id: [] as any,
   });
   let [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState<any>([]);
+  const [tables, setTables] = useState<any>([]);
+  const [rooms, setRooms] = useState<any>([]);
   const [selectedValue, setSelectedValue] = useState(null);
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
   function closeModal() {
     setIsOpen(false);
@@ -37,46 +40,6 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
       photo: name === "photo" ? files[0] : field.photo,
     });
   };
-
-  async function handleFileUpload() {
-    const input = document.querySelector(
-      "input[type='file']"
-    ) as HTMLInputElement;
-    const formData = new FormData();
-    formData.append("name", field.name);
-    formData.append("table", field.table);
-    formData.append("room", field.room);
-    formData.append("photo", input.files![0]);
-    for (let i = 0; i < field.tag.length; i++) {
-      formData.append("tag[]", field.tag[i]);
-    }
-
-    try {
-      const token = Cookie.get("token") as string;
-      const postFileReq = await axios
-        .post("https://spda.17management.my.id/api/devices/data", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Accept: "*/*",
-            authorization: `Bearer ${token}`,
-          },
-        })
-        .then((res) => {
-          console.log(res.data, "res");
-        });
-
-      onSuccess();
-      setLoading(false);
-      closeModal();
-      toast.success("Alat berhasil ditambahkan");
-    } catch (error) {
-      const err = error as AxiosError;
-      console.log(err.response?.data, "error upload");
-      toast.error("Gagal menambahkan alat");
-      setLoading(false);
-      closeModal();
-    }
-  }
 
   useEffect(() => {
     const getTags = async () => {
@@ -108,11 +71,119 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
     getTags();
   }, []);
 
+  useEffect(() => {
+    const getTableId = async () => {
+      try {
+        const token = Cookie.get("token") as string;
+        const res = await axios
+          .get("https://spda.17management.my.id/api/tables/list", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            const tables = res.data.data.map((item: any) => {
+              return {
+                label: item.id,
+                value: item.name,
+              };
+            });
+            setTables(tables);
+            console.log(tables, "tables");
+            if (tables.length > 0) {
+              setSelectedTable(tables);
+            }
+          });
+      } catch (error) {
+        const err = error as AxiosError;
+        console.log(err.response?.data, "error get table");
+      }
+    };
+    getTableId();
+  }, []);
+
+  useEffect(() => {
+    const getRoomId = async () => {
+      try {
+        const token = Cookie.get("token") as string;
+        const res = await axios
+          .get("https://spda.17management.my.id/api/rooms/list", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            const rooms = res.data.data.map((item: any) => {
+              return {
+                label: item.id,
+                value: item.name,
+              };
+            });
+            setRooms(rooms);
+            if (rooms.length > 0) {
+              setSelectedRoom(rooms);
+            }
+          });
+      } catch (error) {
+        const err = error as AxiosError;
+        console.log(err.response?.data, "error get rooms");
+      }
+    };
+    getRoomId();
+  }, []);
+
+  async function handleFileUpload() {
+    const formData = new FormData();
+    formData.append("name", field.name);
+    formData.append("table_id", field.table_id);
+    formData.append("room_id", field.room_id);
+    const input = document.querySelector(
+      "input[type='file']"
+    ) as HTMLInputElement;
+    formData.append("photo", input.files![0]);
+    formData.append("code", field.code);
+    for (let i = 0; i < field.tag.length; i++) {
+      formData.append("tag[]", field.tag[i]);
+    }
+
+    console.log(field.table_id, "table_id");
+    console.log(field.room_id, "room_id");
+    try {
+      const token = Cookie.get("token") as string;
+      const postFileReq = await axios
+        .post("https://spda.17management.my.id/api/devices/data", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Accept: "*/*",
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          console.log(res.data, "res");
+        });
+
+      onSuccess();
+      setLoading(false);
+      closeModal();
+      toast.success("Alat berhasil ditambahkan");
+    } catch (error) {
+      const err = error as AxiosError;
+      console.log(err.response?.data, "error upload");
+      toast.error("Gagal menambahkan alat");
+      setLoading(false);
+      closeModal();
+    }
+  }
+
   const handleSelectChange = (selectedOptions: any) => {
     const options = selectedOptions.map((option: any) => option.label);
+    const room_id = selectedOptions.map((option: any) => option.label);
+    const table_id = selectedOptions.map((option: any) => option.label);
     setField({
       ...field,
       tag: options,
+      room_id: room_id,
+      table_id: table_id,
     });
   };
 
@@ -159,9 +230,6 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                   disini.
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Nama</span>
-
-                    {/* supposed to be a dropdown with name and id from api */}
-                    {/* https://react-select.com/home, pakai yang multi select kedua */}
                     <input
                       type="text"
                       placeholder="Node 1"
@@ -172,22 +240,24 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Meja</span>
-                    <input
-                      type="text"
-                      placeholder="Meja Bu Dania"
-                      className="input input-bordered"
-                      name="table"
-                      onChange={handleChange}
+                    <Select
+                      isMulti
+                      options={tables}
+                      className="basic-multi-select"
+                      classNamePrefix="select"
+                      onChange={handleSelectChange}
+                      name="table_id"
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Ruang</span>
-                    <input
-                      type="text"
-                      placeholder="Ruangan Dosen 2"
-                      className="input input-bordered"
-                      name="room"
-                      onChange={handleChange}
+                    <Select
+                      isMulti
+                      options={rooms}
+                      className="basic-multi-select"
+                      classNamePrefix="select"
+                      onChange={handleSelectChange}
+                      name="room_id"
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
@@ -213,6 +283,17 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                     name="photo"
                     onChange={handleChange}
                   />
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Kode</span>
+
+                    <input
+                      type="text"
+                      placeholder="Node 1"
+                      className="input input-bordered"
+                      name="code"
+                      onChange={handleChange}
+                    />
+                  </label>
                 </Dialog.Description>
                 <button
                   onClick={() => {

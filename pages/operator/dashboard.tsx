@@ -6,9 +6,13 @@ import { MoonLoader } from "react-spinners";
 import SwitchTheme from "../../components/Switcher";
 import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import axios from "axios";
-
+import CrudDocument from "./documents";
+import CrudDevices from "./devices";
+import CrudUsers from "../admin/users";
+import CrudTags from "./tag";
 import useSWR from "swr";
-import CrudUsers from "./users";
+import CrudRoom from "./room";
+import CrudTable from "./table";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
@@ -18,7 +22,7 @@ export default function DashboardAdmin() {
     setSelectedItem(item);
   };
 
-  useAuthRedirect();
+  // useAuthRedirect();
 
   async function logoutHandler() {
     Cookie.remove("token");
@@ -80,7 +84,7 @@ export default function DashboardAdmin() {
   return (
     <>
       <Head>
-        <title>Dashboard Admin</title>
+        <title>Dashboard Operator</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className=" font-semibold ml-4 mt-5 mr-4">
@@ -92,7 +96,7 @@ export default function DashboardAdmin() {
             Menu
           </label>
           <div>
-            <h1 className="hidden md:flex mb-5">Dashboard Admin</h1>
+            <h1 className="hidden md:flex mb-5">Dashboard Operator</h1>
             <div className="flex items-center space-x-3 mr-4 md:mr-0">
               <div className="avatar placeholder">
                 {/* <div className="mask mask-squircle w-10 h-10 text-center bg-neutral-focus text-neutral-content">
@@ -111,7 +115,12 @@ export default function DashboardAdmin() {
       <div className="drawer drawer-mobile">
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content flex flex-col items-center justify-center">
-          {selectedItem === 1 && <CrudUsers />}
+          {selectedItem === 1 && <CrudDocument />}
+          {/* {selectedItem === 2 && <CrudUsers />} */}
+          {selectedItem === 2 && <CrudDevices />}
+          {selectedItem === 3 && <CrudTags />}
+          {selectedItem === 4 && <CrudRoom />}
+          {selectedItem === 5 && <CrudTable />}
         </div>
 
         <div className="drawer-side">
@@ -127,7 +136,7 @@ export default function DashboardAdmin() {
                 Dokumen
               </a>
             </li>
-            <li>
+            {/* <li>
               <a
                 className={
                   selectedItem === 2 ? "active font-semibold text-white" : ""
@@ -135,6 +144,16 @@ export default function DashboardAdmin() {
                 onClick={() => handleClick(2)}
               >
                 Users
+              </a>
+            </li> */}
+            <li>
+              <a
+                className={
+                  selectedItem === 2 ? "active font-semibold text-white" : ""
+                }
+                onClick={() => handleClick(2)}
+              >
+                Alat
               </a>
             </li>
             <li>
@@ -144,7 +163,7 @@ export default function DashboardAdmin() {
                 }
                 onClick={() => handleClick(3)}
               >
-                Alat
+                Tags
               </a>
             </li>
             <li>
@@ -154,7 +173,17 @@ export default function DashboardAdmin() {
                 }
                 onClick={() => handleClick(4)}
               >
-                Tags
+                Ruang
+              </a>
+            </li>
+            <li>
+              <a
+                className={
+                  selectedItem === 5 ? "active font-semibold text-white" : ""
+                }
+                onClick={() => handleClick(5)}
+              >
+                Meja
               </a>
             </li>
             <li className="">

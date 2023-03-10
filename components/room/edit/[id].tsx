@@ -9,11 +9,8 @@ import Select from "react-select";
 
 type Data = {
   name: string;
-  device_id: string;
-  tag: Array<string>;
-  uuid: any;
-  id: any;
   code: any;
+  id: any;
 };
 
 interface EditButtonProps {
@@ -27,7 +24,7 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
   const id = context.query.id as string;
   const token = context.req.headers.token;
   const response = await axios.get(
-    "https://spda.17management.my.id/api/documents/data" + id,
+    "https://spda.17management.my.id/api/rooms/data" + id,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -42,20 +39,16 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
   };
 };
 
-export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
+export default function EditRoom({ datas, onSuccess }: EditButtonProps) {
   const data = datas;
-  const defaultValue = data.tag.map((tag: any) => ({ value: tag, label: tag }));
+
   const [field, setField] = useState({
     name: data.name,
-    device_id: data.device_id,
-    uuid: data.uuid,
-    tag: data.tag,
-    code: data.code,
+    // code: data.code,
   });
   let [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState<any>([]);
-
   const [selectedValue, setSelectedValue] = useState<any>([]);
 
   function closeModal() {
@@ -71,13 +64,7 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
     const token = Cookie.get("token") as string;
     const formData = new FormData();
     formData.append("name", field.name);
-    formData.append("device_id", field.device_id);
-    formData.append("uuid", field.uuid);
-    formData.append("code", field.code);
-    // field.tag.forEach((tag) => formData.append("tag[]", tag));
-    for (let i = 0; i < field.tag.length; i++) {
-      formData.append("tag[]", field.tag[i]);
-    }
+
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -86,17 +73,17 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
     };
     try {
       const postFileReq = await axios.post(
-        `https://spda.17management.my.id/api/documents/update/${id}`,
+        `https://spda.17management.my.id/api/rooms/update/${id}`,
         formData,
         options
       );
       setLoading(false);
       onSuccess();
       closeModal();
-      toast.success("Dokumen berhasil dirubah");
+      toast.success("Ruang berhasil dirubah");
     } catch (error) {
       const err = error as AxiosError;
-      toast.error("Dokumen gagal dirubah");
+      toast.error("Ruang gagal dirubah");
       closeModal();
       setLoading(false);
       console.log(err.response?.data);
@@ -133,74 +120,14 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
     };
     getTags();
   }, []);
-  // useEffect(() => {
-  //   const getTableId = async () => {
-  //     try {
-  //       const token = Cookie.get("token") as string;
-  //       const res = await axios
-  //         .get("https://spda.17management.my.id/api/tables/list", {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         })
-  //         .then((res) => {
-  //           const tables = res.data.data.map((item: any) => {
-  //             return {
-  //               label: item.id,
-  //               value: item.name,
-  //             };
-  //           });
-  //           setTables(tables);
-  //           console.log(tables, "tables");
-  //           if (tables.length > 0) {
-  //             setSelectedTable(tables);
-  //           }
-  //         });
-  //     } catch (error) {
-  //       const err = error as AxiosError;
-  //       console.log(err.response?.data, "error get table");
-  //     }
-  //   };
-  //   getTableId();
-  // }, []);
 
-  // useEffect(() => {
-  //   const getRoomId = async () => {
-  //     try {
-  //       const token = Cookie.get("token") as string;
-  //       const res = await axios
-  //         .get("https://spda.17management.my.id/api/rooms/list", {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         })
-  //         .then((res) => {
-  //           const rooms = res.data.data.map((item: any) => {
-  //             return {
-  //               label: item.id,
-  //               value: item.name,
-  //             };
-  //           });
-  //           setRooms(rooms);
-  //           if (rooms.length > 0) {
-  //             setSelectedRoom(rooms);
-  //           }
-  //         });
-  //     } catch (error) {
-  //       const err = error as AxiosError;
-  //       console.log(err.response?.data, "error get rooms");
-  //     }
+  //   const handleSelectChange = (selectedOptions: any) => {
+  //     const options = selectedOptions.map((option: any) => option.label);
+  //     setField({
+  //       ...field,
+  //       tag: options,
+  //     });
   //   };
-  //   getRoomId();
-  // }, []);
-
-  const handleSelectChange = (selectedOptions: any) => {
-    const options = selectedOptions.map((option: any) => option.label);
-    setField({
-      ...field,
-      tag: options,
-    });
-  };
 
   const handleChange = (e: any) => {
     const { name, value, files } = e.target;
@@ -245,61 +172,18 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
             >
               <Dialog.Panel className="modal-box m-5">
                 <Dialog.Title className="font-bold text-xl">
-                  Ubah Dokumen
+                  Ubah Ruang
                 </Dialog.Title>
                 <Dialog.Description className="mt-1 mb-4 text-md">
                   Masukkan nama, id alat, uuid, dan foto dokumen yang ingin anda
                   ubah disini.
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Nama Dokumen</span>
+                    <span>Nama Ruang</span>
                     <input
                       type="text"
                       placeholder={data.name}
                       className="input input-bordered"
                       name="name"
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Device Id Dokumen</span>
-                    <input
-                      type="text"
-                      className="input input-bordered"
-                      placeholder={data.device_id}
-                      name="device_id"
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>uuid Dokumen</span>
-                    <input
-                      type="text"
-                      className="input input-bordered"
-                      placeholder={data.uuid}
-                      defaultValue={data.uuid}
-                      name="uuid"
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Tag</span>
-                    <Select
-                      name="tag[]"
-                      isMulti
-                      options={options}
-                      className="basic-multi-select"
-                      onChange={handleSelectChange}
-                      defaultValue={defaultValue}
-                      classNamePrefix="select"
-                    />
-                  </label>
-                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Kode Dokumen</span>
-                    <input
-                      type="text"
-                      placeholder={data.code}
-                      className="input input-bordered"
-                      name="code"
                       onChange={handleChange}
                     />
                   </label>

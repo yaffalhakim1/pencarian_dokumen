@@ -4,6 +4,7 @@ import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
 import { TailSpin } from "react-loader-spinner";
 import { GetServerSideProps } from "next";
+import { toast } from "sonner";
 
 type Data = {
   name: string;
@@ -87,10 +88,14 @@ export default function EditUser({ datas, onSuccess }: EditButtonProps) {
       console.log(postUserRes);
       setLoading(false);
       onSuccess();
+      toast.success("Data User berhasil diubah");
       closeModal();
     } catch (error) {
       const err = error as AxiosError;
+
       console.log(err.response?.data);
+      toast.success("Data User gagal diubah");
+      setLoading(false);
     }
   }
 

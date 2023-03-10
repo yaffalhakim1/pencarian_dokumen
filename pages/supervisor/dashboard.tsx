@@ -7,9 +7,6 @@ import SwitchTheme from "../../components/Switcher";
 import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import axios from "axios";
 
-import useSWR from "swr";
-import CrudUsers from "./users";
-
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -80,7 +77,7 @@ export default function DashboardAdmin() {
   return (
     <>
       <Head>
-        <title>Dashboard Admin</title>
+        <title>Dashboard Operator</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className=" font-semibold ml-4 mt-5 mr-4">
@@ -92,7 +89,7 @@ export default function DashboardAdmin() {
             Menu
           </label>
           <div>
-            <h1 className="hidden md:flex mb-5">Dashboard Admin</h1>
+            <h1 className="hidden md:flex mb-5">Dashboard Operator</h1>
             <div className="flex items-center space-x-3 mr-4 md:mr-0">
               <div className="avatar placeholder">
                 {/* <div className="mask mask-squircle w-10 h-10 text-center bg-neutral-focus text-neutral-content">
@@ -111,7 +108,10 @@ export default function DashboardAdmin() {
       <div className="drawer drawer-mobile">
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content flex flex-col items-center justify-center">
-          {selectedItem === 1 && <CrudUsers />}
+          {/* {selectedItem === 1 && <CrudDocument />} */}
+          {/* {selectedItem === 2 && <CrudUsers />} */}
+          {/* {selectedItem === 3 && <CrudDevices />}
+          {selectedItem === 4 && <CrudTags />} */}
         </div>
 
         <div className="drawer-side">
