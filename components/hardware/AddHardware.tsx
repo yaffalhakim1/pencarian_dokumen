@@ -84,8 +84,8 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
           .then((res) => {
             const tables = res.data.data.map((item: any) => {
               return {
-                label: item.id,
-                value: item.name,
+                value: item.id,
+                label: item.name,
               };
             });
             setTables(tables);
@@ -115,8 +115,8 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
           .then((res) => {
             const rooms = res.data.data.map((item: any) => {
               return {
-                label: item.id,
-                value: item.name,
+                value: item.id,
+                label: item.name,
               };
             });
             setRooms(rooms);
@@ -148,6 +148,7 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
 
     console.log(field.table_id, "table_id");
     console.log(field.room_id, "room_id");
+    console.log(field.tag, "tag");
     try {
       const token = Cookie.get("token") as string;
       const postFileReq = await axios
@@ -177,12 +178,24 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
 
   const handleSelectChange = (selectedOptions: any) => {
     const options = selectedOptions.map((option: any) => option.label);
-    const room_id = selectedOptions.map((option: any) => option.label);
-    const table_id = selectedOptions.map((option: any) => option.label);
     setField({
       ...field,
       tag: options,
+    });
+  };
+
+  const handleSelectRoomChange = (selectedRoom: any) => {
+    const room_id = selectedRoom.map((option: any) => option.value);
+    setField({
+      ...field,
       room_id: room_id,
+    });
+  };
+
+  const handleSelectTableChange = (selectedTable: any) => {
+    const table_id = selectedTable.map((option: any) => option.value);
+    setField({
+      ...field,
       table_id: table_id,
     });
   };
@@ -245,7 +258,7 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                       options={tables}
                       className="basic-multi-select"
                       classNamePrefix="select"
-                      onChange={handleSelectChange}
+                      onChange={handleSelectTableChange}
                       name="table_id"
                     />
                   </label>
@@ -256,7 +269,7 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                       options={rooms}
                       className="basic-multi-select"
                       classNamePrefix="select"
-                      onChange={handleSelectChange}
+                      onChange={handleSelectRoomChange}
                       name="room_id"
                     />
                   </label>

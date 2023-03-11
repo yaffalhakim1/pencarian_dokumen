@@ -152,7 +152,7 @@ export default function CrudDocument() {
                   <th>No</th>
                   <th>Name Dokumen</th>
                   <th>Tag</th>
-                  <th>Nama Alat</th>
+                  {/* <th>Nama Alat</th> */}
                   <th></th>
                   <th></th>
                   <th></th>
@@ -164,7 +164,7 @@ export default function CrudDocument() {
                     <th>{index++}</th>
                     <td>{item.name}</td>
                     <td>{item.tag.join(", ")} </td>
-                    <td>{item.device_name}</td>
+                    {/* <td>{item.device_name}</td> */}
                     <td>
                       <EditDocs
                         datas={{
@@ -172,7 +172,7 @@ export default function CrudDocument() {
                           device_id: item.device_id,
                           uuid: item.uuid,
                           tag: item.tag,
-
+                          code: item.code,
                           // uuid: item.uuid,
                           id: item.id,
                         }}

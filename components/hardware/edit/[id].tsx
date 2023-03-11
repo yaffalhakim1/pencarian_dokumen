@@ -10,11 +10,13 @@ import { toast } from "sonner";
 type Data = {
   name: string;
   tag: any;
-  table: any;
-  room: any;
+  table?: any;
+  room?: any;
   photo: any;
   id: any;
   code: any;
+  table_id: any;
+  room_id: any;
 };
 
 interface EditButtonProps {
@@ -45,14 +47,13 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
 
 export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
   const data = datas;
-  console.log(data.table, "data table from device");
-
   const defaultValueTags = data.tag.map((tag: any) => ({
-    value: tag,
     label: tag,
   }));
-  const defaultValueTables = data.table;
-  const defaultValueRooms = data.room;
+  const defaultValueTables = data.table_id;
+  const defaultValueRooms = data.room_id;
+  // console.log(defaultValueTables, "default value tables");
+  // console.log(defaultValueRooms, "default value rooms");
   const [field, setField] = useState({
     name: data.name,
     table: data.table,
@@ -61,6 +62,8 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
     tag: data.tag,
     id: data.id,
     code: data.code,
+    table_id: data.table_id,
+    room_id: data.room_id,
   });
   let [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -90,13 +93,16 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
       formData.append("tag[]", field.tag[i]);
     }
     formData.append("name", field.name);
-    formData.append("table_id", field.table);
-    formData.append("room_id", field.room);
-    formData.append("code", field.code);
-    // formData.append("photo", input.files![0]);
+    formData.append("table_id", field.table_id);
+    formData.append("room_id", field.room_id);
     if (field.photo instanceof File) {
       formData.append("photo", field.photo);
     }
+    formData.append("code", field.code);
+    console.log(field.table_id, "field table");
+    console.log(field.room_id, "field room");
+    console.log(field.tag, "field tag");
+
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -140,14 +146,26 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
 
   const handleSelectChange = (selectedOptions: any) => {
     const options = selectedOptions.map((option: any) => option.label);
-    const room_id = selectedOptions.map((option: any) => option.label);
-    const table_id = selectedOptions.map((option: any) => option.label);
     setField({
       ...field,
       tag: options,
-      room: room_id,
-      table: table_id,
     });
+  };
+
+  const handleSelectRoomChange = (selectedRoom: any) => {
+    const room_id = selectedRoom.value;
+    setField((prevField) => ({
+      ...prevField,
+      room_id: room_id,
+    }));
+  };
+
+  const handleSelectTableChange = (selectedTable: any) => {
+    const table_id = selectedTable.value;
+    setField((prevField) => ({
+      ...prevField,
+      table_id: table_id,
+    }));
   };
 
   useEffect(() => {
@@ -194,12 +212,11 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
           .then((res) => {
             const tables = res.data.data.map((item: any) => {
               return {
-                label: item.id,
-                value: item.name,
+                value: item.id,
+                label: item.name,
               };
             });
             setTables(tables);
-            console.log(tables, "tables");
             if (tables.length > 0) {
               setSelectedTable(tables);
             }
@@ -225,8 +242,8 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
           .then((res) => {
             const rooms = res.data.data.map((item: any) => {
               return {
-                label: item.id,
-                value: item.name,
+                value: item.id,
+                label: item.name,
               };
             });
             setRooms(rooms);
@@ -307,24 +324,22 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Meja</span>
                     <Select
-                      name="room_id"
-                      isMulti
+                      name="table_id"
                       options={tables}
-                      className="basic-multi-select"
-                      classNamePrefix="select"
-                      onChange={handleSelectChange}
                       defaultValue={defaultValueTables}
+                      className="basic-single"
+                      classNamePrefix="select"
+                      onChange={handleSelectTableChange}
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Ruang</span>
                     <Select
                       name="room_id"
-                      isMulti
                       options={rooms}
-                      className="basic-multi-select"
+                      className="basic-single"
                       classNamePrefix="select"
-                      onChange={handleSelectChange}
+                      onChange={handleSelectRoomChange}
                       defaultValue={defaultValueRooms}
                     />
                   </label>
@@ -332,7 +347,7 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                     <span>Kode</span>
                     <input
                       type="text"
-                      placeholder={data.name}
+                      placeholder={data.code}
                       className="input input-bordered"
                       name="code"
                       onChange={handleChange}

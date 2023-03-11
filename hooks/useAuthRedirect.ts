@@ -35,12 +35,9 @@ export function useAuthRedirect() {
         Router.push("/manager/dashboard");
       case "Supervisor":
         Router.push("/supervisor/dashboard");
-
       case "User":
-        if (Router.route.startsWith("/admin")) {
+        if (Router.route.startsWith("/operator")) {
           Router.push("/auth/unauthorized");
-        } else {
-          Router.push("/users/main");
         }
         break;
       default:

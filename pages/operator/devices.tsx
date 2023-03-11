@@ -146,9 +146,7 @@ export default function CrudDevices() {
                 <tr className="[&_th]:font-semibold [&_th]:capitalize">
                   <th>No</th>
                   <th>Lokasi</th>
-                  <th>Meja</th>
-                  {/* <th>Ruang</th>
-                  <th>Foto</th> */}
+                  <th>Foto</th>
                   <th>Tag</th>
                   <th></th>
                 </tr>
@@ -158,8 +156,6 @@ export default function CrudDevices() {
                   <tr key={item.id}>
                     <th>{index++}</th>
                     <td>{item.name}</td>
-                    {/* <td>{item.table}</td>
-                    <td>{item.room}</td> */}
                     <td>
                       <img src={item.photo} width={100} alt="" />
                     </td>
@@ -168,11 +164,14 @@ export default function CrudDevices() {
                       <EditHardware
                         datas={{
                           id: item.id,
+                          room_id: item.room_id,
+                          table_id: item.table_id,
                           name: item.name,
                           tag: item.tag,
-                          table: item.table,
-                          room: item.room,
                           photo: item.photo,
+                          code: item.code,
+                          room: item.room,
+                          table: item.table,
                         }}
                         onSuccess={() => mutate()}
                       />
