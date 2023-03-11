@@ -124,39 +124,10 @@ export default function DashboardAdmin() {
                 }
                 onClick={() => handleClick(1)}
               >
-                Dokumen
-              </a>
-            </li>
-            <li>
-              <a
-                className={
-                  selectedItem === 2 ? "active font-semibold text-white" : ""
-                }
-                onClick={() => handleClick(2)}
-              >
                 Users
               </a>
             </li>
-            <li>
-              <a
-                className={
-                  selectedItem === 3 ? "active font-semibold text-white" : ""
-                }
-                onClick={() => handleClick(3)}
-              >
-                Alat
-              </a>
-            </li>
-            <li>
-              <a
-                className={
-                  selectedItem === 4 ? "active font-semibold text-white" : ""
-                }
-                onClick={() => handleClick(4)}
-              >
-                Tags
-              </a>
-            </li>
+
             <li className="">
               <a
                 className="btn btn-error text-white mt-5 py-3"

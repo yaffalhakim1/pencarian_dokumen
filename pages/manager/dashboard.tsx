@@ -11,6 +11,7 @@ import CrudDevices from "./devices";
 import CrudUsers from "../admin/users";
 import CrudTags from "./tag";
 import useSWR from "swr";
+import CrudApproval from "./approval";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
@@ -114,9 +115,10 @@ export default function DashboardAdmin() {
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content flex flex-col items-center justify-center">
           {selectedItem === 1 && <CrudDocument />}
-          {/* {selectedItem === 2 && <CrudUsers />} */}
+          {selectedItem === 2 && <CrudUsers />}
           {selectedItem === 3 && <CrudDevices />}
           {selectedItem === 4 && <CrudTags />}
+          {selectedItem === 5 && <CrudApproval />}
         </div>
 
         <div className="drawer-side">
@@ -160,6 +162,16 @@ export default function DashboardAdmin() {
                 onClick={() => handleClick(4)}
               >
                 Tags
+              </a>
+            </li>
+            <li>
+              <a
+                className={
+                  selectedItem === 5 ? "active font-semibold text-white" : ""
+                }
+                onClick={() => handleClick(5)}
+              >
+                Approval
               </a>
             </li>
             <li className="">

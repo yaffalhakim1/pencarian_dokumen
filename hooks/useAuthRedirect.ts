@@ -18,11 +18,6 @@ export function useAuthRedirect() {
       return;
     }
     switch (role) {
-      case undefined:
-        // setTimeout(() => {
-        //   Router.push("/auth/login");
-        // }, 1000);
-        break;
       case "Operator":
         Router.push("/operator/dashboard");
         break;

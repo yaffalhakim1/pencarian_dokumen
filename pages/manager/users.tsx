@@ -134,7 +134,7 @@ export default function CrudUsers() {
                         <img src={item.photo} alt="" width={100} />
                       </td> */}
                     <td>
-                      <EditUser
+                      {/* <EditUser
                         datas={{
                           name: item.name,
                           username: item.username,
@@ -142,14 +142,13 @@ export default function CrudUsers() {
                           id: item.id,
                         }}
                         onSuccess={() => mutate()}
-                        // device_id={item.device_id}
+                       
                       />
-                      {/* <br /> */}
                       <DeleteUser
                         id={item.id}
                         onSuccess={() => mutate()}
                         onClick={() => handleDelete(item.id)}
-                      />
+                      /> */}
                     </td>
                   </tr>
                 ))}

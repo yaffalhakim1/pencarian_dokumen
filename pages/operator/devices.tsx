@@ -170,8 +170,6 @@ export default function CrudDevices() {
                           tag: item.tag,
                           photo: item.photo,
                           code: item.code,
-                          room: item.room,
-                          table: item.table,
                         }}
                         onSuccess={() => mutate()}
                       />

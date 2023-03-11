@@ -47,12 +47,17 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
 
 export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
   const data = datas;
+  console.log(data.table_id, "data");
   const defaultValueTags = data.tag.map((tag: any) => ({
     label: tag,
   }));
-  const defaultValueTables = data.table_id;
-  const defaultValueRooms = data.room_id;
-  // console.log(defaultValueTables, "default value tables");
+  const defaultValueTables = {
+    label: data.table_id,
+    value: data.table_id,
+  };
+  const defaultValueRooms = { label: data.table };
+
+  console.log(defaultValueTables, "default value tables");
   // console.log(defaultValueRooms, "default value rooms");
   const [field, setField] = useState({
     name: data.name,
@@ -326,10 +331,10 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                     <Select
                       name="table_id"
                       options={tables}
-                      defaultValue={defaultValueTables}
                       className="basic-single"
                       classNamePrefix="select"
                       onChange={handleSelectTableChange}
+                      defaultValue={defaultValueTables}
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">

@@ -156,19 +156,19 @@ export default function CrudTags() {
 
                     <td></td>
                     <td>
-                      <EditTags
+                      {/* <EditTags
                         datas={{
                           name: item.name,
                           id: item.id,
                         }}
                         onSuccess={() => mutate()}
                       />
-                      {/* <br /> */}
+                     
                       <DeleteTags
                         id={item.id}
                         onSuccess={() => mutate()}
                         onClick={() => handleDelete(item.id)}
-                      />
+                      /> */}
                     </td>
                   </tr>
                 ))}

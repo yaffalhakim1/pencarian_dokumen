@@ -165,7 +165,7 @@ export default function CrudDevices() {
                     </td>
                     <td>{item.tag.join(", ")}</td>
                     <td>
-                      <EditHardware
+                      {/* <EditHardware
                         datas={{
                           id: item.id,
                           name: item.name,
@@ -176,12 +176,11 @@ export default function CrudDevices() {
                         }}
                         onSuccess={() => mutate()}
                       />
-                      {/* <br /> */}
                       <DeleteHardware
                         id={item.id}
                         onSuccess={() => mutate()}
                         onClick={() => handleDelete(item.id)}
-                      />
+                      /> */}
                     </td>
                   </tr>
                 ))}
