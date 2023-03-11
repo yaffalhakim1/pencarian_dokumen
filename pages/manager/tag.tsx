@@ -25,7 +25,7 @@ interface Item {
 export default function CrudTags() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState<any>([]);
-  useAuthRedirect();
+  // useAuthRedirect();
   let index = 1;
   const [page, setPage] = useState(1);
 
@@ -108,7 +108,7 @@ export default function CrudTags() {
           Lakukan perubahan data tag atau penanda disini
         </p>
         <div className="md:flex md:justify-between">
-          <AddTags onSuccess={mutate} />
+          {/* <AddTags onSuccess={mutate} /> */}
           <div className="form-control">
             <div className="input-group input-group-sm mb-3">
               <input

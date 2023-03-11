@@ -28,7 +28,7 @@ export default function CrudApproval() {
   const [approvedIds, setApprovedIds] = useState<number[]>([]);
   const [rejectedIds, setRejectedIds] = useState<number[]>([]);
 
-  useAuthRedirect();
+  // useAuthRedirect();
   let index = 1;
   const [page, setPage] = useState(1);
 

@@ -24,7 +24,7 @@ export default function CrudDevices() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState<any>([]);
   const [items, setItems] = useState<Item[]>([]);
-  useAuthRedirect();
+  // useAuthRedirect();
   let index = 1;
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -110,7 +110,7 @@ export default function CrudDevices() {
           Lakukan perubahan data perangkat keras disini
         </p>
         <div className="md:flex md:justify-between">
-          <AddHardware onSuccess={mutate} />
+          {/* <AddHardware onSuccess={mutate} /> */}
           <div className="form-control">
             <div className="input-group input-group-sm mb-3">
               <input

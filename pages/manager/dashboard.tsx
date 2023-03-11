@@ -21,7 +21,7 @@ export default function DashboardAdmin() {
     setSelectedItem(item);
   };
 
-  useAuthRedirect();
+  // useAuthRedirect();
 
   async function logoutHandler() {
     Cookie.remove("token");
@@ -83,7 +83,7 @@ export default function DashboardAdmin() {
   return (
     <>
       <Head>
-        <title>Dashboard Operator</title>
+        <title>Dashboard Manajer</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className=" font-semibold ml-4 mt-5 mr-4">
@@ -95,7 +95,7 @@ export default function DashboardAdmin() {
             Menu
           </label>
           <div>
-            <h1 className="hidden md:flex mb-5">Dashboard Operator</h1>
+            <h1 className="hidden md:flex mb-5">Dashboard Manajer</h1>
             <div className="flex items-center space-x-3 mr-4 md:mr-0">
               <div className="avatar placeholder">
                 {/* <div className="mask mask-squircle w-10 h-10 text-center bg-neutral-focus text-neutral-content">
@@ -115,10 +115,10 @@ export default function DashboardAdmin() {
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content flex flex-col items-center justify-center">
           {selectedItem === 1 && <CrudDocument />}
-          {selectedItem === 2 && <CrudUsers />}
-          {selectedItem === 3 && <CrudDevices />}
-          {selectedItem === 4 && <CrudTags />}
-          {selectedItem === 5 && <CrudApproval />}
+          {/* {selectedItem === 2 && <CrudUsers />} */}
+          {selectedItem === 2 && <CrudDevices />}
+          {selectedItem === 3 && <CrudTags />}
+          {selectedItem === 4 && <CrudApproval />}
         </div>
 
         <div className="drawer-side">
@@ -134,6 +134,7 @@ export default function DashboardAdmin() {
                 Dokumen
               </a>
             </li>
+
             <li>
               <a
                 className={
@@ -141,7 +142,7 @@ export default function DashboardAdmin() {
                 }
                 onClick={() => handleClick(2)}
               >
-                Users
+                Alat
               </a>
             </li>
             <li>
@@ -151,7 +152,7 @@ export default function DashboardAdmin() {
                 }
                 onClick={() => handleClick(3)}
               >
-                Alat
+                Tags
               </a>
             </li>
             <li>
@@ -160,16 +161,6 @@ export default function DashboardAdmin() {
                   selectedItem === 4 ? "active font-semibold text-white" : ""
                 }
                 onClick={() => handleClick(4)}
-              >
-                Tags
-              </a>
-            </li>
-            <li>
-              <a
-                className={
-                  selectedItem === 5 ? "active font-semibold text-white" : ""
-                }
-                onClick={() => handleClick(5)}
               >
                 Approval
               </a>

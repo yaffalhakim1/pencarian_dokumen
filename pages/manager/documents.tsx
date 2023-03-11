@@ -24,7 +24,7 @@ export default function CrudDocument() {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useAuthRedirect();
+  // useAuthRedirect();
   let index = 1;
   const [page, setPage] = useState(1);
 
