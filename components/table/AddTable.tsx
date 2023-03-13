@@ -105,7 +105,6 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
         options
       )
       .then((postFileReq) => {
-        console.log(postFileReq, "postfile req");
         onSuccess();
         setLoading(false);
         closeModal();

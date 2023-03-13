@@ -6,6 +6,7 @@ import { TailSpin } from "react-loader-spinner";
 import { GetServerSideProps } from "next";
 import Select from "react-select";
 import { toast } from "sonner";
+import useSWR from "swr";
 
 type Data = {
   name: string;
@@ -54,8 +55,7 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
   }));
   const defaultValueTables = { value: data.table_name };
   const defaultValueRooms = { value: data.room_name };
-  console.log(defaultValueRooms, "default value rooms");
-  console.log(defaultValueTables, "default value tables");
+
   const [field, setField] = useState({
     name: data.name,
     table: data.table,
@@ -69,9 +69,9 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
   });
   let [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [options, setOptions] = useState<any>([]);
-  const [tables, setTables] = useState<any>([]);
-  const [rooms, setRooms] = useState<any>([]);
+  // const [options, setOptions] = useState<any>([]);
+  // const [tables, setTables] = useState<any>([]);
+  // const [rooms, setRooms] = useState<any>([]);
   const [selectedValue, setSelectedValue] = useState<any>([]);
   const [selectedTable, setSelectedTable] = useState(null);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -101,9 +101,6 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
       formData.append("photo", field.photo);
     }
     formData.append("code", field.code);
-    console.log(field.table_id, "field table");
-    console.log(field.room_id, "field room");
-    console.log(field.tag, "field tag");
 
     const options = {
       headers: {
@@ -117,7 +114,6 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
         formData,
         options
       );
-      console.log(postFileReq, "post file req");
       setLoading(false);
       onSuccess();
       closeModal();
@@ -170,96 +166,137 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
     }));
   };
 
-  useEffect(() => {
-    const getTags = async () => {
-      try {
-        const token = Cookie.get("token") as string;
-        const res = await axios
-          .get("https://spda.17management.my.id/api/tags/list", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((res) => {
-            const options = res.data.data.map((item: any) => {
-              return {
-                value: item.id,
-                label: item.name,
-              };
-            });
+  const token = Cookie.get("token") as string;
 
-            setOptions(options);
-            if (options.length > 0) {
-              setSelectedValue(options[0]);
-            }
-          });
-      } catch (error) {
-        const err = error as AxiosError;
-        console.log(err.response?.data, "error get tags in edit hardware");
-      }
-    };
-    getTags();
-  }, []);
+  const { data: tables, error: tablesError } = useSWR(
+    "https://spda.17management.my.id/api/tables/list",
+    (url) =>
+      axios
+        .get(url, { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) =>
+          res.data.data.map((item: { id: any; name: any }) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        )
+  );
 
-  useEffect(() => {
-    const getTableId = async () => {
-      try {
-        const token = Cookie.get("token") as string;
-        const res = await axios
-          .get("https://spda.17management.my.id/api/tables/list", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((res) => {
-            const tables = res.data.data.map((item: any) => {
-              return {
-                value: item.id,
-                label: item.name,
-              };
-            });
-            setTables(tables);
-            if (tables.length > 0) {
-              setSelectedTable(tables);
-            }
-          });
-      } catch (error) {
-        const err = error as AxiosError;
-        console.log(err.response?.data, "error get table");
-      }
-    };
-    getTableId();
-  }, []);
+  const { data: rooms, error: roomsError } = useSWR(
+    "https://spda.17management.my.id/api/rooms/list",
+    (url) =>
+      axios
+        .get(url, { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) =>
+          res.data.data.map((item: { id: any; name: any }) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        )
+  );
 
-  useEffect(() => {
-    const getRoomId = async () => {
-      try {
-        const token = Cookie.get("token") as string;
-        const res = await axios
-          .get("https://spda.17management.my.id/api/rooms/list", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((res) => {
-            const rooms = res.data.data.map((item: any) => {
-              return {
-                value: item.id,
-                label: item.name,
-              };
-            });
-            setRooms(rooms);
-            if (rooms.length > 0) {
-              setSelectedRoom(rooms);
-            }
-          });
-      } catch (error) {
-        const err = error as AxiosError;
-        console.log(err.response?.data, "error get rooms");
-      }
-    };
-    getRoomId();
-  }, []);
+  const { data: tags, error: tagsError } = useSWR(
+    "https://spda.17management.my.id/api/tags/list",
+    (url) =>
+      axios
+        .get(url, { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) =>
+          res.data.data.map((item: { id: any; name: any }) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        )
+  );
+
+  // useEffect(() => {
+  //   const getTags = async () => {
+  //     try {
+  //       const token = Cookie.get("token") as string;
+  //       const res = await axios
+  //         .get("https://spda.17management.my.id/api/tags/list", {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         })
+  //         .then((res) => {
+  //           const options = res.data.data.map((item: any) => {
+  //             return {
+  //               value: item.id,
+  //               label: item.name,
+  //             };
+  //           });
+
+  //           setOptions(options);
+  //           if (options.length > 0) {
+  //             setSelectedValue(options[0]);
+  //           }
+  //         });
+  //     } catch (error) {
+  //       const err = error as AxiosError;
+  //       console.log(err.response?.data, "error get tags in edit hardware");
+  //     }
+  //   };
+  //   getTags();
+  // }, []);
+
+  // useEffect(() => {
+  //   const getTableId = async () => {
+  //     try {
+  //       const token = Cookie.get("token") as string;
+  //       const res = await axios
+  //         .get("https://spda.17management.my.id/api/tables/list", {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         })
+  //         .then((res) => {
+  //           const tables = res.data.data.map((item: any) => {
+  //             return {
+  //               value: item.id,
+  //               label: item.name,
+  //             };
+  //           });
+  //           setTables(tables);
+  //           if (tables.length > 0) {
+  //             setSelectedTable(tables);
+  //           }
+  //         });
+  //     } catch (error) {
+  //       const err = error as AxiosError;
+  //       console.log(err.response?.data, "error get table");
+  //     }
+  //   };
+  //   getTableId();
+  // }, []);
+
+  // useEffect(() => {
+  //   const getRoomId = async () => {
+  //     try {
+  //       const token = Cookie.get("token") as string;
+  //       const res = await axios
+  //         .get("https://spda.17management.my.id/api/rooms/list", {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         })
+  //         .then((res) => {
+  //           const rooms = res.data.data.map((item: any) => {
+  //             return {
+  //               value: item.id,
+  //               label: item.name,
+  //             };
+  //           });
+  //           setRooms(rooms);
+  //           if (rooms.length > 0) {
+  //             setSelectedRoom(rooms);
+  //           }
+  //         });
+  //     } catch (error) {
+  //       const err = error as AxiosError;
+  //       console.log(err.response?.data, "error get rooms");
+  //     }
+  //   };
+  //   getRoomId();
+  // }, []);
 
   return (
     <>
@@ -316,7 +353,7 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                     <Select
                       name="tag[]"
                       isMulti
-                      options={options}
+                      options={tags}
                       className="basic-multi-select"
                       classNamePrefix="select"
                       onChange={handleSelectChange}

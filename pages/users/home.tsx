@@ -98,7 +98,7 @@ export default function HomeUser() {
       );
       setDocuments(response.data.data);
       setTotalPages(response.data.last_page);
-      console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.log(error);
     }

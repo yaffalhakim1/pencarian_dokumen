@@ -211,7 +211,7 @@ export default function CrudApproval() {
                 </tr>
               </thead>
               <tbody>
-                {data.data.map((item: any) => (
+                {data.data.data.map((item: any) => (
                   <tr key={item.id}>
                     <th>{index++}</th>
                     <td>{item.data.name}</td>

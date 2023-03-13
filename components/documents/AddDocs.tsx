@@ -69,7 +69,7 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
           });
       } catch (error) {
         const err = error as AxiosError;
-        console.log(err);
+
         console.log(err.response?.data, "error get tags in add docs");
       }
     };
@@ -153,8 +153,7 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
       formData.append("tag[]", field.tag[i]);
     }
     formData.append("code", field.code);
-    console.log(field.name);
-    console.log(field.uuid);
+
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -168,8 +167,6 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
         options
       )
       .then((postFileReq) => {
-        console.log(formData.append("uuid", field.uuid), "form data");
-        console.log(postFileReq, "postfile req");
         onSuccess();
         setLoading(false);
         closeModal();

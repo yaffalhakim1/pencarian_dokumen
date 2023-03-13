@@ -5,6 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { TailSpin } from "react-loader-spinner";
 import { toast } from "sonner";
 import Select from "react-select";
+import useSWR from "swr";
 
 export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
   const [field, setField] = useState({
@@ -17,9 +18,9 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
   });
   let [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [options, setOptions] = useState<any>([]);
-  const [tables, setTables] = useState<any>([]);
-  const [rooms, setRooms] = useState<any>([]);
+  // const [options, setOptions] = useState<any>([]);
+  // const [tables, setTables] = useState<any>([]);
+  // const [rooms, setRooms] = useState<any>([]);
   const [selectedValue, setSelectedValue] = useState(null);
   const [selectedTable, setSelectedTable] = useState(null);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -41,96 +42,137 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
     });
   };
 
-  useEffect(() => {
-    const getTags = async () => {
-      try {
-        const token = Cookie.get("token") as string;
-        const res = await axios
-          .get("https://spda.17management.my.id/api/tags/list", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((res) => {
-            const options = res.data.data.map((item: any) => {
-              return {
-                value: item.id,
-                label: item.name,
-              };
-            });
-            setOptions(options);
-            if (options.length > 0) {
-              setSelectedValue(options);
-            }
-          });
-      } catch (error) {
-        const err = error as AxiosError;
-        console.log(err.response?.data, "error get tags in add hardware");
-      }
-    };
-    getTags();
-  }, []);
+  // useEffect(() => {
+  //   const getTags = async () => {
+  //     try {
+  //       const token = Cookie.get("token") as string;
+  //       const res = await axios
+  //         .get("https://spda.17management.my.id/api/tags/list", {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         })
+  //         .then((res) => {
+  //           const options = res.data.data.map((item: any) => {
+  //             return {
+  //               value: item.id,
+  //               label: item.name,
+  //             };
+  //           });
+  //           setOptions(options);
+  //           if (options.length > 0) {
+  //             setSelectedValue(options);
+  //           }
+  //         });
+  //     } catch (error) {
+  //       const err = error as AxiosError;
+  //       console.log(err.response?.data, "error get tags in add hardware");
+  //     }
+  //   };
+  //   getTags();
+  // }, []);
 
-  useEffect(() => {
-    const getTableId = async () => {
-      try {
-        const token = Cookie.get("token") as string;
-        const res = await axios
-          .get("https://spda.17management.my.id/api/tables/list", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((res) => {
-            const tables = res.data.data.map((item: any) => {
-              return {
-                value: item.id,
-                label: item.name,
-              };
-            });
-            setTables(tables);
+  // useEffect(() => {
+  //   const getTableId = async () => {
+  //     try {
+  //       const token = Cookie.get("token") as string;
+  //       const res = await axios
+  //         .get("https://spda.17management.my.id/api/tables/list", {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         })
+  //         .then((res) => {
+  //           const tables = res.data.data.map((item: any) => {
+  //             return {
+  //               value: item.id,
+  //               label: item.name,
+  //             };
+  //           });
+  //           setTables(tables);
 
-            if (tables.length > 0) {
-              setSelectedTable(tables);
-            }
-          });
-      } catch (error) {
-        const err = error as AxiosError;
-        console.log(err.response?.data, "error get table");
-      }
-    };
-    getTableId();
-  }, []);
+  //           if (tables.length > 0) {
+  //             setSelectedTable(tables);
+  //           }
+  //         });
+  //     } catch (error) {
+  //       const err = error as AxiosError;
+  //       console.log(err.response?.data, "error get table");
+  //     }
+  //   };
+  //   getTableId();
+  // }, []);
 
-  useEffect(() => {
-    const getRoomId = async () => {
-      try {
-        const token = Cookie.get("token") as string;
-        const res = await axios
-          .get("https://spda.17management.my.id/api/rooms/list", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((res) => {
-            const rooms = res.data.data.map((item: any) => {
-              return {
-                value: item.id,
-                label: item.name,
-              };
-            });
-            setRooms(rooms);
-            if (rooms.length > 0) {
-              setSelectedRoom(rooms);
-            }
-          });
-      } catch (error) {
-        const err = error as AxiosError;
-        console.log(err.response?.data, "error get rooms");
-      }
-    };
-    getRoomId();
-  }, []);
+  // useEffect(() => {
+  //   const getRoomId = async () => {
+  //     try {
+  //       const token = Cookie.get("token") as string;
+  //       const res = await axios
+  //         .get("https://spda.17management.my.id/api/rooms/list", {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         })
+  //         .then((res) => {
+  //           const rooms = res.data.data.map((item: any) => {
+  //             return {
+  //               value: item.id,
+  //               label: item.name,
+  //             };
+  //           });
+  //           setRooms(rooms);
+  //           if (rooms.length > 0) {
+  //             setSelectedRoom(rooms);
+  //           }
+  //         });
+  //     } catch (error) {
+  //       const err = error as AxiosError;
+  //       console.log(err.response?.data, "error get rooms");
+  //     }
+  //   };
+  //   getRoomId();
+  // }, []);
+
+  const token = Cookie.get("token") as string;
+
+  const { data: tables, error: tablesError } = useSWR(
+    "https://spda.17management.my.id/api/tables/list",
+    (url) =>
+      axios
+        .get(url, { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) =>
+          res.data.data.map((item: { id: any; name: any }) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        )
+  );
+
+  const { data: rooms, error: roomsError } = useSWR(
+    "https://spda.17management.my.id/api/rooms/list",
+    (url) =>
+      axios
+        .get(url, { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) =>
+          res.data.data.map((item: { id: any; name: any }) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        )
+  );
+
+  const { data: tags, error: tagsError } = useSWR(
+    "https://spda.17management.my.id/api/tags/list",
+    (url) =>
+      axios
+        .get(url, { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) =>
+          res.data.data.map((item: { id: any; name: any }) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        )
+  );
 
   async function handleFileUpload() {
     const formData = new FormData();
@@ -146,9 +188,6 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
       formData.append("tag[]", field.tag[i]);
     }
 
-    console.log(field.table_id, "table_id");
-    console.log(field.room_id, "room_id");
-    console.log(field.tag, "tag");
     try {
       const token = Cookie.get("token") as string;
       const postFileReq = await axios
@@ -275,7 +314,7 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                     <span>Tag</span>
                     <Select
                       isMulti
-                      options={options}
+                      options={tags}
                       className="basic-multi-select"
                       classNamePrefix="select"
                       onChange={handleSelectChange}

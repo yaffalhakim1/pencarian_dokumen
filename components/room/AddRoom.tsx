@@ -47,7 +47,6 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
     axios
       .post("https://spda.17management.my.id/api/rooms/data", formData, options)
       .then((postFileReq) => {
-        console.log(postFileReq, "postfile req");
         onSuccess();
         setLoading(false);
         closeModal();

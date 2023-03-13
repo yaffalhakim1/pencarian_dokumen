@@ -84,8 +84,7 @@ export default function EditUser({ datas, onSuccess }: EditButtonProps) {
         options
       );
       const postUserRes = await postUserReq.data;
-      console.log(formData);
-      console.log(postUserRes);
+
       setLoading(false);
       onSuccess();
       toast.success("Data User berhasil diubah");

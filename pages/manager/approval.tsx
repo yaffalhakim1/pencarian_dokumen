@@ -100,7 +100,6 @@ export default function CrudApproval() {
       );
       setLoading(false);
       mutate(data);
-      console.log(data);
       toast.success("Penghapusan disetujui");
     } catch (error) {
       setLoading(false);
@@ -123,7 +122,6 @@ export default function CrudApproval() {
       );
       setLoading(false);
       mutate(data);
-      console.log(data);
       toast.success("Penghapusan ditolak");
     } catch (error) {
       setLoading(false);
@@ -211,7 +209,7 @@ export default function CrudApproval() {
                 </tr>
               </thead>
               <tbody>
-                {data.data.map((item: any) => (
+                {data.data.data.map((item: any) => (
                   <tr key={item.id}>
                     <th>{index++}</th>
                     <td>{item.data.name}</td>

@@ -35,6 +35,7 @@ export default function CrudDocument() {
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log(res.data);
     return res.data;
   };
 
