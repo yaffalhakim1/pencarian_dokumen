@@ -17,6 +17,8 @@ type Data = {
   code: any;
   table_id: any;
   room_id: any;
+  table_name: any;
+  room_name: any;
 };
 
 interface EditButtonProps {
@@ -47,18 +49,13 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
 
 export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
   const data = datas;
-  console.log(data.table_id, "data");
   const defaultValueTags = data.tag.map((tag: any) => ({
     label: tag,
   }));
-  const defaultValueTables = {
-    label: data.table_id,
-    value: data.table_id,
-  };
-  const defaultValueRooms = { label: data.table };
-
+  const defaultValueTables = { value: data.table_name };
+  const defaultValueRooms = { value: data.room_name };
+  console.log(defaultValueRooms, "default value rooms");
   console.log(defaultValueTables, "default value tables");
-  // console.log(defaultValueRooms, "default value rooms");
   const [field, setField] = useState({
     name: data.name,
     table: data.table,
@@ -198,7 +195,7 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
           });
       } catch (error) {
         const err = error as AxiosError;
-        console.log(err.response?.data, "error get tags");
+        console.log(err.response?.data, "error get tags in edit hardware");
       }
     };
     getTags();
@@ -333,8 +330,8 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                       options={tables}
                       className="basic-single"
                       classNamePrefix="select"
+                      defaultValue={defaultValueTables.value}
                       onChange={handleSelectTableChange}
-                      defaultValue={defaultValueTables}
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
@@ -344,8 +341,8 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                       options={rooms}
                       className="basic-single"
                       classNamePrefix="select"
+                      defaultValue={defaultValueRooms.value}
                       onChange={handleSelectRoomChange}
-                      defaultValue={defaultValueRooms}
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
