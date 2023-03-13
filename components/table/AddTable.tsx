@@ -17,6 +17,8 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState<any>([]);
   const [selectedValue, setSelectedValue] = useState(null);
+  const [rooms, setRooms] = useState<any>([]);
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
   function closeModal() {
     setIsOpen(false);
@@ -36,6 +38,15 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
       return updatedField;
     });
   };
+
+  const handleSelectRoomChange = (selectedRoom: any) => {
+    const room_id = selectedRoom.value;
+    setField((prevField) => ({
+      ...prevField,
+      room_id: room_id,
+    }));
+  };
+
   const handleSelectChange = (selectedOptions: any) => {
     const options = selectedOptions.map((option: any) => option.label);
     setField({
@@ -45,7 +56,7 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
   };
 
   useEffect(() => {
-    const getTags = async () => {
+    const getRoomId = async () => {
       try {
         const token = Cookie.get("token") as string;
         const res = await axios
@@ -55,24 +66,23 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
             },
           })
           .then((res) => {
-            const options = res.data.data.map((item: any) => {
+            const rooms = res.data.data.map((item: any) => {
               return {
-                value: item.name,
-                label: item.id,
+                value: item.id,
+                label: item.name,
               };
             });
-            setOptions(options);
-            if (options.length > 0) {
-              setSelectedValue(options);
+            setRooms(rooms);
+            if (rooms.length > 0) {
+              setSelectedRoom(rooms);
             }
           });
       } catch (error) {
         const err = error as AxiosError;
-        console.log(err);
         console.log(err.response?.data, "error get rooms");
       }
     };
-    getTags();
+    getRoomId();
   }, []);
 
   async function handleAddTable() {
@@ -154,7 +164,7 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
                     <span>Nama Ruang</span>
                     <input
                       type="text"
-                      placeholder="nama dokumen"
+                      placeholder="nama ruang"
                       className="input input-bordered"
                       name="name"
                       onChange={handleChange}
@@ -173,13 +183,12 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Ruang Id</span>
+                    <span>Ruang</span>
                     <Select
-                      isMulti
-                      options={options}
-                      className="basic-multi-select"
+                      options={rooms}
+                      className="basic-single"
                       classNamePrefix="select"
-                      onChange={handleSelectChange}
+                      onChange={handleSelectRoomChange}
                       name="room_id"
                     />
                   </label>

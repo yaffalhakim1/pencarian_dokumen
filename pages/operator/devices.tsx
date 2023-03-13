@@ -152,7 +152,7 @@ export default function CrudDevices() {
                 </tr>
               </thead>
               <tbody>
-                {data.data.map((item: any) => (
+                {data.data.data.map((item: any) => (
                   <tr key={item.id}>
                     <th>{index++}</th>
                     <td>{item.name}</td>
@@ -170,6 +170,8 @@ export default function CrudDevices() {
                           tag: item.tag,
                           photo: item.photo,
                           code: item.code,
+                          room_name: item.room_name,
+                          table_name: item.table_name,
                         }}
                         onSuccess={() => mutate()}
                       />

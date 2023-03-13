@@ -88,10 +88,9 @@ export default function CrudDocument() {
         }
       );
 
-      setLoading(false);
       mutate(data);
-      console.log(data);
-      toast.success("Dokumen berhasil dihapus");
+      setLoading(false);
+      toast.success("Menunggu Persetujuan");
     } catch (error) {
       setLoading(false);
       toast.error("Dokumen gagal dihapus");
@@ -159,7 +158,7 @@ export default function CrudDocument() {
                 </tr>
               </thead>
               <tbody>
-                {data.data.map((item: any) => (
+                {data.data.data.map((item: any) => (
                   <tr key={item.id}>
                     <th>{index++}</th>
                     <td>{item.name}</td>

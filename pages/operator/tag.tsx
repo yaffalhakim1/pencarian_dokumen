@@ -28,6 +28,7 @@ export default function CrudTags() {
   useAuthRedirect();
   let index = 1;
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const fetcher = async (url: string) => {
     const token = Cookie.get("token") as string;
@@ -87,8 +88,10 @@ export default function CrudTags() {
         }
       );
       mutate(data);
-      toast.success("Tag berhasil dihapus");
+      setLoading(false);
+      toast.success("Menunggu Persetujuan");
     } catch (error) {
+      setLoading(false);
       console.error(error);
     }
   };
@@ -149,7 +152,7 @@ export default function CrudTags() {
                 </tr>
               </thead>
               <tbody>
-                {data.data.map((item: any) => (
+                {data.data.data.map((item: any) => (
                   <tr key={item.id}>
                     <th>{index++}</th>
                     <td>{item.name}</td>

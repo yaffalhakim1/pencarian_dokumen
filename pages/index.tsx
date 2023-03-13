@@ -11,17 +11,22 @@ export default function Home() {
   const loginTime = Date.now();
   const token = Cookie.get("token") as string;
   const role = Cookie.get("role") as string;
+  const router = Router;
   // const expiredTime = Cookie.get("expired_in") as number;
 
   useEffect(() => {
-    if (!token) {
-      Router.push("/auth/login");
-    } else if (role === "Super Admin" && token) {
-      Router.push("/admin/dashboard");
-    } else if (role === "User" && token) {
-      Router.push("/users/main");
+    if (role === "Admin") {
+      router.push("/admin/dashboard");
+    } else if (role === "User") {
+      router.push("/users/main");
+    } else if (role === "Operator") {
+      router.push("/operator/dashboard");
+    } else if (role === "Manager") {
+      router.push("/manager/dashboard");
+    } else if (role === "Supervisor") {
+      router.push("/supervisor/dashboard");
     }
-  }, [token]);
+  }, [role, token]);
 
   return (
     <>

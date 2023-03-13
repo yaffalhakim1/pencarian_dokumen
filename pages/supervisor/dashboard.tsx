@@ -13,7 +13,7 @@ export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
   const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState("");
-  // const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("");
 
   const handleClick = (item: SetStateAction<number>) => {
     setSelectedItem(item);
@@ -42,41 +42,23 @@ export default function DashboardAdmin() {
     Router.replace("/auth/login");
   }
 
-  // async function getProfile() {
-  //   const token = Cookie.get("token") as string;
-  //   const profile = await axios
-  //     .get("https://spda.17management.my.id/api/users/profile", {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       const data = res.data.data;
-  //       setUserName(data.name);
-  //       // setEmail(data.email);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }
-
-  // const token = Cookie.get("token") as string;
-  // const { data, error } = useSWR(
-  //   `https://spda.17management.my.id/api/users/profile`,
-  //   (url) =>
-  //     axios
-  //       .get(url, {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       })
-  //       .then((res) => res.data.data)
-  // );
-
-  // // if (error) return <div>Failed to load profile</div>;
-  // if (!data) return <div>Loading...</div>;
-
-  // const { name, email } = data;
+  async function getProfile() {
+    const token = Cookie.get("token") as string;
+    const profile = await axios
+      .get("https://spda.17management.my.id/api/users/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        const data = res.data.data;
+        setUserName(data.name);
+        setEmail(data.email);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   return (
     <>
@@ -95,14 +77,14 @@ export default function DashboardAdmin() {
           <div>
             <h1 className="hidden md:flex mb-5">Dashboard Supervisor</h1>
             <div className="flex items-center space-x-3 mr-4 md:mr-0">
-              {/* <div className="avatar placeholder">
+              <div className="avatar placeholder">
                 <div className="mask mask-squircle w-10 h-10 text-center bg-neutral-focus text-neutral-content">
-                  {name.charAt(0)}
+                  {userName.charAt(0)}
                 </div>
-              </div> */}
+              </div>
               <div>
-                {/* <div className="font-bold">{name}</div>
-                <div className="text-sm opacity-50">{email}</div> */}
+                <div className="font-bold">{userName}</div>
+                <div className="text-sm opacity-50">{email}</div>
               </div>
             </div>
             {/* <SwitchTheme /> */}

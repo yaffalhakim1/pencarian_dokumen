@@ -4,7 +4,6 @@ import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { TailSpin } from "react-loader-spinner";
-import Alert from "../Alert";
 import Select from "react-select";
 import { toast } from "sonner";
 import { getData } from "../../lib/firebase";
@@ -71,11 +70,11 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
       } catch (error) {
         const err = error as AxiosError;
         console.log(err);
-        console.log(err.response?.data, "error get tags");
+        console.log(err.response?.data, "error get tags in add docs");
       }
     };
     getTags();
-  }, []);
+  }, [setOptions, setSelectedValue]);
 
   //get data from rtdb firebase
   useEffect(() => {

@@ -12,6 +12,8 @@ import CrudUsers from "../admin/users";
 import CrudTags from "./tag";
 import useSWR from "swr";
 import CrudApproval from "./approval";
+import CrudRoom from "./room";
+import CrudTable from "./table";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
@@ -118,7 +120,9 @@ export default function DashboardAdmin() {
           {/* {selectedItem === 2 && <CrudUsers />} */}
           {selectedItem === 2 && <CrudDevices />}
           {selectedItem === 3 && <CrudTags />}
-          {selectedItem === 4 && <CrudApproval />}
+          {selectedItem === 4 && <CrudRoom />}
+          {selectedItem === 5 && <CrudTable />}
+          {selectedItem === 6 && <CrudApproval />}
         </div>
 
         <div className="drawer-side">
@@ -161,6 +165,26 @@ export default function DashboardAdmin() {
                   selectedItem === 4 ? "active font-semibold text-white" : ""
                 }
                 onClick={() => handleClick(4)}
+              >
+                Ruang
+              </a>
+            </li>
+            <li>
+              <a
+                className={
+                  selectedItem === 5 ? "active font-semibold text-white" : ""
+                }
+                onClick={() => handleClick(5)}
+              >
+                Meja
+              </a>
+            </li>
+            <li>
+              <a
+                className={
+                  selectedItem === 6 ? "active font-semibold text-white" : ""
+                }
+                onClick={() => handleClick(6)}
               >
                 Approval
               </a>

@@ -128,7 +128,7 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
           });
       } catch (error) {
         const err = error as AxiosError;
-        console.log(err.response?.data, "error get tags");
+        console.log(err.response?.data, "error get tags in edit docs");
       }
     };
     getTags();

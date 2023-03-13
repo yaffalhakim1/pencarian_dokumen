@@ -4,7 +4,6 @@ import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { TailSpin } from "react-loader-spinner";
-import Alert from "../Alert";
 import { toast } from "sonner";
 
 export default function AddTags({ onSuccess }: { onSuccess: () => void }) {
@@ -92,13 +91,6 @@ export default function AddTags({ onSuccess }: { onSuccess: () => void }) {
           </Transition.Child>
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            {/* {showSnackbar && (
-              <Alert
-                message="Dokumen berhasil ditambahkan"
-                errorType="success"
-              />
-            )} */}
-
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"

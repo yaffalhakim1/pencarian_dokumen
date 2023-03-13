@@ -4,7 +4,6 @@ import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { TailSpin } from "react-loader-spinner";
-import Alert from "../Alert";
 
 export default function AddUser(this: any) {
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -93,13 +92,6 @@ export default function AddUser(this: any) {
           </Transition.Child>
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            {/* {showSnackbar && (
-              <Alert
-                message="Dokumen berhasil ditambahkan"
-                errorType="success"
-              />
-            )} */}
-
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"

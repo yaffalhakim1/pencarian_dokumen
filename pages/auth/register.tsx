@@ -9,7 +9,6 @@ import Select from "react-select";
 import { TailSpin } from "react-loader-spinner";
 import Head from "next/head";
 import Image from "next/image";
-import Alert from "../../components/Alert";
 import { toast } from "sonner";
 // import { AuthContext } from "../../hooks/AuthContext";
 

@@ -65,7 +65,7 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
           });
       } catch (error) {
         const err = error as AxiosError;
-        console.log(err.response?.data, "error get tags");
+        console.log(err.response?.data, "error get tags in add hardware");
       }
     };
     getTags();
@@ -89,7 +89,7 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
               };
             });
             setTables(tables);
-            console.log(tables, "tables");
+
             if (tables.length > 0) {
               setSelectedTable(tables);
             }
@@ -185,19 +185,19 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
   };
 
   const handleSelectRoomChange = (selectedRoom: any) => {
-    const room_id = selectedRoom.map((option: any) => option.value);
-    setField({
-      ...field,
+    const room_id = selectedRoom.value;
+    setField((prevField) => ({
+      ...prevField,
       room_id: room_id,
-    });
+    }));
   };
 
   const handleSelectTableChange = (selectedTable: any) => {
-    const table_id = selectedTable.map((option: any) => option.value);
-    setField({
-      ...field,
+    const table_id = selectedTable.value;
+    setField((prevField) => ({
+      ...prevField,
       table_id: table_id,
-    });
+    }));
   };
 
   return (
@@ -254,9 +254,8 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Meja</span>
                     <Select
-                      isMulti
                       options={tables}
-                      className="basic-multi-select"
+                      className="basic-single"
                       classNamePrefix="select"
                       onChange={handleSelectTableChange}
                       name="table_id"
@@ -265,9 +264,8 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Ruang</span>
                     <Select
-                      isMulti
                       options={rooms}
-                      className="basic-multi-select"
+                      className="basic-single"
                       classNamePrefix="select"
                       onChange={handleSelectRoomChange}
                       name="room_id"

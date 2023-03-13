@@ -69,6 +69,7 @@ export default function DeleteTable(props: Props) {
                   onClick={() => {
                     props.onClick && props.onClick();
                     setLoading(true);
+                    closeModal();
                   }}
                   className="btn btn-error mr-3 mb-3 md:mb-0 capitalize text-white"
                 >

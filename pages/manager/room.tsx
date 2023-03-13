@@ -12,21 +12,20 @@ import useSWR, { mutate } from "swr";
 import DeleteDocs from "../../components/documents/DeleteDocs";
 import EditDocs from "../../components/documents/edit/[id]";
 import { toast } from "sonner";
-import Approve from "../../components/approval/Approve";
-import Reject from "../../components/approval/Reject";
+import AddRoom from "../../components/room/AddRoom";
+import EditRoom from "../../components/room/edit/[id]";
+import DeleteRoom from "../../components/room/DeleteRoom";
 
 interface Item {
   id: number;
   name: string;
 }
 
-export default function CrudApproval() {
+export default function CrudRoom() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState<any>([]);
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(false);
-  const [approvedIds, setApprovedIds] = useState<number[]>([]);
-  const [rejectedIds, setRejectedIds] = useState<number[]>([]);
 
   useAuthRedirect();
   let index = 1;
@@ -43,7 +42,7 @@ export default function CrudApproval() {
   };
 
   const { data, error, mutate } = useSWR(
-    `https://spda.17management.my.id/api/approvals/data?page=${page}`,
+    `https://spda.17management.my.id/api/rooms/data?page=${page}`,
     fetcher
   );
   if (error)
@@ -78,6 +77,30 @@ export default function CrudApproval() {
 
   const pageNumbers = Array.from({ length: data.last_page }, (_, i) => i + 1);
 
+  const handleDelete = async (id: any) => {
+    const token = Cookie.get("token") as string;
+    setLoading(true);
+    try {
+      await axios.post(
+        `https://spda.17management.my.id/api/rooms/delete/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setLoading(false);
+      mutate(data);
+      console.log(data);
+      toast.success("Dokumen berhasil dihapus");
+    } catch (error) {
+      setLoading(false);
+      toast.error("Dokumen gagal dihapus");
+      console.error(error);
+    }
+  };
+
   function handleSearch() {
     const filteredItems = items.filter((item: { name: string }) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -85,88 +108,15 @@ export default function CrudApproval() {
     setFilteredItems(filteredItems);
   }
 
-  const handleApprove = async (id: any) => {
-    const token = Cookie.get("token") as string;
-    setLoading(true);
-    try {
-      await axios.post(
-        `https://spda.17management.my.id/api/approvals/approve/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setLoading(false);
-      mutate(data);
-      console.log(data);
-      toast.success("Penghapusan disetujui");
-    } catch (error) {
-      setLoading(false);
-      toast.error("Penghapusan gagal disetujui");
-      console.error(error);
-    }
-  };
-
-  const handleReject = async (id: any) => {
-    const token = Cookie.get("token") as string;
-    try {
-      await axios.post(
-        `https://spda.17management.my.id/api/approvals/reject/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setLoading(false);
-      mutate(data);
-      console.log(data);
-      toast.success("Penghapusan ditolak");
-    } catch (error) {
-      setLoading(false);
-      toast.error("Penghapusan gagal ditolak");
-      console.error(error);
-    }
-  };
-
-  function renderApproveRejectButtons(itemId: number, itemStatus: string) {
-    if (itemStatus === "DISETUJUI" || itemStatus === "DITOLAK") {
-      return null;
-    }
-    return (
-      <>
-        <Approve
-          id={itemId}
-          onSuccess={() => {
-            setApprovedIds([...approvedIds, itemId]);
-            mutate();
-          }}
-          onClick={() => handleApprove(itemId)}
-        />
-        <Reject
-          id={itemId}
-          onSuccess={() => {
-            setRejectedIds([...rejectedIds, itemId]);
-            mutate();
-          }}
-          onClick={() => handleReject(itemId)}
-        />
-      </>
-    );
-  }
-
   return (
     <>
       <div className="container px-6  pt-2 pb-6 h-full">
-        <p className="text-2xl font-semibold mb-2">Dashboard Persetujuan</p>
+        <p className="text-2xl font-semibold mb-2">Dashboard Ruang</p>
         <p className="text-md font-normal mb-8">
-          Lakukan perubahan data dokumen disini
+          Lakukan perubahan data ruang disini
         </p>
         <div className="md:flex md:justify-between">
-          {/* <AddDocument onSuccess={mutate} /> */}
+          <AddRoom onSuccess={mutate} />
           <div className="form-control">
             <div className="input-group input-group-sm mb-3">
               <input
@@ -201,12 +151,10 @@ export default function CrudApproval() {
               <thead>
                 <tr className="[&_th]:font-semibold [&_th]:capitalize">
                   <th>No</th>
-                  <th>Name Dokumen</th>
-                  <th>Tag</th>
-                  <th>Dibuat oleh</th>
-                  <th>Status</th>
-                  <th>Aksi</th>
-
+                  <th>Name Ruang</th>
+                  <th>Kode Ruang Alat</th>
+                  <th></th>
+                  <th></th>
                   <th></th>
                 </tr>
               </thead>
@@ -214,21 +162,24 @@ export default function CrudApproval() {
                 {data.data.map((item: any) => (
                   <tr key={item.id}>
                     <th>{index++}</th>
-                    <td>{item.data.name}</td>
-                    <td>{item.data.tag}</td>
-                    <td>{item.data.created_by}</td>
-                    <td
-                      className={
-                        item.status === "MENUNGGU PERSETUJUAN"
-                          ? "pending"
-                          : item.status === "DISETUJUI"
-                          ? "approved"
-                          : "rejected"
-                      }
-                    >
-                      {item.status}
+                    <td>{item.name}</td>
+                    <td>{item.code}</td>
+                    <td>
+                      {/* <EditRoom
+                        datas={{
+                          name: item.name,
+                          code: item.code,
+                          id: item.id,
+                        }}
+                        onSuccess={() => mutate()}
+                      />
+
+                      <DeleteRoom
+                        id={item.id}
+                        onSuccess={() => mutate()}
+                        onClick={() => handleDelete(item.id)}
+                      /> */}
                     </td>
-                    <td>{renderApproveRejectButtons(item.id, item.status)}</td>
                   </tr>
                 ))}
               </tbody>

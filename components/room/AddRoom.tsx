@@ -112,7 +112,6 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
                       onChange={handleChange}
                     />
                   </label>
-                  {/* https://react-select.com/home, pakai yang single */}
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Kode Ruang</span>
                     <input
