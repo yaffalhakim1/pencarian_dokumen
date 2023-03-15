@@ -15,18 +15,18 @@ export default function Home() {
   // const expiredTime = Cookie.get("expired_in") as number;
 
   useEffect(() => {
-    if (role === "Admin") {
+    if (role === "Admin" && token) {
       router.push("/admin/dashboard");
-    } else if (role === "User") {
+    } else if (role === "User" && token) {
       router.push("/users/main");
-    } else if (role === "Operator") {
+    } else if (role === "Operator" && token) {
       router.push("/operator/dashboard");
-    } else if (role === "Manager") {
+    } else if (role === "Manager" && token) {
       router.push("/manager/dashboard");
-    } else if (role === "Supervisor") {
+    } else if (role === "Supervisor" && token) {
       router.push("/supervisor/dashboard");
     }
-  }, [role, token]);
+  }, []);
 
   return (
     <>
