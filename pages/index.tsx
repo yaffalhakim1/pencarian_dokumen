@@ -25,6 +25,8 @@ export default function Home() {
       router.push("/manager/dashboard");
     } else if (role === "Supervisor" && token) {
       router.push("/supervisor/dashboard");
+    } else {
+      router.push("/auth/login");
     }
   }, []);
 
