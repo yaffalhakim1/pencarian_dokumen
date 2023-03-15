@@ -7,7 +7,7 @@ const nextConfig = {
 };
 
 module.exports = withPWA({
-  ...nextConfig,
+  reactStrictMode: true,
   pwa: {
     dest: "public",
     register: true,
