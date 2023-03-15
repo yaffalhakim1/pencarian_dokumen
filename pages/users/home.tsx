@@ -7,23 +7,21 @@ import Link from "next/link";
 import DocumentsList from "../../components/documents/DocumentsList";
 
 interface Document {
-  // Define the shape of a document object based on the API response
-  // For example:
   id: any;
   name: string;
   tag: string[];
   device_name: string;
   photo: string;
-  // Add more properties as needed
+}
+
+interface data {
+  data: Document[];
 }
 
 interface ApiResponse {
-  // Define the shape of the API response
-  // For example:
-  data: Document[];
+  data: data;
   per_page: number;
   last_page: number;
-  // Add more properties as needed
 }
 
 export default function HomeUser() {
@@ -96,9 +94,9 @@ export default function HomeUser() {
           },
         }
       );
-      setDocuments(response.data.data);
+      setDocuments(response.data.data.data);
       setTotalPages(response.data.last_page);
-      // console.log(response.data);
+      console.log(response.data.data);
     } catch (error) {
       console.log(error);
     }

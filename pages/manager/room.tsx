@@ -164,22 +164,7 @@ export default function CrudRoom() {
                     <th>{index++}</th>
                     <td>{item.name}</td>
                     <td>{item.code}</td>
-                    <td>
-                      {/* <EditRoom
-                        datas={{
-                          name: item.name,
-                          code: item.code,
-                          id: item.id,
-                        }}
-                        onSuccess={() => mutate()}
-                      />
-
-                      <DeleteRoom
-                        id={item.id}
-                        onSuccess={() => mutate()}
-                        onClick={() => handleDelete(item.id)}
-                      /> */}
-                    </td>
+                    <td></td>
                   </tr>
                 ))}
               </tbody>
