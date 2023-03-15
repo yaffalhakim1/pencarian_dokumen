@@ -109,7 +109,7 @@ export default function CrudTags() {
         </p>
         <div className="md:flex md:justify-between">
           {/* <AddTags onSuccess={mutate} /> */}
-          <div className="form-control">
+          {/* <div className="form-control">
             <div className="input-group input-group-sm mb-3">
               <input
                 type="text"
@@ -135,7 +135,7 @@ export default function CrudTags() {
                 </svg>
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="flex flex-col h-full w-full">
           <div className="overflow-x-auto">

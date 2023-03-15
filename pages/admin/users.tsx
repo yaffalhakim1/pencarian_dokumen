@@ -12,6 +12,7 @@ import _ from "lodash";
 import LoadingTable from "../../components/SkeletonTable";
 import useSWR, { mutate } from "swr";
 import { useAuthRedirect } from "../../hooks/useAuthRedirect";
+import { toast } from "sonner";
 
 export default function CrudUsers() {
   let index = 1;
@@ -65,6 +66,7 @@ export default function CrudUsers() {
         }
       );
       mutate(data);
+      toast.success("Pengguna berhasil dihapus");
     } catch (error) {
       console.error(error);
     }
@@ -78,8 +80,8 @@ export default function CrudUsers() {
           Lakukan perubahan data user disini
         </p>
         <div className="md:flex md:justify-between ">
-          {/* <AddUser /> */}
-          <div className="form-control">
+          <AddUser onSuccess={mutate} />
+          {/* <div className="form-control">
             <div className="input-group input-group-sm mb-3">
               <input
                 type="text"
@@ -103,7 +105,7 @@ export default function CrudUsers() {
                 </svg>
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="flex flex-col h-full w-full">
           <div className="overflow-x-auto">
@@ -136,6 +138,7 @@ export default function CrudUsers() {
                     <td>
                       <EditUser
                         datas={{
+                          role: item.role,
                           name: item.name,
                           username: item.username,
                           email: item.email,

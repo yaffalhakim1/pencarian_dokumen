@@ -4,14 +4,19 @@ import Cookie from "js-cookie";
 import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { TailSpin } from "react-loader-spinner";
+import { toast } from "sonner";
+import Select from "react-select";
+import useSWR from "swr";
 
-export default function AddUser(this: any) {
+export default function AddUser({ onSuccess }: { onSuccess: () => void }) {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [field, setField] = useState({
     name: "",
-    device_id: "",
-    photo: "",
-    uuid: "",
+    email: "",
+    username: "",
+    password: "",
+    password_confirmation: "",
+    role: [],
   });
   const [photoUrl, setPhotoUrl] = useState("");
   let [isOpen, setIsOpen] = useState(false);
@@ -31,24 +36,29 @@ export default function AddUser(this: any) {
     setField({
       ...field,
       [e.target.name]: e.target.value,
-      photo: name === "photo" ? files[0] : field.photo,
+      // photo: name === "photo" ? files[0] : field.photo,
     });
   };
 
-  async function handleFileUpload() {
+  async function handleAddUser() {
     const input = document.querySelector(
       "input[type='file']"
     ) as HTMLInputElement;
     const formData = new FormData();
-    formData.append("photo", input.files![0]);
+    // formData.append("photo", input.files![0]);
     formData.append("name", field.name);
-    formData.append("device_id", field.device_id);
-    formData.append("uuid", field.uuid);
+    formData.append("email", field.email);
+    formData.append("username", field.username);
+    for (let i = 0; i < field.role.length; i++) {
+      formData.append("role[]", field.role[i]);
+    }
+    formData.append("password", field.password);
+    formData.append("password_confirmation", field.password_confirmation);
 
     try {
       const token = Cookie.get("token") as string;
       const postFileReq = await axios.post(
-        "https://spda.17management.my.id/api/documents/data",
+        "https://spda.17management.my.id/api/users/data",
         formData,
         {
           headers: {
@@ -58,23 +68,52 @@ export default function AddUser(this: any) {
           },
         }
       );
-
       const postFileRes = await postFileReq.data;
+      console.log(postFileRes, "add users from admin");
+      onSuccess();
       setLoading(false);
+      closeModal();
+      toast.success("Pengguna baru berhasil ditambahkan");
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response?.data, "error upload");
+      toast.error("Gagal menambahkan alat");
+      setLoading(false);
+      closeModal();
     }
   }
+
+  const token = Cookie.get("token") as string;
+  const { data: roles, error: tagsError } = useSWR(
+    "https://spda.17management.my.id/api/users/roles/list",
+    (url) =>
+      axios
+        .get(url, { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) =>
+          res.data.data.map((item: { id: any; name: any }) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        )
+  );
+  console.log(roles, "roles");
+
+  const handleSelectChange = (selectedRoles: any) => {
+    const roles = selectedRoles.map((role: any) => role.label);
+    setField({
+      ...field,
+      role: roles,
+    });
+  };
 
   return (
     <>
       <button
         type="button"
         onClick={openModal}
-        className="btn btn-sm btn-success mb-3 mr-auto no-animation capitalize"
+        className="btn btn-sm btn-accent mb-3 mr-auto capitalize text-white"
       >
-        Tambah User
+        Tambah Pengguna
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -103,42 +142,72 @@ export default function AddUser(this: any) {
             >
               <Dialog.Panel className="modal-box m-5">
                 <Dialog.Title className="font-bold text-lg">
-                  Tambah User
+                  Tambah Pengguna
                 </Dialog.Title>
                 <Dialog.Description className="py-4">
-                  Masukkan nama, lokasi, dan foto dokumen yang ingin anda
-                  tambahkan disini
-                  <label className="input-group mb-5 mt-5">
-                    <span>Nama Dokumen</span>
+                  Masukkan data pengguna baru disini
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Nama</span>
                     <input
                       type="text"
-                      placeholder="nama dokumen"
+                      placeholder="Nama Pengguna"
                       className="input input-bordered"
                       name="name"
                       onChange={handleChange}
                     />
                   </label>
-                  <label className="input-group mb-5 mt-5">
-                    <span>device id Dokumen</span>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Username</span>
                     <input
                       type="text"
-                      placeholder="nama dokumen"
+                      placeholder="Username pengguna"
                       className="input input-bordered"
-                      name="device_id"
+                      name="username"
                       onChange={handleChange}
                     />
                   </label>
-                  <label className="input-group mb-5 mt-5">
-                    <span>uuid Dokumen</span>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Email</span>
                     <input
                       type="text"
-                      placeholder="nama dokumen"
+                      placeholder="Email Pengguna"
                       className="input input-bordered"
-                      name="uuid"
+                      name="email"
                       onChange={handleChange}
                     />
                   </label>
-                  <label className="label">
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Role</span>
+                    <Select
+                      isMulti
+                      options={roles}
+                      className="basic-multi-select"
+                      classNamePrefix="Role"
+                      onChange={handleSelectChange}
+                      name="role"
+                    />
+                  </label>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Password</span>
+                    <input
+                      type="text"
+                      placeholder="Password"
+                      className="input input-bordered"
+                      name="password"
+                      onChange={handleChange}
+                    />
+                  </label>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Konfirmasi Password</span>
+                    <input
+                      type="text"
+                      placeholder="Password"
+                      className="input input-bordered"
+                      name="password_confirmation"
+                      onChange={handleChange}
+                    />
+                  </label>
+                  {/* <label className="label">
                     <span className="label-text">
                       Masukkan foto ruangan lokasi
                     </span>
@@ -148,11 +217,11 @@ export default function AddUser(this: any) {
                     placeholder="Masukkan foto ruangan lokasi"
                     className="file-input w-full max-w-xs"
                     name="photo"
-                  />
+                  /> */}
                 </Dialog.Description>
                 <button
                   onClick={() => {
-                    handleFileUpload();
+                    handleAddUser();
                     setLoading(true);
                   }}
                   className="btn btn-success mr-3 mb-3 md:mb-0 capitalize"
@@ -171,7 +240,7 @@ export default function AddUser(this: any) {
                       </button> */}
                     </div>
                   ) : (
-                    "Tambahkan Dokumen"
+                    "Tambahkan Pengguna"
                   )}
                 </button>
                 <button

@@ -5,12 +5,14 @@ import { Dialog, Transition } from "@headlessui/react";
 import { TailSpin } from "react-loader-spinner";
 import { GetServerSideProps } from "next";
 import { toast } from "sonner";
-
+import Select from "react-select";
+import useSWR from "swr";
 type Data = {
   name: string;
   username: string;
   email: string;
-  // photo: string;
+  role: any;
+
   id: any;
 };
 
@@ -41,15 +43,17 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
 
 export default function EditUser({ datas, onSuccess }: EditButtonProps) {
   const data = datas;
+
+  const defaultValueUser = data.role.map((role: any) => ({
+    label: role,
+  }));
   const [field, setField] = useState({
     name: data.name,
     username: data.username,
     email: data.email,
-    // photo: data.photo,
+    role: data.role,
   });
   let [isOpen, setIsOpen] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
-  const [photoUrl, setPhotoUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
   function closeModal() {
@@ -60,17 +64,19 @@ export default function EditUser({ datas, onSuccess }: EditButtonProps) {
     setIsOpen(true);
   }
 
-  async function handleFileUpload() {
+  async function handleEditUser() {
     const id = datas.id;
     const token = Cookie.get("token") as string;
     const input = document.querySelector(
       "input[type='file']"
     ) as HTMLInputElement;
     const formData = new FormData();
-
     formData.append("name", field.name);
     formData.append("username", field.username);
     formData.append("email", field.email);
+    for (let i = 0; i < field.role.length; i++) {
+      formData.append("role[]", field.role[i]);
+    }
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -84,14 +90,12 @@ export default function EditUser({ datas, onSuccess }: EditButtonProps) {
         options
       );
       const postUserRes = await postUserReq.data;
-
       setLoading(false);
       onSuccess();
       toast.success("Data User berhasil diubah");
       closeModal();
     } catch (error) {
       const err = error as AxiosError;
-
       console.log(err.response?.data);
       toast.success("Data User gagal diubah");
       setLoading(false);
@@ -138,6 +142,28 @@ export default function EditUser({ datas, onSuccess }: EditButtonProps) {
     });
   };
 
+  const token = Cookie.get("token") as string;
+  const { data: roles, error: tagsError } = useSWR(
+    "https://spda.17management.my.id/api/users/roles/list",
+    (url) =>
+      axios
+        .get(url, { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) =>
+          res.data.data.map((item: { id: any; name: any }) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        )
+  );
+
+  const handleSelectChange = (selectedRole: any) => {
+    const options = selectedRole.map((role: any) => role.label);
+    setField({
+      ...field,
+      role: options,
+    });
+  };
+
   return (
     <>
       <button
@@ -177,11 +203,11 @@ export default function EditUser({ datas, onSuccess }: EditButtonProps) {
             >
               <Dialog.Panel className="modal-box m-5">
                 <Dialog.Title className="font-semibold text-xl">
-                  Ubah Data User
+                  Ubah Data Pengguna
                 </Dialog.Title>
                 <Dialog.Description className="mt-1 mb-4 text-md">
-                  Masukkan nama, username, dan email user yang ingin anda ubah
-                  disini
+                  Masukkan nama, username, email, role pengguna yang ingin anda
+                  ubah disini
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span className="pr-12">Nama</span>
                     <input
@@ -212,23 +238,24 @@ export default function EditUser({ datas, onSuccess }: EditButtonProps) {
                       onChange={handleChange}
                     />
                   </label>
-                  {/* <label className="label">
-                    <span className="label-text">
-                      Masukkan foto ruangan lokasi
-                    </span>
-                  </label> */}
-                  {/* <input
-                    type="file"
-                    className="file-input w-full max-w-xs"
-                    name="photo"
-                    placeholder={data.email}
-                  /> */}
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Role</span>
+                    <Select
+                      isMulti
+                      options={roles}
+                      className="basic-multi-select"
+                      classNamePrefix="Role"
+                      onChange={handleSelectChange}
+                      name="role"
+                      defaultValue={defaultValueUser}
+                    />
+                  </label>
                 </Dialog.Description>
                 <div className="">
                   <button
                     onClick={() => {
+                      handleEditUser();
                       setLoading(true);
-                      handleFileUpload();
                     }}
                     className="btn btn-accent  mr-3 mb-3 md:mb-0 capitalize text-white"
                   >
