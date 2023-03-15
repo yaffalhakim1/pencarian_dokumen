@@ -53,8 +53,12 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
   const defaultValueTags = data.tag.map((tag: any) => ({
     label: tag,
   }));
-  const defaultValueTables = { value: data.table_name };
-  const defaultValueRooms = { value: data.room_name };
+  const defaultValueTables = {
+    label: data.table_name,
+  };
+  const defaultValueRooms = {
+    label: data.room_name,
+  };
 
   const [field, setField] = useState({
     name: data.name,
@@ -66,6 +70,8 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
     code: data.code,
     table_id: data.table_id,
     room_id: data.room_id,
+    table_name: data.table_name,
+    room_name: data.room_name,
   });
   let [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -367,7 +373,7 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                       options={tables}
                       className="basic-single"
                       classNamePrefix="select"
-                      defaultValue={defaultValueTables.value}
+                      defaultValue={defaultValueTables}
                       onChange={handleSelectTableChange}
                     />
                   </label>
@@ -378,7 +384,7 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                       options={rooms}
                       className="basic-single"
                       classNamePrefix="select"
-                      defaultValue={defaultValueRooms.value}
+                      defaultValue={defaultValueRooms}
                       onChange={handleSelectRoomChange}
                     />
                   </label>
