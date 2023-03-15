@@ -5,6 +5,7 @@ import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import axios from "axios";
 import Link from "next/link";
 import DocumentsList from "../../components/documents/DocumentsList";
+import Head from "next/head";
 
 interface Document {
   id: any;
@@ -114,6 +115,9 @@ export default function HomeUser() {
 
   return (
     <>
+      <Head>
+        <title>Pencarian Dokumen</title>
+      </Head>
       <div className="dropdown">
         <label
           tabIndex={0}

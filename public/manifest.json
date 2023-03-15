@@ -1,6 +1,6 @@
 {
-  "name": "My PWA",
-  "short_name": "My PWA",
+  "name": "SPDA",
+  "short_name": "SPDA",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#ffffff",

@@ -1,3 +1,4 @@
+import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import HomeUser from "./home";
 
@@ -23,6 +24,9 @@ export default function Main() {
 
   return (
     <>
+      <Head>
+        <title>Pencarian Dokumen</title>
+      </Head>
       <div className="btm-nav">
         {/* <button
           className={`text-primary ${activeTab === 0 && "active"}`}
