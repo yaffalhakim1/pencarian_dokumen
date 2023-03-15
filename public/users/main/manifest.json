@@ -7,12 +7,12 @@
   "background_color": "#ffffff",
   "icons": [
     {
-      "src": "/users/main/undip.png",
+      "src": "/users/main/Undip.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/users/main/undip.png",
+      "src": "/users/main/Undip.png",
       "sizes": "512x512",
       "type": "image/png"
     }
