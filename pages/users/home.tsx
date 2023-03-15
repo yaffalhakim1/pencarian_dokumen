@@ -148,7 +148,7 @@ export default function HomeUser() {
       </div>
 
       <div className="flex justify-start w-full">
-        {/* <div className="form-control mt-4">
+        <div className="form-control mt-4">
           <div className="input-group ">
             <input
               className="input input-bordered"
@@ -174,7 +174,7 @@ export default function HomeUser() {
               </svg>
             </button>
           </div>
-        </div> */}
+        </div>
       </div>
 
       <ul>
