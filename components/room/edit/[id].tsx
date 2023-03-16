@@ -44,7 +44,7 @@ export default function EditRoom({ datas, onSuccess }: EditButtonProps) {
 
   const [field, setField] = useState({
     name: data.name,
-    // code: data.code,
+    code: data.code,
   });
   let [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -64,6 +64,7 @@ export default function EditRoom({ datas, onSuccess }: EditButtonProps) {
     const token = Cookie.get("token") as string;
     const formData = new FormData();
     formData.append("name", field.name);
+    formData.append("code", field.code);
 
     const options = {
       headers: {
@@ -183,6 +184,16 @@ export default function EditRoom({ datas, onSuccess }: EditButtonProps) {
                       placeholder={data.name}
                       className="input input-bordered"
                       name="name"
+                      onChange={handleChange}
+                    />
+                  </label>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Kode Ruang</span>
+                    <input
+                      type="text"
+                      placeholder={data.code}
+                      className="input input-bordered"
+                      name="code"
                       onChange={handleChange}
                     />
                   </label>

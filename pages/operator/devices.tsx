@@ -148,6 +148,7 @@ export default function CrudDevices() {
                   <th>Lokasi</th>
                   <th>Foto</th>
                   <th>Tag</th>
+                  <th>Kode</th>
                   <th></th>
                 </tr>
               </thead>
@@ -160,6 +161,7 @@ export default function CrudDevices() {
                       <img src={item.photo} width={100} alt="" />
                     </td>
                     <td>{item.tag.join(", ")}</td>
+                    <td>{item.code}</td>
                     <td>
                       <EditHardware
                         datas={{

@@ -151,7 +151,7 @@ export default function CrudRoom() {
                 <tr className="[&_th]:font-semibold [&_th]:capitalize">
                   <th>No</th>
                   <th>Name Ruang</th>
-                  <th>Kode Ruang Alat</th>
+                  <th>Kode Ruang</th>
                   <th></th>
                   <th></th>
                   <th></th>

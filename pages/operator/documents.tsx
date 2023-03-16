@@ -39,6 +39,14 @@ export default function CrudDocument() {
     return res.data;
   };
 
+  /**
+   * Fetches data from the server using the `swr` library.
+   *
+   * @param {string} url - The URL of the server's API endpoint.
+   * @param {Function} fetcher - The function used to fetch the data.
+   * @returns {object} - An object with the `data`, `error`, and `mutate` properties.
+   */
+
   const { data, error, mutate } = useSWR(
     `https://spda.17management.my.id/api/documents/data?page=${page}`,
     fetcher
@@ -75,6 +83,10 @@ export default function CrudDocument() {
 
   const pageNumbers = Array.from({ length: data.last_page }, (_, i) => i + 1);
 
+  /**
+   * Deletes (soft delete) a document from the server.
+   * @param {any} id - The ID of the document to be deleted.
+   */
   const handleDelete = async (id: any) => {
     const token = Cookie.get("token") as string;
     setLoading(true);
@@ -88,7 +100,6 @@ export default function CrudDocument() {
           },
         }
       );
-
       mutate(data);
       setLoading(false);
       toast.success("Menunggu Persetujuan");
@@ -99,6 +110,11 @@ export default function CrudDocument() {
     }
   };
 
+  /**
+   * Filters the `items` array based on the `searchTerm` value and sets the `filteredItems` state.
+   *
+   * @returns {void}
+   */
   function handleSearch() {
     const filteredItems = items.filter((item: { name: string }) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -152,7 +168,8 @@ export default function CrudDocument() {
                   <th>No</th>
                   <th>Name Dokumen</th>
                   <th>Tag</th>
-                  {/* <th>Nama Alat</th> */}
+                  <th>Kode Dokumen</th>
+                  <th></th>
                   <th></th>
                   <th></th>
                   <th></th>
@@ -164,7 +181,7 @@ export default function CrudDocument() {
                     <th>{index++}</th>
                     <td>{item.name}</td>
                     <td>{item.tag.join(", ")} </td>
-                    {/* <td>{item.device_name}</td> */}
+                    <td>{item.code}</td>
                     <td>
                       <EditDocs
                         datas={{
