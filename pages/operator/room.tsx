@@ -92,8 +92,7 @@ export default function CrudRoom() {
       );
       setLoading(false);
       mutate(data);
-      console.log(data);
-      toast.success("Dokumen berhasil dihapus");
+      toast.success("Silakan menunggu persetujuan");
     } catch (error) {
       setLoading(false);
       toast.error("Dokumen gagal dihapus");

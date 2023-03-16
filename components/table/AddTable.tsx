@@ -6,6 +6,7 @@ import { TailSpin } from "react-loader-spinner";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import Select from "react-select";
+import useSWR from "swr";
 
 export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
   const [field, setField] = useState({
@@ -17,7 +18,7 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState<any>([]);
   const [selectedValue, setSelectedValue] = useState(null);
-  const [rooms, setRooms] = useState<any>([]);
+  // const [rooms, setRooms] = useState<any>([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
 
   function closeModal() {
@@ -55,35 +56,49 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
     });
   };
 
-  useEffect(() => {
-    const getRoomId = async () => {
-      try {
-        const token = Cookie.get("token") as string;
-        const res = await axios
-          .get("https://spda.17management.my.id/api/rooms/list", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((res) => {
-            const rooms = res.data.data.map((item: any) => {
-              return {
-                value: item.id,
-                label: item.name,
-              };
-            });
-            setRooms(rooms);
-            if (rooms.length > 0) {
-              setSelectedRoom(rooms);
-            }
-          });
-      } catch (error) {
-        const err = error as AxiosError;
-        console.log(err.response?.data, "error get rooms");
-      }
-    };
-    getRoomId();
-  }, []);
+  const token = Cookie.get("token") as string;
+  const { data: rooms, error: roomsError } = useSWR(
+    "https://spda.17management.my.id/api/rooms/list",
+    (url) =>
+      axios
+        .get(url, { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) =>
+          res.data.data.map((item: { id: any; name: any }) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        )
+  );
+
+  // useEffect(() => {
+  //   const getRoomId = async () => {
+  //     try {
+  //       const token = Cookie.get("token") as string;
+  //       const res = await axios
+  //         .get("https://spda.17management.my.id/api/rooms/list", {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         })
+  //         .then((res) => {
+  //           const rooms = res.data.data.map((item: any) => {
+  //             return {
+  //               value: item.id,
+  //               label: item.name,
+  //             };
+  //           });
+  //           setRooms(rooms);
+  //           if (rooms.length > 0) {
+  //             setSelectedRoom(rooms);
+  //           }
+  //         });
+  //     } catch (error) {
+  //       const err = error as AxiosError;
+  //       console.log(err.response?.data, "error get rooms");
+  //     }
+  //   };
+  //   getRoomId();
+  // }, []);
 
   async function handleAddTable() {
     const token = Cookie.get("token") as string;
@@ -112,7 +127,12 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
       })
       .catch((error) => {
         const err = error as AxiosError;
-        toast.error("Meja sudah ada");
+        if (err.response?.status === 400) {
+          toast.error("Meja sudah ada");
+        } else {
+          toast.error("Gagal menambahkan meja");
+        }
+
         setLoading(false);
         closeModal();
         console.log(err.response?.data, "error upload");
@@ -160,10 +180,10 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
                 <Dialog.Description className="mt-1 mb-4 text-md">
                   Masukkan nama dan kode meja yang ingin anda tambahkan disini.
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Nama Ruang</span>
+                    <span>Nama Meja</span>
                     <input
                       type="text"
-                      placeholder="nama ruang"
+                      placeholder="nama meja"
                       className="input input-bordered"
                       name="name"
                       onChange={handleChange}
@@ -174,7 +194,7 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
                     <span>Kode Meja</span>
                     <input
                       type="text"
-                      // placeholder={data.device_id}
+                      placeholder="A.201.D"
                       //   value={deviceId}
                       className="input input-bordered"
                       name="code"

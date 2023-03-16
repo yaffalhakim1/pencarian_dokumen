@@ -116,7 +116,7 @@ export default function CrudRoom() {
           Lakukan perubahan data ruang disini
         </p>
         <div className="md:flex md:justify-between">
-          <AddRoom onSuccess={mutate} />
+          {/* <AddRoom onSuccess={mutate} /> */}
           {/* <div className="form-control">
             <div className="input-group input-group-sm mb-3">
               <input

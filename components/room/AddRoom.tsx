@@ -54,7 +54,11 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
       })
       .catch((error) => {
         const err = error as AxiosError;
-        toast.error("Ruang sudah ada");
+        if (err.response?.status === 400) {
+          toast.error("Ruang sudah ada");
+        } else {
+          toast.error("Ruang tidak berhasil ditambahkan");
+        }
         setLoading(false);
         closeModal();
         console.log(err.response?.data, "error upload");
@@ -105,7 +109,7 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
                     <span>Nama Ruang</span>
                     <input
                       type="text"
-                      placeholder="nama dokumen"
+                      placeholder="nama ruang"
                       className="input input-bordered"
                       name="name"
                       onChange={handleChange}
@@ -115,7 +119,7 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
                     <span>Kode Ruang</span>
                     <input
                       type="text"
-                      // placeholder={data.device_id}
+                      placeholder="A.201"
                       //   value={deviceId}
                       className="input input-bordered"
                       name="code"

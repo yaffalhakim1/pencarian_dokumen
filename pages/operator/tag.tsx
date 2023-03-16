@@ -89,7 +89,7 @@ export default function CrudTags() {
       );
       mutate(data);
       setLoading(false);
-      toast.success("Menunggu Persetujuan");
+      toast.success("Silakan menunggu Persetujuan");
     } catch (error) {
       setLoading(false);
       console.error(error);

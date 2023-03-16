@@ -215,7 +215,12 @@ export default function CrudApproval() {
                   <tr key={item.id}>
                     <th>{index++}</th>
                     <td>{item.data.name}</td>
-                    <td>{item.data.tag}</td>
+                    <td>
+                      {item.data.tag &&
+                        JSON.parse(item.data.tag).map((tag: any) => (
+                          <span key={tag}>{tag}</span>
+                        ))}
+                    </td>
                     <td>{item.data.created_by}</td>
                     <td>{item.status}</td>
                     {/* <td>{renderApproveRejectButtons(item.id, item.status)}</td> */}

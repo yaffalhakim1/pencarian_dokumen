@@ -88,7 +88,7 @@ export default function CrudDevices() {
       );
       setLoading(false);
       mutate(data);
-      toast.success("Alat berhasil dihapus");
+      toast.success("Silakan menunggu persetujuan");
     } catch (error) {
       setLoading(false);
       console.error(error);

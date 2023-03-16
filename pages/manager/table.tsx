@@ -119,7 +119,7 @@ export default function CrudTable() {
           Lakukan perubahan data meja disini
         </p>
         <div className="md:flex md:justify-between">
-          <AddTable onSuccess={mutate} />
+          {/* <AddTable onSuccess={mutate} /> */}
           {/* <div className="form-control">
             <div className="input-group input-group-sm mb-3">
               <input

@@ -76,8 +76,13 @@ export default function AddUser({ onSuccess }: { onSuccess: () => void }) {
       toast.success("Pengguna baru berhasil ditambahkan");
     } catch (error) {
       const err = error as AxiosError;
+      if (err.response?.status === 400) {
+        toast.error("Salah satu data sudah ada");
+      } else {
+        toast.error("Gagal menambahkan pengguna");
+      }
       console.log(err.response?.data, "error upload");
-      toast.error("Gagal menambahkan alat");
+
       setLoading(false);
       closeModal();
     }
@@ -96,7 +101,6 @@ export default function AddUser({ onSuccess }: { onSuccess: () => void }) {
           }))
         )
   );
-  console.log(roles, "roles");
 
   const handleSelectChange = (selectedRoles: any) => {
     const roles = selectedRoles.map((role: any) => role.label);

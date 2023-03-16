@@ -91,35 +91,35 @@ export default function EditRoom({ datas, onSuccess }: EditButtonProps) {
   }
 
   //get list tags
-  useEffect(() => {
-    const getTags = async () => {
-      try {
-        const token = Cookie.get("token") as string;
-        const res = await axios
-          .get("https://spda.17management.my.id/api/tags/list", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((res) => {
-            const options = res.data.data.map((item: any) => {
-              return {
-                value: item.id,
-                label: item.name,
-              };
-            });
-            setOptions(options);
-            if (options.length > 0) {
-              setSelectedValue(options);
-            }
-          });
-      } catch (error) {
-        const err = error as AxiosError;
-        console.log(err.response?.data, "error get tags in edit room");
-      }
-    };
-    getTags();
-  }, []);
+  // useEffect(() => {
+  //   const getTags = async () => {
+  //     try {
+  //       const token = Cookie.get("token") as string;
+  //       const res = await axios
+  //         .get("https://spda.17management.my.id/api/tags/list", {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         })
+  //         .then((res) => {
+  //           const options = res.data.data.map((item: any) => {
+  //             return {
+  //               value: item.id,
+  //               label: item.name,
+  //             };
+  //           });
+  //           setOptions(options);
+  //           if (options.length > 0) {
+  //             setSelectedValue(options);
+  //           }
+  //         });
+  //     } catch (error) {
+  //       const err = error as AxiosError;
+  //       console.log(err.response?.data, "error get tags in edit room");
+  //     }
+  //   };
+  //   getTags();
+  // }, []);
 
   //   const handleSelectChange = (selectedOptions: any) => {
   //     const options = selectedOptions.map((option: any) => option.label);
@@ -175,8 +175,7 @@ export default function EditRoom({ datas, onSuccess }: EditButtonProps) {
                   Ubah Ruang
                 </Dialog.Title>
                 <Dialog.Description className="mt-1 mb-4 text-md">
-                  Masukkan nama, id alat, uuid, dan foto dokumen yang ingin anda
-                  ubah disini.
+                  Masukkan nama, ruang yang ingin anda ubah disini
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Nama Ruang</span>
                     <input

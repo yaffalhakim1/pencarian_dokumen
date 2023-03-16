@@ -32,7 +32,6 @@ export default function CrudUsers() {
     "https://spda.17management.my.id/api/users/data",
     fetcher
   );
-
   if (error)
     return (
       <div className="container mx-auto">
