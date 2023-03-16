@@ -77,7 +77,7 @@ export default function AddUser({ onSuccess }: { onSuccess: () => void }) {
     } catch (error) {
       const err = error as AxiosError;
       if (err.response?.status === 400) {
-        toast.error("Salah satu data sudah ada");
+        toast.error(`${err.response?.data}`);
       } else {
         toast.error("Gagal menambahkan pengguna");
       }
