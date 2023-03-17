@@ -2,6 +2,9 @@ import axios from "axios";
 import { GetServerSideProps } from "next";
 import Cookie from "js-cookie";
 import Link from "next/link";
+import useSWR from "swr";
+import { useState } from "react";
+import { useRouter } from "next/router";
 
 type Data = {
   id: any;
@@ -25,6 +28,15 @@ interface Props {
   data: Data;
 }
 
+const fetcher = async (url: string, token: string) => {
+  const response = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data.data;
+};
+
 export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
   context
 ) => {
@@ -47,35 +59,39 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
   };
 };
 
-export default function DocumentPage({ data }: Props) {
-  const datas = data;
+export default function DocumentPage() {
+  const router = useRouter();
+  const { id } = router.query;
+  const token = Cookie.get("token");
+
+  const fetcher = async (url: string) => {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data.data;
+  };
+
+  const { data, error } = useSWR<Data>(
+    id ? `https://spda.17management.my.id/api/documents/data/${id}` : null,
+    fetcher
+  );
+
+  if (error) return <div>Error fetching document</div>;
+  if (!data) return <div>Loading document...</div>;
 
   return (
     <>
-      {/* <div className="p-4">
-        <Link href="/" legacyBehavior>
-          <a className=" hover:text-blue-700">Back</a>
-        </Link>
-        <h1 className="text-center font-semibold text-xl">Detail Dokumen</h1>
-        <img src={datas.photo} alt="" className="mx-auto mt-4" />
-        <h1 className=" text-slate-900 truncate pr-20 mt-4">
-          <span className="font-normal">Nama : </span> {datas.name}
-        </h1>
-        <p>Alat : {datas.device_name}</p>
-        <p>Tag : {datas.tag.join(", ")}</p>
-        <p>Ruang : {datas.room_name}</p>
-        <p>Meja : {datas.table_name}</p>
-      </div> */}
       <div className="card w-auto bg-base-100 shadow-2xl">
         <Link href="/" legacyBehavior>
           <a className=" hover:text-blue-700 ml-10 mt-10">Back</a>
         </Link>
-
         <figure className="p-1 rounded-md mx-10 mt-10 shadow-xl bg-warning bg-blend-overlay">
-          <img src={datas.photo} alt="Images" className="rounded-xl" />
+          <img src={data.photo} alt="Images" className="rounded-xl" />
         </figure>
         <div className="flex justify-center mt-7">
-          {datas.tag.map((item) => (
+          {data.tag.map((item) => (
             <button
               className="btn btn-sm btn-success rounded-sm mx-1 shadow-lg text-white"
               key={item}
@@ -85,10 +101,10 @@ export default function DocumentPage({ data }: Props) {
           ))}
         </div>
         <div className="card-body items-center text-center">
-          <h1 className="card-title text-2xl">{datas.name}</h1>
+          <h1 className="card-title text-2xl">{data.name}</h1>
           <p className="font-sans">
-            Dokumen ini berada di Ruang {datas.room_name} tepatnya di Meja{" "}
-            {datas.table_name}
+            Dokumen ini berada di Ruang {data.room_name} tepatnya di Meja{" "}
+            {data.table_name}
           </p>
         </div>
       </div>
