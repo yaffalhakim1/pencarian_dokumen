@@ -2,9 +2,10 @@ import axios from "axios";
 import { GetServerSideProps } from "next";
 import Cookie from "js-cookie";
 import Link from "next/link";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import IconRefreshCircleOutline from "../../../components/icons";
 
 type Data = {
   id: any;
@@ -75,18 +76,53 @@ export default function DocumentPage() {
 
   const { data, error } = useSWR<Data>(
     id ? `https://spda.17management.my.id/api/documents/data/${id}` : null,
-    fetcher
+    fetcher,
+    {
+      revalidateOnFocus: true,
+      refreshInterval(latestData) {
+        return latestData ? 5000 : 0;
+      },
+    }
   );
 
+  const handleRefresh = async () => {
+    await mutate(
+      `https://spda.17management.my.id/api/documents/data/${id}`,
+      async (data: any) => {
+        const response = await axios.get(
+          `https://spda.17management.my.id/api/documents/data/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        return response.data.data;
+      },
+      false
+    );
+    console.log(data);
+  };
+
   if (error) return <div>Error fetching document</div>;
-  if (!data) return <div>Loading document...</div>;
+  if (!data) return <div className="flex mx-auto">Loading document...</div>;
+
+  const [isClicked, setIsClicked] = useState(false);
+
+  const handleClick = () => {
+    setIsClicked(true);
+    handleRefresh();
+    setTimeout(() => {
+      setIsClicked(false);
+    }, 300);
+  };
 
   return (
     <>
       <div className="card w-auto bg-base-100 shadow-2xl">
-        <Link href="/" legacyBehavior>
+        {/* <Link href="/" legacyBehavior>
           <a className=" hover:text-blue-700 ml-10 mt-10">Back</a>
-        </Link>
+        </Link> */}
         <figure className="p-1 rounded-md mx-10 mt-10 shadow-xl bg-warning bg-blend-overlay">
           <img src={data.photo} alt="Images" className="rounded-xl" />
         </figure>
@@ -101,10 +137,22 @@ export default function DocumentPage() {
           ))}
         </div>
         <div className="card-body items-center text-center">
-          <h1 className="card-title text-2xl">{data.name}</h1>
+          <div className="flex">
+            <h1 className="card-title text-3xl ">{data.name}</h1>
+            <button
+              className={` ${isClicked ? "animate-spin text-green-500" : ""}`}
+              onClick={handleClick}
+            >
+              <IconRefreshCircleOutline
+                width={30}
+                height={30}
+                className="ml-2"
+              />
+            </button>
+          </div>
           <p className="font-sans">
-            Dokumen ini berada di Ruang {data.room_name} tepatnya di Meja{" "}
-            {data.table_name}
+            Dokumen ini berada di Ruang {data.room_name} dengan radius maksimal
+            10m dari {data.table_name}
           </p>
         </div>
       </div>

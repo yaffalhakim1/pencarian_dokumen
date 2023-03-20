@@ -1,4 +1,12 @@
-import { useEffect, useState } from "react";
+import {
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  ReactFragment,
+  ReactPortal,
+  useEffect,
+  useState,
+} from "react";
 import Router from "next/router";
 import Cookie from "js-cookie";
 import { useAuthRedirect } from "../../hooks/useAuthRedirect";
@@ -33,6 +41,14 @@ export default function HomeUser() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  // const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [searchHistory, setSearchHistory] = useState(() => {
+    const searchHistoryString = localStorage.getItem("searchHistory");
+    if (searchHistoryString) {
+      return JSON.parse(searchHistoryString);
+    }
+    return [];
+  });
 
   async function logoutHandler(e: { preventDefault: () => void }) {
     e.preventDefault();
@@ -98,19 +114,32 @@ export default function HomeUser() {
       setDocuments(response.data.data.data);
       setTotalPages(response.data.last_page);
       console.log(response.data.data);
+      const newSearchHistory = [...searchHistory, query];
+      setSearchHistory(newSearchHistory);
+      localStorage.setItem("searchHistory", JSON.stringify(newSearchHistory));
     } catch (error) {
       console.log(error);
     }
   };
+  useEffect(() => {
+    const searchHistoryString = localStorage.getItem("searchHistory");
+    if (searchHistoryString) {
+      setSearchHistory(JSON.parse(searchHistoryString));
+    }
+  }, []);
 
-  // if you want to use pagination, you can uncomment use the code below
-
-  // const handlePrevPage = () => {
-  //   setCurrentPage(currentPage - 1);
-  // };
-
-  // const handleNextPage = () => {
-  //   setCurrentPage(currentPage + 1);
+  // const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const newQuery = event.target.value;
+  //   const newSearchHistory = [...searchHistory];
+  //   if (newQuery.length > 0 && !newSearchHistory.includes(newQuery)) {
+  //     newSearchHistory.unshift(newQuery);
+  //     localStorage.setItem(
+  //       "searchHistory",
+  //       JSON.stringify(newSearchHistory.slice(0, 5))
+  //     );
+  //   }
+  //   setQuery(newQuery);
+  //   setSearchHistory(newSearchHistory);
   // };
 
   return (
@@ -156,7 +185,9 @@ export default function HomeUser() {
               value={query}
               placeholder="Masukkan nama dokumen yang ingin anda cari"
               onChange={(event) => setQuery(event.target.value)}
+              // onChange={handleInputChange}
             />
+
             <button onClick={handleSearch} className="btn btn-square">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -175,6 +206,24 @@ export default function HomeUser() {
             </button>
           </div>
         </div>
+        {/* <ul>
+          {searchHistory.map(
+            (
+              searchQuery:
+                | string
+                | number
+                | boolean
+                | ReactElement<any, string | JSXElementConstructor<any>>
+                | ReactFragment
+                | ReactPortal
+                | null
+                | undefined,
+              index: Key | null | undefined
+            ) => (
+              <li key={index}>{searchQuery}</li>
+            )
+          )}
+        </ul> */}
       </div>
 
       <ul>
@@ -201,20 +250,6 @@ export default function HomeUser() {
           </div>
         )}
       </ul>
-      {/* 
-      if you want to use pagination, uncomment this code below
-            */}
-      {/* <div>
-        <button onClick={handlePrevPage} disabled={currentPage === 1}>
-          Prev
-        </button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-          Next
-        </button>
-      </div> */}
     </>
   );
 }
