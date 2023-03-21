@@ -64,6 +64,7 @@ export default function DocumentPage() {
   const router = useRouter();
   const { id } = router.query;
   const token = Cookie.get("token");
+  const [isClicked, setIsClicked] = useState(false);
 
   const fetcher = async (url: string) => {
     const response = await axios.get(url, {
@@ -106,8 +107,6 @@ export default function DocumentPage() {
 
   if (error) return <div>Error fetching document</div>;
   if (!data) return <div className="flex mx-auto">Loading document...</div>;
-
-  const [isClicked, setIsClicked] = useState(false);
 
   const handleClick = () => {
     setIsClicked(true);
