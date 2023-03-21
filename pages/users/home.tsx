@@ -42,13 +42,6 @@ export default function HomeUser() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   // const [searchHistory, setSearchHistory] = useState<string[]>([]);
-  const [searchHistory, setSearchHistory] = useState(() => {
-    const searchHistoryString = localStorage.getItem("searchHistory");
-    if (searchHistoryString) {
-      return JSON.parse(searchHistoryString);
-    }
-    return [];
-  });
 
   async function logoutHandler(e: { preventDefault: () => void }) {
     e.preventDefault();
@@ -114,19 +107,10 @@ export default function HomeUser() {
       setDocuments(response.data.data.data);
       setTotalPages(response.data.last_page);
       console.log(response.data.data);
-      const newSearchHistory = [...searchHistory, query];
-      setSearchHistory(newSearchHistory);
-      localStorage.setItem("searchHistory", JSON.stringify(newSearchHistory));
     } catch (error) {
       console.log(error);
     }
   };
-  useEffect(() => {
-    const searchHistoryString = localStorage.getItem("searchHistory");
-    if (searchHistoryString) {
-      setSearchHistory(JSON.parse(searchHistoryString));
-    }
-  }, []);
 
   // const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   const newQuery = event.target.value;
