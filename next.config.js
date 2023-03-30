@@ -23,7 +23,4 @@ module.exports = withPWA({
   //     },
   //   ];
   // },
-  images: {
-    remotePatterns: [{}],
-  },
 });
