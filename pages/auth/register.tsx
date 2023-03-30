@@ -65,9 +65,47 @@ export default function Register() {
     Router.replace("/auth/login");
   }
 
+  // async function handleRegister(event: React.SyntheticEvent) {
+  //   event.preventDefault();
+  //   try {
+  //     const registerReq = await axios.post(
+  //       "https://spda.17management.my.id/api/auth/register",
+  //       {
+  //         name: field.name,
+  //         email: field.email,
+  //         username: field.username,
+  //         password: field.password,
+  //         password_confirmation: field.password_confirmation,
+  //         role: "User",
+  //       },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           accept: "*/*",
+  //         },
+  //       }
+  //     );
+  //     const registerResp = await registerReq.data;
+  //     setLoading(false);
+  //     if (registerReq.status === 200) {
+  //       router.push("/auth/login");
+  //     }
+  //   } catch (error: any) {
+  //     if (error.response.status === 400) {
+  //       toast.error("Email atau username sudah terdaftar");
+  //     } else if (error.response.status === 500) {
+  //       toast.error("Register gagal, silakan coba lagi");
+  //     } else {
+  //       toast.error("Register gagal, silakan coba lagi");
+  //     }
+
+  //     setLoading(false);
+  //     const err = error as AxiosError;
+  //   }
+  // }
+
   async function handleRegister(event: React.SyntheticEvent) {
     event.preventDefault();
-
     try {
       const registerReq = await axios.post(
         "https://spda.17management.my.id/api/auth/register",
@@ -86,21 +124,30 @@ export default function Register() {
           },
         }
       );
-
       const registerResp = await registerReq.data;
       setLoading(false);
       if (registerReq.status === 200) {
+        toast.success("Register berhasil");
         router.push("/auth/login");
       }
     } catch (error: any) {
-      if (error.response.status === 400) {
-        toast.error("Email atau username sudah terdaftar");
+      if (error.response.status === 500) {
+        toast.error("Register gagal, silakan coba lagi");
+      } else if (
+        error.response.data &&
+        error.response.data.message &&
+        typeof error.response.data.message === "object"
+      ) {
+        const errors = error.response.data.message;
+        for (const field in errors) {
+          errors[field].forEach((error: string) => {
+            toast.error(error);
+          });
+        }
       } else {
         toast.error("Register gagal, silakan coba lagi");
       }
       setLoading(false);
-      const err = error as AxiosError;
-      console.log(err.message, "error register");
     }
   }
 
@@ -184,7 +231,7 @@ export default function Register() {
                     placeholder="Password (minimum 8 characters)"
                     name="password"
                     onChange={fieldHandler}
-                    pattern=".{8,}"
+                    // pattern=".{8,}"
                     title="Password must be at least 8 characters long"
                     required
                   />
@@ -202,30 +249,6 @@ export default function Register() {
                     required
                   />
                 </div>
-
-                {/* <div className="mb-6">
-                  <div className="text-lg font-bold text-gray-700 tracking-wide">
-                    Role
-                  </div>
-                  <input
-                    type="text"
-                    // className="form-control block w-full px-4 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                    className="w-full text-sm py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
-                    placeholder="Isi dengan User"
-                    name="role"
-                    onChange={fieldHandler}
-                    value="User"
-                    required
-                  />
-                  <Select
-                    isMulti
-                    options={options}
-                    className="basic-multi-select"
-                    classNamePrefix="select"
-                    onChange={handleSelectChange}
-                    name="role"
-                  />
-                </div> */}
 
                 <button
                   type="submit"

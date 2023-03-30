@@ -28,12 +28,12 @@ export default function Home() {
     } else {
       router.push("/auth/login");
     }
-  }, []);
+  });
 
   return (
     <>
       <div className="container mx-auto">
-        <div className="flex text-center justify-center items-center">
+        <div className="flex justify-center items-center min-h-screen">
           <TailSpin color="#4B5563" height={40} width={40} />
           <p className="ml-5 text-lg text-center">Sedang memeriksa....</p>
         </div>

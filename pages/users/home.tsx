@@ -38,10 +38,11 @@ export default function HomeUser() {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [query, setQuery] = useState("");
+  const [history, setHistory] = useState<string[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  // const [searchHistory, setSearchHistory] = useState<string[]>([]);
 
   async function logoutHandler(e: { preventDefault: () => void }) {
     e.preventDefault();
@@ -106,25 +107,11 @@ export default function HomeUser() {
       );
       setDocuments(response.data.data.data);
       setTotalPages(response.data.last_page);
-      console.log(response.data.data);
+      setHistory((prevHistory) => [...prevHistory, query]);
     } catch (error) {
       console.log(error);
     }
   };
-
-  // const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const newQuery = event.target.value;
-  //   const newSearchHistory = [...searchHistory];
-  //   if (newQuery.length > 0 && !newSearchHistory.includes(newQuery)) {
-  //     newSearchHistory.unshift(newQuery);
-  //     localStorage.setItem(
-  //       "searchHistory",
-  //       JSON.stringify(newSearchHistory.slice(0, 5))
-  //     );
-  //   }
-  //   setQuery(newQuery);
-  //   setSearchHistory(newSearchHistory);
-  // };
 
   return (
     <>
@@ -162,7 +149,7 @@ export default function HomeUser() {
 
       <div className="flex justify-start w-full">
         <div className="form-control mt-4">
-          <div className="input-group ">
+          <div className="input-group">
             <input
               className="input input-bordered"
               type="text"
@@ -170,6 +157,9 @@ export default function HomeUser() {
               placeholder="Masukkan nama dokumen yang ingin anda cari"
               onChange={(event) => setQuery(event.target.value)}
               // onChange={handleInputChange}
+              // onClick={handleInputClick}
+              onFocus={() => setShowHistory(true)} // Show the search history list when the search bar is clicked
+              onBlur={() => setShowHistory(false)}
             />
 
             <button onClick={handleSearch} className="btn btn-square">
@@ -189,25 +179,22 @@ export default function HomeUser() {
               </svg>
             </button>
           </div>
-        </div>
-        {/* <ul>
-          {searchHistory.map(
-            (
-              searchQuery:
-                | string
-                | number
-                | boolean
-                | ReactElement<any, string | JSXElementConstructor<any>>
-                | ReactFragment
-                | ReactPortal
-                | null
-                | undefined,
-              index: Key | null | undefined
-            ) => (
-              <li key={index}>{searchQuery}</li>
-            )
+          {showHistory && (
+            <div className="absolute top-full left-0 w-full bg-white rounded-b-md shadow-lg z-10">
+              <ul>
+                {history.map((item, index) => (
+                  <li
+                    key={index}
+                    className="px-2 py-1 cursor-pointer hover:bg-gray-100"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
-        </ul> */}
+          <p className="text-zinc-600">coba: dokumen</p>
+        </div>
       </div>
 
       <ul>

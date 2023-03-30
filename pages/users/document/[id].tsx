@@ -6,6 +6,7 @@ import useSWR, { mutate } from "swr";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import IconRefreshCircleOutline from "../../../components/icons";
+import { TailSpin } from "react-loader-spinner";
 
 type Data = {
   id: any;
@@ -106,7 +107,22 @@ export default function DocumentPage() {
   };
 
   if (error) return <div>Error fetching document</div>;
-  if (!data) return <div className="flex mx-auto">Loading document...</div>;
+  if (!data)
+    return (
+      <div className=" flex justify-center items-center min-h-screen">
+        <TailSpin
+          height="20"
+          width="20"
+          color="#000000"
+          ariaLabel="tail-spin-loading"
+          radius="1"
+          wrapperStyle={{}}
+          wrapperClass="mr-3"
+          visible={true}
+        />
+        <p className="text-center text-xl">Mohon tunggu...</p>
+      </div>
+    );
 
   const handleClick = () => {
     setIsClicked(true);
