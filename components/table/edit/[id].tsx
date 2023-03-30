@@ -6,11 +6,14 @@ import { TailSpin } from "react-loader-spinner";
 import { GetServerSideProps } from "next";
 import { toast } from "sonner";
 import Select from "react-select";
+import useSWR from "swr";
 
 type Data = {
   name: string;
   code: any;
+  room_id: any;
   id: any;
+  room_name: any;
 };
 
 interface EditButtonProps {
@@ -41,15 +44,17 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
 
 export default function EditTable({ datas, onSuccess }: EditButtonProps) {
   const data = datas;
+  const defaultValueRooms = {
+    label: datas.room_name,
+  };
 
   const [field, setField] = useState({
     name: data.name,
     code: data.code,
+    room_id: data.room_id,
   });
   let [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [options, setOptions] = useState<any>([]);
-  const [selectedValue, setSelectedValue] = useState<any>([]);
 
   function closeModal() {
     setIsOpen(false);
@@ -59,12 +64,13 @@ export default function EditTable({ datas, onSuccess }: EditButtonProps) {
     setIsOpen(true);
   }
 
-  async function handleEdit() {
+  async function handleEditTable() {
     const id = datas.id;
     const token = Cookie.get("token") as string;
     const formData = new FormData();
     formData.append("name", field.name);
     formData.append("code", field.code);
+    formData.append("room_id", field.room_id);
 
     const options = {
       headers: {
@@ -91,7 +97,27 @@ export default function EditTable({ datas, onSuccess }: EditButtonProps) {
     }
   }
 
-  //get list tags
+  //get list room
+  const token = Cookie.get("token") as string;
+  const { data: rooms, error: roomsError } = useSWR(
+    "https://spda.17management.my.id/api/rooms/list",
+    (url) =>
+      axios
+        .get(url, { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) =>
+          res.data.data.map((item: { id: any; name: any }) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        )
+  );
+  const handleSelectRoomChange = (selectedRoom: any) => {
+    const room_id = selectedRoom.value;
+    setField((prevField) => ({
+      ...prevField,
+      room_id: room_id,
+    }));
+  };
 
   //   const handleSelectChange = (selectedOptions: any) => {
   //     const options = selectedOptions.map((option: any) => option.label);
@@ -168,11 +194,22 @@ export default function EditTable({ datas, onSuccess }: EditButtonProps) {
                       onChange={handleChange}
                     />
                   </label>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Ruang</span>
+                    <Select
+                      options={rooms}
+                      className="basic-single"
+                      defaultValue={defaultValueRooms}
+                      classNamePrefix="select"
+                      onChange={handleSelectRoomChange}
+                      name="room_id"
+                    />
+                  </label>
                 </Dialog.Description>
                 <button
                   onClick={() => {
                     setLoading(true);
-                    handleEdit();
+                    handleEditTable();
                   }}
                   className="btn btn-accent mr-3 mb-3 md:mb-0 capitalize"
                 >

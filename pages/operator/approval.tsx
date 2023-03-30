@@ -205,7 +205,6 @@ export default function CrudApproval() {
                   <th>Tag</th>
                   <th>Dibuat oleh</th>
                   <th>Status</th>
-                  <th>Aksi</th>
 
                   <th></th>
                 </tr>

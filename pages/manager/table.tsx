@@ -154,8 +154,9 @@ export default function CrudTable() {
               <thead>
                 <tr className="[&_th]:font-semibold [&_th]:capitalize">
                   <th>No</th>
-                  <th>Name meja</th>
-                  <th>Kode meja ruangan </th>
+                  <th>Kode meja ruangan</th>
+                  <th>Nama meja</th>
+                  <th>Ruang</th>
                   <th></th>
                   <th></th>
                   <th></th>
@@ -164,9 +165,10 @@ export default function CrudTable() {
               <tbody>
                 {data.data.data.map((item: any) => (
                   <tr key={item.id}>
-                    <th>{index++}</th>
-                    <td>{item.name}</td>
+                    <td>{index++}</td>
                     <td>{item.code}</td>
+                    <td>{item.name}</td>
+                    <td>{item.room_name}</td>
                     <td>
                       {/* <EditTable
                         datas={{

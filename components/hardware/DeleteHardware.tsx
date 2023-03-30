@@ -63,7 +63,7 @@ export default function DeleteHardware(props: Props) {
                   Hapus Alat
                 </Dialog.Title>
                 <Dialog.Description className="mt-1 mb-6">
-                  Apakah anda yakin ingin menghapus dokumen ini? Aksi ini tidak
+                  Apakah anda yakin ingin menghapus alat ini? Aksi ini tidak
                   dapat dibatalkan.
                 </Dialog.Description>
                 <button

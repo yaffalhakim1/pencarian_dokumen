@@ -59,7 +59,7 @@ export default function EditRoom({ datas, onSuccess }: EditButtonProps) {
     setIsOpen(true);
   }
 
-  async function handleEdit() {
+  async function handleEditRoom() {
     const id = datas.id;
     const token = Cookie.get("token") as string;
     const formData = new FormData();
@@ -201,7 +201,7 @@ export default function EditRoom({ datas, onSuccess }: EditButtonProps) {
                 <button
                   onClick={() => {
                     setLoading(true);
-                    handleEdit();
+                    handleEditRoom();
                   }}
                   className="btn btn-accent mr-3 mb-3 md:mb-0 capitalize"
                 >

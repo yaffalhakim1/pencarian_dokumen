@@ -14,6 +14,7 @@ import useSWR from "swr";
 import CrudRoom from "./room";
 import CrudTable from "./table";
 import CrudApproval from "./approval";
+import useRoleAuthorization from "../../hooks/useRoleAuth";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
@@ -26,10 +27,12 @@ export default function DashboardAdmin() {
   };
 
   // useAuthRedirect();
+  useRoleAuthorization(["Operator"]);
 
   async function logoutHandler() {
     Cookie.remove("token");
     Cookie.remove("expired_in");
+    Cookie.remove("role");
     const token = Cookie.get("token") as string;
     const logout = await axios
       .post("https://spda.17management.my.id/api/auth/logout", {

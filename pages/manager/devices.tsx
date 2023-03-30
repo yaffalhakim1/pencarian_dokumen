@@ -145,10 +145,9 @@ export default function CrudDevices() {
               <thead>
                 <tr className="[&_th]:font-semibold [&_th]:capitalize">
                   <th>No</th>
-                  <th>Lokasi</th>
-                  <th>Meja</th>
-                  <th>Ruang</th>
+                  <th>Kode</th>
                   <th>Foto</th>
+                  <th>Ruang</th>
                   <th>Tag</th>
                   <th></th>
                 </tr>
@@ -156,13 +155,12 @@ export default function CrudDevices() {
               <tbody>
                 {data.data.data.map((item: any) => (
                   <tr key={item.id}>
-                    <th>{index++}</th>
-                    <td>{item.name}</td>
-                    <td>{item.table}</td>
-                    <td>{item.room}</td>
+                    <td>{index++}</td>
+                    <td>{item.code}</td>
                     <td>
                       <img src={item.photo} width={100} alt="" />
                     </td>
+                    <td>{item.room_name}</td>
                     <td>{item.tag.join(", ")}</td>
                     <td>
                       {/* <EditHardware

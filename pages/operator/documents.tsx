@@ -166,11 +166,11 @@ export default function CrudDocument() {
                 <tr className="[&_th]:font-semibold [&_th]:capitalize">
                   {/* tampilkan nama, foto, lokasi, meja,  */}
                   <th>No</th>
-                  <th>Name Dokumen</th>
-                  <th>Tag</th>
                   <th>Kode Dokumen</th>
-                  <th></th>
-                  <th></th>
+                  <th>Nama Dokumen</th>
+                  <th>ruang</th>
+                  <th>meja</th>
+                  <th>tag</th>
                   <th></th>
                   <th></th>
                 </tr>
@@ -179,9 +179,12 @@ export default function CrudDocument() {
                 {data.data.data.map((item: any) => (
                   <tr key={item.id}>
                     <th>{index++}</th>
-                    <td>{item.name}</td>
-                    <td>{item.tag.join(", ")} </td>
                     <td>{item.code}</td>
+                    <td>{item.name}</td>
+                    <td>{item.room}</td>
+                    <td>{item.table}</td>
+                    <td>{item.tag.join(", ")} </td>
+
                     <td>
                       <EditDocs
                         datas={{

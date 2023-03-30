@@ -30,7 +30,7 @@ export default function AddTags({ onSuccess }: { onSuccess: () => void }) {
     });
   };
 
-  async function handleFileUpload() {
+  async function handleAddTags() {
     const input = document.querySelector(
       "input[type='file']"
     ) as HTMLInputElement;
@@ -150,7 +150,7 @@ export default function AddTags({ onSuccess }: { onSuccess: () => void }) {
                 </Dialog.Description>
                 <button
                   onClick={() => {
-                    handleFileUpload();
+                    handleAddTags();
                     setLoading(true);
                   }}
                   className="btn btn-accent mr-3 mb-3 md:mb-0 capitalize"

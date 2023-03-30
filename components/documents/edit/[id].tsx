@@ -6,6 +6,7 @@ import { TailSpin } from "react-loader-spinner";
 import { GetServerSideProps } from "next";
 import { toast } from "sonner";
 import Select from "react-select";
+import useSWR from "swr";
 
 type Data = {
   name: string;
@@ -54,7 +55,6 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
   });
   let [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [options, setOptions] = useState<any>([]);
 
   const [selectedValue, setSelectedValue] = useState<any>([]);
 
@@ -66,7 +66,7 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
     setIsOpen(true);
   }
 
-  async function handleEdit() {
+  async function handleEditDoc() {
     const id = datas.id;
     const token = Cookie.get("token") as string;
     const formData = new FormData();
@@ -104,35 +104,61 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
   }
 
   //get list tags
-  useEffect(() => {
-    const getTags = async () => {
-      try {
-        const token = Cookie.get("token") as string;
-        const res = await axios
-          .get("https://spda.17management.my.id/api/tags/list", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((res) => {
-            const options = res.data.data.map((item: any) => {
-              return {
-                value: item.id,
-                label: item.name,
-              };
-            });
-            setOptions(options);
-            if (options.length > 0) {
-              setSelectedValue(options);
-            }
-          });
-      } catch (error) {
-        const err = error as AxiosError;
-        console.log(err.response?.data, "error get tags in edit docs");
-      }
-    };
-    getTags();
-  }, []);
+  const token = Cookie.get("token") as string;
+
+  const { data: tags, error: tagsError } = useSWR(
+    "https://spda.17management.my.id/api/tags/list",
+    (url) =>
+      axios
+        .get(url, { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) =>
+          res.data.data.map((item: { id: any; name: any }) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        )
+  );
+  const { data: devices, error: devicesError } = useSWR(
+    "https://spda.17management.my.id/api/devices/list",
+    (url) =>
+      axios
+        .get(url, { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) =>
+          res.data.data.map((item: { id: any; name: any }) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        )
+  );
+  // useEffect(() => {
+  //   const getTags = async () => {
+  //     try {
+  //       const token = Cookie.get("token") as string;
+  //       const res = await axios
+  //         .get("https://spda.17management.my.id/api/tags/list", {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         })
+  //         .then((res) => {
+  //           const options = res.data.data.map((item: any) => {
+  //             return {
+  //               value: item.id,
+  //               label: item.name,
+  //             };
+  //           });
+  //           setOptions(options);
+  //           if (options.length > 0) {
+  //             setSelectedValue(options);
+  //           }
+  //         });
+  //     } catch (error) {
+  //       const err = error as AxiosError;
+  //       console.log(err.response?.data, "error get tags in edit docs");
+  //     }
+  //   };
+  //   getTags();
+  // }, []);
   // useEffect(() => {
   //   const getTableId = async () => {
   //     try {
@@ -202,6 +228,14 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
     });
   };
 
+  const handleSelectDeviceChange = (selectedDevice: any) => {
+    const device_id = selectedDevice.value;
+    setField((prevField) => ({
+      ...prevField,
+      device_id: device_id,
+    }));
+  };
+
   const handleChange = (e: any) => {
     const { name, value, files } = e.target;
     setField({
@@ -262,12 +296,12 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Device Id Dokumen</span>
-                    <input
-                      type="text"
-                      className="input input-bordered"
-                      placeholder={data.device_id}
+                    <Select
+                      options={devices}
+                      className="basic-single"
+                      classNamePrefix="select"
+                      onChange={handleSelectDeviceChange}
                       name="device_id"
-                      onChange={handleChange}
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
@@ -286,7 +320,7 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
                     <Select
                       name="tag[]"
                       isMulti
-                      options={options}
+                      options={tags}
                       className="basic-multi-select"
                       onChange={handleSelectChange}
                       defaultValue={defaultValue}
@@ -307,7 +341,7 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
                 <button
                   onClick={() => {
                     setLoading(true);
-                    handleEdit();
+                    handleEditDoc();
                   }}
                   className="btn btn-accent mr-3 mb-3 md:mb-0 capitalize"
                 >

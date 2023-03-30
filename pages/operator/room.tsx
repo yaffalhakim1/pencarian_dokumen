@@ -150,8 +150,8 @@ export default function CrudRoom() {
               <thead>
                 <tr className="[&_th]:font-semibold [&_th]:capitalize">
                   <th>No</th>
-                  <th>Name Ruang</th>
                   <th>Kode Ruang</th>
+                  <th>Name Ruang</th>
                   <th></th>
                   <th></th>
                   <th></th>
@@ -160,9 +160,10 @@ export default function CrudRoom() {
               <tbody>
                 {data.data.data.map((item: any) => (
                   <tr key={item.id}>
-                    <th>{index++}</th>
-                    <td>{item.name}</td>
+                    <td>{index++}</td>
                     <td>{item.code}</td>
+                    <td>{item.name}</td>
+
                     <td>
                       <EditRoom
                         datas={{

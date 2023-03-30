@@ -174,7 +174,7 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
         )
   );
 
-  async function handleFileUpload() {
+  async function handleAddDevice() {
     const formData = new FormData();
     formData.append("name", field.name);
     formData.append("table_id", field.table_id);
@@ -347,7 +347,7 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                 </Dialog.Description>
                 <button
                   onClick={() => {
-                    handleFileUpload();
+                    handleAddDevice();
                     setLoading(true);
                   }}
                   className="btn btn-accent mr-3 mb-3 md:mb-0 capitalize"

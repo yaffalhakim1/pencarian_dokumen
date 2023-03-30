@@ -16,28 +16,5 @@ export function useAuthRedirect() {
       Router.push("/auth/login");
       return;
     }
-    // switch (role) {
-    //   case "Operator":
-    //     Router.push("/operator/dashboard");
-    //     break;
-    //   case "User":
-    //     Router.push("/users/main");
-    //     break;
-    //   case "Admin":
-    //     Router.push("/admin/dashboard");
-    //   case "Manager":
-    //     Router.push("/manager/dashboard");
-    //   case "Supervisor":
-    //     Router.push("/supervisor/dashboard");
-    //   case "User":
-    //     if (Router.route.startsWith("/operator")) {
-    //       Router.push("/auth/unauthorized");
-    //     }
-    //     break;
-    //   default:
-    //     // Handle unexpected role value
-    //     Router.push("/auth/login");
-    //     break;
-    // }
   }, []);
 }

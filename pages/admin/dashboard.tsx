@@ -9,6 +9,7 @@ import axios from "axios";
 
 import useSWR from "swr";
 import CrudUsers from "./users";
+import useRoleAuthorization from "../../hooks/useRoleAuth";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
@@ -20,7 +21,7 @@ export default function DashboardAdmin() {
     setSelectedItem(item);
   };
 
-  useAuthRedirect();
+  useRoleAuthorization(["Admin"]);
 
   async function logoutHandler() {
     Cookie.remove("token");

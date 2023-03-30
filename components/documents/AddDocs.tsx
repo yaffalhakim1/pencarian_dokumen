@@ -45,36 +45,50 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
   }
 
   //get list tags
-  useEffect(() => {
-    const getTags = async () => {
-      try {
-        const token = Cookie.get("token") as string;
-        const res = await axios
-          .get("https://spda.17management.my.id/api/tags/list", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((res) => {
-            const options = res.data.data.map((item: any) => {
-              return {
-                value: item.id,
-                label: item.name,
-              };
-            });
-            setOptions(options);
-            if (options.length > 0) {
-              setSelectedValue(options);
-            }
-          });
-      } catch (error) {
-        const err = error as AxiosError;
+  // useEffect(() => {
+  //   const getTags = async () => {
+  //     try {
+  //       const token = Cookie.get("token") as string;
+  //       const res = await axios
+  //         .get("https://spda.17management.my.id/api/tags/list", {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         })
+  //         .then((res) => {
+  //           const options = res.data.data.map((item: any) => {
+  //             return {
+  //               value: item.id,
+  //               label: item.name,
+  //             };
+  //           });
+  //           setOptions(options);
+  //           if (options.length > 0) {
+  //             setSelectedValue(options);
+  //           }
+  //         });
+  //     } catch (error) {
+  //       const err = error as AxiosError;
 
-        console.log(err.response?.data, "error get tags in add docs");
-      }
-    };
-    getTags();
-  }, [setOptions, setSelectedValue]);
+  //       console.log(err.response?.data, "error get tags in add docs");
+  //     }
+  //   };
+  //   getTags();
+  // }, [setOptions, setSelectedValue]);
+  const token = Cookie.get("token") as string;
+
+  const { data: tags, error: tagsError } = useSWR(
+    "https://spda.17management.my.id/api/tags/list",
+    (url) =>
+      axios
+        .get(url, { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) =>
+          res.data.data.map((item: { id: any; name: any }) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        )
+  );
 
   //get data from rtdb firebase
   useEffect(() => {
@@ -259,7 +273,7 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
                     <span>Tag</span>
                     <Select
                       isMulti
-                      options={options}
+                      options={tags}
                       className="basic-multi-select"
                       classNamePrefix="select"
                       onChange={handleSelectChange}

@@ -14,6 +14,7 @@ import useSWR from "swr";
 import CrudApproval from "./approval";
 import CrudRoom from "./room";
 import CrudTable from "./table";
+import useRoleAuthorization from "../../hooks/useRoleAuth";
 
 export default function DashboardAdmin() {
   const [selectedItem, setSelectedItem] = useState(1);
@@ -23,7 +24,7 @@ export default function DashboardAdmin() {
     setSelectedItem(item);
   };
 
-  // useAuthRedirect();
+  useRoleAuthorization(["Manager"]);
 
   async function logoutHandler() {
     Cookie.remove("token");

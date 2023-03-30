@@ -56,7 +56,7 @@ export default function EditTags({ datas, onSuccess }: EditButtonProps) {
     setIsOpen(true);
   }
 
-  async function handleFileUpload() {
+  async function handleEditTags() {
     const id = datas.id;
     const token = Cookie.get("token") as string;
     const input = document.querySelector(
@@ -188,7 +188,7 @@ export default function EditTags({ datas, onSuccess }: EditButtonProps) {
                 <button
                   onClick={() => {
                     setLoading(true);
-                    handleFileUpload();
+                    handleEditTags();
                   }}
                   className="btn btn-accent mr-3 mb-3 md:mb-0 capitalize"
                 >
