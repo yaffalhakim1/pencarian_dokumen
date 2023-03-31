@@ -135,9 +135,9 @@ export default function DocumentPage() {
   return (
     <>
       <div className="card w-auto bg-base-100 shadow-2xl">
-        <Link href="/" legacyBehavior>
-          <a className=" hover:text-blue-700 ml-10 mt-10">Back</a>
-        </Link>
+        {/* <Link href="/" legacyBehavior>
+          <a className=" hover:text-blue-700 ml-10 mt-10">⬅️ Kembali</a>
+        </Link> */}
         <figure className="p-1 rounded-md mx-10 mt-10 shadow-xl bg-warning bg-blend-overlay">
           <img src={data.photo} alt="Images" className="rounded-xl" />
         </figure>

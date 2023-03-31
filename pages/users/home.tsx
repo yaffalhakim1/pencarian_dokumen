@@ -1,12 +1,4 @@
-import {
-  JSXElementConstructor,
-  Key,
-  ReactElement,
-  ReactFragment,
-  ReactPortal,
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 import Router from "next/router";
 import Cookie from "js-cookie";
 import { useAuthRedirect } from "../../hooks/useAuthRedirect";
@@ -14,6 +6,8 @@ import axios from "axios";
 import Link from "next/link";
 import DocumentsList from "../../components/documents/DocumentsList";
 import Head from "next/head";
+import useSWR from "swr";
+import { TailSpin } from "react-loader-spinner";
 
 interface Document {
   id: any;
@@ -43,6 +37,7 @@ export default function HomeUser() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   async function logoutHandler(e: { preventDefault: () => void }) {
     e.preventDefault();
@@ -91,7 +86,9 @@ export default function HomeUser() {
 
   const handleSearch = async () => {
     const token = Cookie.get("token") as string;
+
     try {
+      setLoading(true);
       const response = await axios.get<ApiResponse>(
         `https://spda.17management.my.id/api/documents/data`,
         {
@@ -105,11 +102,15 @@ export default function HomeUser() {
           },
         }
       );
+
       setDocuments(response.data.data.data);
       setTotalPages(response.data.last_page);
+
       setHistory((prevHistory) => [...prevHistory, query]);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -156,12 +157,14 @@ export default function HomeUser() {
               value={query}
               placeholder="Masukkan nama dokumen yang ingin anda cari"
               onChange={(event) => setQuery(event.target.value)}
-              // onChange={handleInputChange}
-              // onClick={handleInputClick}
               onFocus={() => setShowHistory(true)} // Show the search history list when the search bar is clicked
               onBlur={() => setShowHistory(false)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  handleSearch();
+                }
+              }}
             />
-
             <button onClick={handleSearch} className="btn btn-square">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -179,46 +182,50 @@ export default function HomeUser() {
               </svg>
             </button>
           </div>
-          {showHistory && (
-            <div className="absolute top-full left-0 w-full bg-white rounded-b-md shadow-lg z-10">
-              <ul>
-                {history.map((item, index) => (
-                  <li
-                    key={index}
-                    className="px-2 py-1 cursor-pointer hover:bg-gray-100"
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
           <p className="text-zinc-600">coba: dokumen</p>
         </div>
       </div>
-
       <ul>
-        {documents.length > 0 ? (
-          <ul className="mt-4">
-            {documents.map((document) => (
-              <DocumentsList
-                key={document.id}
-                id={document.id}
-                name={document.name}
-                tag={document.tag}
-                device_name={document.device_name}
-                photo={document.photo}
-              />
-            ))}
-          </ul>
-        ) : (
-          <div className="text-center mt-8 text-slate-700">
-            {query ? (
-              <span>Dokumen tidak ditemukan</span>
-            ) : (
-              <span>Masukkan kata kunci untuk mencari dokumen</span>
-            )}
+        {loading ? (
+          <div className="text-center mt-8 text-slate-700 flex justify-center items-center">
+            <TailSpin
+              height="30"
+              width="30"
+              color="#000000"
+              ariaLabel="tail-spin-loading"
+              radius="1"
+            />
+            <p className="ml-4 text-lg font-medium">Sedang mencari...</p>
           </div>
+        ) : (
+          <>
+            {documents.length > 0 ? (
+              <ul className="mt-4">
+                {documents.map((document) => (
+                  <DocumentsList
+                    key={document.id}
+                    id={document.id}
+                    name={document.name}
+                    tag={document.tag}
+                    device_name={document.device_name}
+                    photo={document.photo}
+                  />
+                ))}
+              </ul>
+            ) : (
+              <div className="text-center mt-8 text-slate-700">
+                {documents.length == 0 ? (
+                  <span className="text-lg font-medium">
+                    Dokumen tidak ditemukan
+                  </span>
+                ) : (
+                  <span className="text-lg font-medium">
+                    Masukkan kata kunci untuk mencari dokumen
+                  </span>
+                )}
+              </div>
+            )}
+          </>
         )}
       </ul>
     </>

@@ -15,6 +15,7 @@ const nextConfig = withPWA({
 
 module.exports = withPWA({
   reactStrictMode: true,
+
   // async rewrites() {
   //   return [
   //     {
