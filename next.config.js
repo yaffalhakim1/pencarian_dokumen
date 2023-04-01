@@ -15,13 +15,4 @@ const nextConfig = withPWA({
 
 module.exports = withPWA({
   reactStrictMode: true,
-
-  // async rewrites() {
-  //   return [
-  //     {
-  //       source: "/users/main",
-  //       destination: "/users/main/index.html",
-  //     },
-  //   ];
-  // },
 });

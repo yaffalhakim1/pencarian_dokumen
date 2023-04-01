@@ -82,7 +82,7 @@ export default function HomeUser() {
 
   useEffect(() => {
     getProfile();
-  }, []);
+  });
 
   const handleSearch = async () => {
     const token = Cookie.get("token") as string;
@@ -105,7 +105,6 @@ export default function HomeUser() {
 
       setDocuments(response.data.data.data);
       setTotalPages(response.data.last_page);
-
       setHistory((prevHistory) => [...prevHistory, query]);
     } catch (error) {
       // console.log(error);
@@ -150,7 +149,7 @@ export default function HomeUser() {
 
       <div className="flex justify-start w-full">
         <div className="form-control mt-4">
-          <div className="input-group">
+          <div className="input-group ">
             <input
               className="input input-bordered"
               type="text"
