@@ -18,12 +18,7 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
   });
   let [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  // const [options, setOptions] = useState<any>([]);
-  // const [tables, setTables] = useState<any>([]);
-  // const [rooms, setRooms] = useState<any>([]);
-  const [selectedValue, setSelectedValue] = useState(null);
-  const [selectedTable, setSelectedTable] = useState(null);
-  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [selectedRoom, setSelectedRoom] = useState<any>([]);
 
   function closeModal() {
     setIsOpen(false);
@@ -136,8 +131,10 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
   const token = Cookie.get("token") as string;
 
   const { data: tables, error: tablesError } = useSWR(
-    "https://spda.17management.my.id/api/tables/list",
-    (url) =>
+    selectedRoom
+      ? `https://spda.17management.my.id/api/tables/list?room_id=${selectedRoom.value}`
+      : null,
+    (url: string) =>
       axios
         .get(url, { headers: { Authorization: `Bearer ${token}` } })
         .then((res) =>
@@ -223,11 +220,20 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
     });
   };
 
+  // const handleSelectRoomChange = (selectedRoom: any) => {
+  //   const room_id = selectedRoom.value;
+  //   setField((prevField) => ({
+  //     ...prevField,
+  //     room_id: room_id,
+  //   }));
+  // };
+
   const handleSelectRoomChange = (selectedRoom: any) => {
-    const room_id = selectedRoom.value;
+    setSelectedRoom(selectedRoom);
     setField((prevField) => ({
       ...prevField,
-      room_id: room_id,
+      room_id: selectedRoom.value,
+      table_id: null, // reset table_id when room changes
     }));
   };
 
@@ -291,13 +297,13 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Meja</span>
-                    <Select
-                      options={tables}
-                      className="basic-single"
-                      classNamePrefix="select"
-                      onChange={handleSelectTableChange}
-                      name="table_id"
+                    <span>Kode</span>
+                    <input
+                      type="text"
+                      placeholder="Node 1"
+                      className="input input-bordered"
+                      name="code"
+                      onChange={handleChange}
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
@@ -310,6 +316,18 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                       name="room_id"
                     />
                   </label>
+                  {selectedRoom && (
+                    <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                      <span>Meja</span>
+                      <Select
+                        options={tables || []}
+                        className="basic-single"
+                        classNamePrefix="select"
+                        onChange={handleSelectTableChange}
+                        name="table_id"
+                      />
+                    </label>
+                  )}
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Tag</span>
                     <Select
@@ -333,17 +351,6 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
                     name="photo"
                     onChange={handleChange}
                   />
-                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Kode</span>
-
-                    <input
-                      type="text"
-                      placeholder="Node 1"
-                      className="input input-bordered"
-                      name="code"
-                      onChange={handleChange}
-                    />
-                  </label>
                 </Dialog.Description>
                 <button
                   onClick={() => {

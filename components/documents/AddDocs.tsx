@@ -246,7 +246,15 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
                       onChange={handleChange}
                     />
                   </label>
-                  {/* https://react-select.com/home, pakai yang single */}
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Kode Dokumen</span>
+                    <input
+                      type="text"
+                      className="input input-bordered"
+                      name="code"
+                      onChange={handleChange}
+                    />
+                  </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>device id Dokumen</span>
                     <input
@@ -278,15 +286,6 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
                       classNamePrefix="select"
                       onChange={handleSelectChange}
                       name="tag"
-                    />
-                  </label>
-                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Kode Dokumen</span>
-                    <input
-                      type="text"
-                      className="input input-bordered"
-                      name="code"
-                      onChange={handleChange}
                     />
                   </label>
                 </Dialog.Description>

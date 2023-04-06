@@ -78,9 +78,7 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
   // const [options, setOptions] = useState<any>([]);
   // const [tables, setTables] = useState<any>([]);
   // const [rooms, setRooms] = useState<any>([]);
-  const [selectedValue, setSelectedValue] = useState<any>([]);
-  const [selectedTable, setSelectedTable] = useState(null);
-  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [selectedRoom, setSelectedRoom] = useState<any>([]);
 
   function closeModal() {
     setIsOpen(false);
@@ -157,10 +155,11 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
   };
 
   const handleSelectRoomChange = (selectedRoom: any) => {
-    const room_id = selectedRoom.value;
+    setSelectedRoom(selectedRoom);
     setField((prevField) => ({
       ...prevField,
-      room_id: room_id,
+      room_id: selectedRoom.value,
+      table_id: null, // reset table_id when room changes
     }));
   };
 
@@ -175,8 +174,10 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
   const token = Cookie.get("token") as string;
 
   const { data: tables, error: tablesError } = useSWR(
-    "https://spda.17management.my.id/api/tables/list",
-    (url) =>
+    selectedRoom
+      ? `https://spda.17management.my.id/api/tables/list?room_id=${selectedRoom.value}`
+      : null,
+    (url: string) =>
       axios
         .get(url, { headers: { Authorization: `Bearer ${token}` } })
         .then((res) =>
@@ -345,7 +346,7 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                 <Dialog.Description className="mt-1 mb-4 text-md">
                   Masukkan nama, id alat yang ingin anda ubah disini.
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Nama Ruangan</span>
+                    <span>Nama</span>
                     <input
                       type="text"
                       placeholder={data.name}
@@ -355,26 +356,13 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Tag</span>
-                    <Select
-                      name="tag[]"
-                      isMulti
-                      options={tags}
-                      className="basic-multi-select"
-                      classNamePrefix="select"
-                      onChange={handleSelectChange}
-                      defaultValue={defaultValueTags}
-                    />
-                  </label>
-                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Meja</span>
-                    <Select
-                      name="table_id"
-                      options={tables}
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={defaultValueTables}
-                      onChange={handleSelectTableChange}
+                    <span>Kode</span>
+                    <input
+                      type="text"
+                      placeholder={data.code}
+                      className="input input-bordered"
+                      name="code"
+                      onChange={handleChange}
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
@@ -389,13 +377,26 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Kode</span>
-                    <input
-                      type="text"
-                      placeholder={data.code}
-                      className="input input-bordered"
-                      name="code"
-                      onChange={handleChange}
+                    <span>Meja</span>
+                    <Select
+                      name="table_id"
+                      options={tables}
+                      className="basic-single"
+                      classNamePrefix="select"
+                      defaultValue={defaultValueTables}
+                      onChange={handleSelectTableChange}
+                    />
+                  </label>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Tag</span>
+                    <Select
+                      name="tag[]"
+                      isMulti
+                      options={tags}
+                      className="basic-multi-select"
+                      classNamePrefix="select"
+                      onChange={handleSelectChange}
+                      defaultValue={defaultValueTags}
                     />
                   </label>
                   <label className="label">

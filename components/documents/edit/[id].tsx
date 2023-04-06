@@ -295,6 +295,16 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
                     />
                   </label>
                   <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
+                    <span>Kode Dokumen</span>
+                    <input
+                      type="text"
+                      placeholder={data.code}
+                      className="input input-bordered"
+                      name="code"
+                      onChange={handleChange}
+                    />
+                  </label>
+                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
                     <span>Device Id Dokumen</span>
                     <Select
                       options={devices}
@@ -325,16 +335,6 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
                       onChange={handleSelectChange}
                       defaultValue={defaultValue}
                       classNamePrefix="select"
-                    />
-                  </label>
-                  <label className="md:mb-3 mt-5 mb-6 input-group input-group-vertical">
-                    <span>Kode Dokumen</span>
-                    <input
-                      type="text"
-                      placeholder={data.code}
-                      className="input input-bordered"
-                      name="code"
-                      onChange={handleChange}
                     />
                   </label>
                 </Dialog.Description>
