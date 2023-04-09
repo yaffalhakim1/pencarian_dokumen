@@ -4,7 +4,6 @@ import Cookie from "js-cookie";
 import Head from "next/head";
 import { MoonLoader } from "react-spinners";
 import SwitchTheme from "../../components/Switcher";
-import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import axios from "axios";
 import CrudDocument from "./documents";
 import CrudDevices from "./devices";
@@ -26,7 +25,6 @@ export default function DashboardAdmin() {
     setSelectedItem(item);
   };
 
-  // useAuthRedirect();
   useRoleAuthorization(["Operator"]);
 
   async function logoutHandler() {

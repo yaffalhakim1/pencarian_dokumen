@@ -40,7 +40,7 @@ export const getData = () => {
       "value",
       (snapshot) => {
         const data = snapshot.val();
-        console.log(data, "data fb geData");
+        console.log(data, "data from firebase in function geData");
         resolve(data);
       },
       (error) => {

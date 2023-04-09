@@ -6,7 +6,6 @@ import { TailSpin } from "react-loader-spinner";
 import DeleteButton from "../../components/documents/DeleteDocs";
 import EditButton from "../../components/documents/edit/[id]";
 import LoadingTable from "../../components/SkeletonTable";
-import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import _ from "lodash";
 import DeleteHardware from "../../components/hardware/DeleteHardware";
 import AddHardware from "../../components/hardware/AddHardware";
@@ -24,7 +23,6 @@ export default function CrudDevices() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState<any>([]);
   const [items, setItems] = useState<Item[]>([]);
-  useAuthRedirect();
   let index = 1;
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -146,8 +144,10 @@ export default function CrudDevices() {
                 <tr className="[&_th]:font-semibold [&_th]:capitalize">
                   <th>No</th>
                   <th>Kode</th>
+                  <th>Nama</th>
                   <th>Foto</th>
                   <th>Ruang</th>
+                  <th>Meja</th>
                   <th>Tag</th>
                   <th></th>
                 </tr>
@@ -155,12 +155,14 @@ export default function CrudDevices() {
               <tbody>
                 {data.data.data.map((item: any) => (
                   <tr key={item.id}>
-                    <th>{index++}</th>
+                    <td>{index++}</td>
                     <td>{item.code}</td>
+                    <td>{item.name}</td>
                     <td>
                       <img src={item.photo} width={100} alt="" />
                     </td>
                     <td>{item.room_name}</td>
+                    <td>{item.table_name}</td>
                     <td>{item.tag.join(", ")}</td>
 
                     <td>

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Router from "next/router";
 import Cookie from "js-cookie";
-import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import axios from "axios";
 import Link from "next/link";
 import DocumentsList from "../../components/documents/DocumentsList";
@@ -28,7 +27,6 @@ interface ApiResponse {
 }
 
 export default function HomeUser() {
-  useAuthRedirect();
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [query, setQuery] = useState("");

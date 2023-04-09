@@ -3,21 +3,9 @@ import Cookie from "js-cookie";
 import axios, { AxiosError } from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { TailSpin } from "react-loader-spinner";
-import DeleteButton from "../../components/documents/DeleteDocs";
-import EditButton from "../../components/documents/edit/[id]";
-import LoadingTable from "../../components/SkeletonTable";
-import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import _ from "lodash";
 import useSWR, { mutate } from "swr";
-import DeleteDocs from "../../components/documents/DeleteDocs";
-import EditDocs from "../../components/documents/edit/[id]";
 import { toast } from "sonner";
-import AddRoom from "../../components/room/AddRoom";
-import EditRoom from "../../components/room/edit/[id]";
-import DeleteRoom from "../../components/room/DeleteRoom";
-import AddTable from "../../components/table/AddTable";
-import EditTable from "../../components/table/edit/[id]";
-import DeleteTable from "../../components/table/DeleteTable";
 
 interface Item {
   id: number;
@@ -30,7 +18,6 @@ export default function CrudTable() {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useAuthRedirect();
   let index = 1;
   const [page, setPage] = useState(1);
 

@@ -44,37 +44,6 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
     setIsOpen(true);
   }
 
-  //get list tags
-  // useEffect(() => {
-  //   const getTags = async () => {
-  //     try {
-  //       const token = Cookie.get("token") as string;
-  //       const res = await axios
-  //         .get("https://spda.17management.my.id/api/tags/list", {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         })
-  //         .then((res) => {
-  //           const options = res.data.data.map((item: any) => {
-  //             return {
-  //               value: item.id,
-  //               label: item.name,
-  //             };
-  //           });
-  //           setOptions(options);
-  //           if (options.length > 0) {
-  //             setSelectedValue(options);
-  //           }
-  //         });
-  //     } catch (error) {
-  //       const err = error as AxiosError;
-
-  //       console.log(err.response?.data, "error get tags in add docs");
-  //     }
-  //   };
-  //   getTags();
-  // }, [setOptions, setSelectedValue]);
   const token = Cookie.get("token") as string;
 
   const { data: tags, error: tagsError } = useSWR(
@@ -106,7 +75,6 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
         setIsLoading(false); // mark data as loaded
       } catch (error) {
         const err = error as AxiosError;
-        console.log(err.response?.data, "error get uuid");
       }
     };
     // Call getDatas initially and attach the listener
@@ -191,7 +159,6 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
         toast.error("uuid sudah ada");
         setLoading(false);
         closeModal();
-        console.log(err.response?.data, "error upload");
       });
   }
 

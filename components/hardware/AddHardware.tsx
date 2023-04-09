@@ -37,97 +37,6 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
     });
   };
 
-  // useEffect(() => {
-  //   const getTags = async () => {
-  //     try {
-  //       const token = Cookie.get("token") as string;
-  //       const res = await axios
-  //         .get("https://spda.17management.my.id/api/tags/list", {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         })
-  //         .then((res) => {
-  //           const options = res.data.data.map((item: any) => {
-  //             return {
-  //               value: item.id,
-  //               label: item.name,
-  //             };
-  //           });
-  //           setOptions(options);
-  //           if (options.length > 0) {
-  //             setSelectedValue(options);
-  //           }
-  //         });
-  //     } catch (error) {
-  //       const err = error as AxiosError;
-  //       console.log(err.response?.data, "error get tags in add hardware");
-  //     }
-  //   };
-  //   getTags();
-  // }, []);
-
-  // useEffect(() => {
-  //   const getTableId = async () => {
-  //     try {
-  //       const token = Cookie.get("token") as string;
-  //       const res = await axios
-  //         .get("https://spda.17management.my.id/api/tables/list", {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         })
-  //         .then((res) => {
-  //           const tables = res.data.data.map((item: any) => {
-  //             return {
-  //               value: item.id,
-  //               label: item.name,
-  //             };
-  //           });
-  //           setTables(tables);
-
-  //           if (tables.length > 0) {
-  //             setSelectedTable(tables);
-  //           }
-  //         });
-  //     } catch (error) {
-  //       const err = error as AxiosError;
-  //       console.log(err.response?.data, "error get table");
-  //     }
-  //   };
-  //   getTableId();
-  // }, []);
-
-  // useEffect(() => {
-  //   const getRoomId = async () => {
-  //     try {
-  //       const token = Cookie.get("token") as string;
-  //       const res = await axios
-  //         .get("https://spda.17management.my.id/api/rooms/list", {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         })
-  //         .then((res) => {
-  //           const rooms = res.data.data.map((item: any) => {
-  //             return {
-  //               value: item.id,
-  //               label: item.name,
-  //             };
-  //           });
-  //           setRooms(rooms);
-  //           if (rooms.length > 0) {
-  //             setSelectedRoom(rooms);
-  //           }
-  //         });
-  //     } catch (error) {
-  //       const err = error as AxiosError;
-  //       console.log(err.response?.data, "error get rooms");
-  //     }
-  //   };
-  //   getRoomId();
-  // }, []);
-
   const token = Cookie.get("token") as string;
 
   const { data: tables, error: tablesError } = useSWR(
@@ -195,9 +104,7 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
             authorization: `Bearer ${token}`,
           },
         })
-        .then((res) => {
-          console.log(res.data, "res");
-        });
+        .then((res) => {});
 
       onSuccess();
       setLoading(false);
@@ -205,7 +112,7 @@ export default function AddHardware({ onSuccess }: { onSuccess: () => void }) {
       toast.success("Alat berhasil ditambahkan");
     } catch (error) {
       const err = error as AxiosError;
-      console.log(err.response?.data, "error upload");
+
       toast.error("Gagal menambahkan alat");
       setLoading(false);
       closeModal();

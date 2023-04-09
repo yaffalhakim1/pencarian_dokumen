@@ -6,7 +6,6 @@ import { TailSpin } from "react-loader-spinner";
 import DeleteButton from "../../components/documents/DeleteDocs";
 import EditButton from "../../components/documents/edit/[id]";
 import LoadingTable from "../../components/SkeletonTable";
-import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import _ from "lodash";
 import useSWR, { mutate } from "swr";
 import DeleteDocs from "../../components/documents/DeleteDocs";
@@ -28,7 +27,6 @@ export default function CrudApproval() {
   const [approvedIds, setApprovedIds] = useState<number[]>([]);
   const [rejectedIds, setRejectedIds] = useState<number[]>([]);
 
-  // useAuthRedirect();
   let index = 1;
   const [page, setPage] = useState(1);
 

@@ -6,7 +6,6 @@ import { TailSpin } from "react-loader-spinner";
 import DeleteButton from "../../components/documents/DeleteDocs";
 import EditButton from "../../components/documents/edit/[id]";
 import LoadingTable from "../../components/SkeletonTable";
-import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import _ from "lodash";
 import DeleteHardware from "../../components/hardware/DeleteHardware";
 import AddHardware from "../../components/hardware/AddHardware";
@@ -25,7 +24,6 @@ interface Item {
 export default function CrudTags() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState<any>([]);
-  useAuthRedirect();
   let index = 1;
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);

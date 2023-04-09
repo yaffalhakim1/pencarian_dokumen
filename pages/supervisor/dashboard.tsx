@@ -4,7 +4,6 @@ import Cookie from "js-cookie";
 import Head from "next/head";
 import { MoonLoader } from "react-spinners";
 import SwitchTheme from "../../components/Switcher";
-import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 import axios from "axios";
 import Approval from "./approval";
 import useSWR from "swr";

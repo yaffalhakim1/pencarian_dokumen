@@ -99,7 +99,6 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
       toast.error("Dokumen gagal dirubah");
       closeModal();
       setLoading(false);
-      console.log(err.response?.data);
     }
   }
 
@@ -130,95 +129,6 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
           }))
         )
   );
-  // useEffect(() => {
-  //   const getTags = async () => {
-  //     try {
-  //       const token = Cookie.get("token") as string;
-  //       const res = await axios
-  //         .get("https://spda.17management.my.id/api/tags/list", {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         })
-  //         .then((res) => {
-  //           const options = res.data.data.map((item: any) => {
-  //             return {
-  //               value: item.id,
-  //               label: item.name,
-  //             };
-  //           });
-  //           setOptions(options);
-  //           if (options.length > 0) {
-  //             setSelectedValue(options);
-  //           }
-  //         });
-  //     } catch (error) {
-  //       const err = error as AxiosError;
-  //       console.log(err.response?.data, "error get tags in edit docs");
-  //     }
-  //   };
-  //   getTags();
-  // }, []);
-  // useEffect(() => {
-  //   const getTableId = async () => {
-  //     try {
-  //       const token = Cookie.get("token") as string;
-  //       const res = await axios
-  //         .get("https://spda.17management.my.id/api/tables/list", {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         })
-  //         .then((res) => {
-  //           const tables = res.data.data.map((item: any) => {
-  //             return {
-  //               label: item.id,
-  //               value: item.name,
-  //             };
-  //           });
-  //           setTables(tables);
-  //           console.log(tables, "tables");
-  //           if (tables.length > 0) {
-  //             setSelectedTable(tables);
-  //           }
-  //         });
-  //     } catch (error) {
-  //       const err = error as AxiosError;
-  //       console.log(err.response?.data, "error get table");
-  //     }
-  //   };
-  //   getTableId();
-  // }, []);
-
-  // useEffect(() => {
-  //   const getRoomId = async () => {
-  //     try {
-  //       const token = Cookie.get("token") as string;
-  //       const res = await axios
-  //         .get("https://spda.17management.my.id/api/rooms/list", {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         })
-  //         .then((res) => {
-  //           const rooms = res.data.data.map((item: any) => {
-  //             return {
-  //               label: item.id,
-  //               value: item.name,
-  //             };
-  //           });
-  //           setRooms(rooms);
-  //           if (rooms.length > 0) {
-  //             setSelectedRoom(rooms);
-  //           }
-  //         });
-  //     } catch (error) {
-  //       const err = error as AxiosError;
-  //       console.log(err.response?.data, "error get rooms");
-  //     }
-  //   };
-  //   getRoomId();
-  // }, []);
 
   const handleSelectChange = (selectedOptions: any) => {
     const options = selectedOptions.map((option: any) => option.label);
