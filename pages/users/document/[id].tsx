@@ -26,10 +26,6 @@ type Data = {
   table_name: string;
 };
 
-interface Props {
-  data: Data;
-}
-
 export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
   context
 ) => {
@@ -156,10 +152,17 @@ export default function DocumentPage() {
               />
             </button>
           </div>
-          <p className="font-sans">
-            Dokumen ini berada di Ruang {data.room_name} dengan radius maksimal
-            10m dari {data.table_name}
-          </p>
+
+          {data.device_id === 0 ? (
+            <p className="font-sans">
+              Dokumen ini tidak berada dalam jangkauan perangkat
+            </p>
+          ) : (
+            <p className="font-sans">
+              Dokumen ini berada di Ruang {data.room_name} dengan radius
+              maksimal 10m dari {data.table_name}
+            </p>
+          )}
         </div>
       </div>
     </>

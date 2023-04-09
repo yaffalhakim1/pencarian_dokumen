@@ -193,7 +193,7 @@ export default function DashboardAdmin() {
                 onClick={logoutHandler}
               >
                 {loading ? (
-                  <div className="flex flex-row items-center">
+                  <div className="flex flex-row items-center capitalize">
                     <MoonLoader color="#fff" size={20} className="mr-3" />
                     <span className="text-white">Loading...</span>
                   </div>

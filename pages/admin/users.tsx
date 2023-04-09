@@ -9,7 +9,6 @@ import AddUser from "../../components/users/tambah_user";
 import DeleteUser from "../../components/users/DeleteUser";
 import EditUser from "../../components/users/edit/[id]";
 import _ from "lodash";
-import LoadingTable from "../../components/SkeletonTable";
 import useSWR, { mutate } from "swr";
 import { toast } from "sonner";
 

@@ -23,6 +23,7 @@ export default function DashboardAdmin() {
 
   async function logoutHandler() {
     Cookie.remove("token");
+    Cookie.remove("role");
     Cookie.remove("expired_in");
     const token = Cookie.get("token") as string;
     const logout = await axios
@@ -118,7 +119,7 @@ export default function DashboardAdmin() {
                 onClick={logoutHandler}
               >
                 {loading ? (
-                  <div className="flex flex-row items-center">
+                  <div className="flex flex-row items-center capitalize">
                     <MoonLoader color="#fff" size={20} className="mr-3" />
                     <span className="text-white">Loading...</span>
                   </div>

@@ -9,7 +9,6 @@ import Select from "react-select";
 import useSWR from "swr";
 
 export default function AddUser({ onSuccess }: { onSuccess: () => void }) {
-  const [showSnackbar, setShowSnackbar] = useState(false);
   const [field, setField] = useState({
     name: "",
     email: "",
@@ -18,9 +17,7 @@ export default function AddUser({ onSuccess }: { onSuccess: () => void }) {
     password_confirmation: "",
     role: [],
   });
-  const [photoUrl, setPhotoUrl] = useState("");
   let [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   function closeModal() {
@@ -36,7 +33,6 @@ export default function AddUser({ onSuccess }: { onSuccess: () => void }) {
     setField({
       ...field,
       [e.target.name]: e.target.value,
-      // photo: name === "photo" ? files[0] : field.photo,
     });
   };
 
@@ -45,7 +41,6 @@ export default function AddUser({ onSuccess }: { onSuccess: () => void }) {
       "input[type='file']"
     ) as HTMLInputElement;
     const formData = new FormData();
-    // formData.append("photo", input.files![0]);
     formData.append("name", field.name);
     formData.append("email", field.email);
     formData.append("username", field.username);
@@ -74,15 +69,23 @@ export default function AddUser({ onSuccess }: { onSuccess: () => void }) {
       setLoading(false);
       closeModal();
       toast.success("Pengguna baru berhasil ditambahkan");
-    } catch (error) {
-      const err = error as AxiosError;
-      if (err.response?.status === 400) {
-        toast.error(`${err.response?.data}`);
+    } catch (error: any) {
+      if (error.response.status === 500) {
+        toast.error("Penambahan gagal, silakan coba lagi");
+      } else if (
+        error.response.data &&
+        error.response.data.message &&
+        typeof error.response.data.message === "object"
+      ) {
+        const errors = error.response.data.message;
+        for (const field in errors) {
+          errors[field].forEach((error: string) => {
+            toast.error(error);
+          });
+        }
       } else {
-        toast.error("Gagal menambahkan pengguna");
+        toast.error("Penambahan gagal, silakan coba lagi");
       }
-      console.log(err.response?.data, "error upload");
-
       setLoading(false);
       closeModal();
     }

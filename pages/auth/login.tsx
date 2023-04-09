@@ -65,7 +65,6 @@ function LoginForm(this: any) {
       setLoading(false);
       if (loginReq.status === 200) {
         Cookie.set("token", loginResp.access_token);
-        // Cookie.set("expired_in", loginResp.expired_in);
         Cookie.set("role", loginResp.data.role[0]);
         console.log(loginResp.data.role[0]);
         if (loginResp.data.role[0] === "Admin") {
@@ -79,29 +78,17 @@ function LoginForm(this: any) {
         } else if (loginResp.data.role[0] === "Supervisor") {
           router.push("/supervisor/dashboard");
         }
-
-        // switch (loginResp.data.role[0]) {
-        //   case "Operator":
-        //     router.push("/operator/dashboard");
-        //     break;
-        //   case "Admin":
-        //     router.push("/admin/dashboard");
-        //   case "User":
-        //     router.push("/users/main");
-        //   case "Manager":
-        //     router.push("/manager/dashboard");
-        //   case "Supervisor":
-        //     router.push("/supervisor/dashboard");
-        //   default:
-        //     break;
-        // }
       }
-    } catch (error) {
-      const err = error as AxiosError;
-      console.log(err.response?.data, "error login");
-      toast.error("Email atau Password salah");
+    } catch (error: any) {
+      if (error.response.status === 500) {
+        toast.error("Register gagal, silakan coba lagi");
+      } else if (error.response.status === 401) {
+        toast.error("Anda belum terdaftar");
+      } else if (error.response.status === 400) {
+        toast.error("Username atau password salah");
+      }
+
       setLoading(false);
-      setShowSnackbar(true);
     }
   }
 

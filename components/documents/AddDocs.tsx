@@ -154,9 +154,23 @@ export default function AddDocument({ onSuccess }: { onSuccess: () => void }) {
         closeModal();
         toast.success("Dokumen berhasil ditambahkan");
       })
-      .catch((error) => {
-        const err = error as AxiosError;
-        toast.error("uuid sudah ada");
+      .catch((error: any) => {
+        if (error.response.status === 500) {
+          toast.error("Register gagal, silakan coba lagi");
+        } else if (
+          error.response.data &&
+          error.response.data.message &&
+          typeof error.response.data.message === "object"
+        ) {
+          const errors = error.response.data.message;
+          for (const field in errors) {
+            errors[field].forEach((error: string) => {
+              toast.error(error);
+            });
+          }
+        } else {
+          toast.error("Register gagal, silakan coba lagi");
+        }
         setLoading(false);
         closeModal();
       });

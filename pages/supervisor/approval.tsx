@@ -1,15 +1,11 @@
-import AddDocument from "../../components/documents/AddDocs";
 import Cookie from "js-cookie";
 import axios, { AxiosError } from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { TailSpin } from "react-loader-spinner";
-import DeleteButton from "../../components/documents/DeleteDocs";
-import EditButton from "../../components/documents/edit/[id]";
-import LoadingTable from "../../components/SkeletonTable";
+
 import _ from "lodash";
 import useSWR, { mutate } from "swr";
-import DeleteDocs from "../../components/documents/DeleteDocs";
-import EditDocs from "../../components/documents/edit/[id]";
+
 import { toast } from "sonner";
 import Approve from "../../components/approval/Approve";
 import Reject from "../../components/approval/Reject";

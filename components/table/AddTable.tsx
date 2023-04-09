@@ -125,17 +125,25 @@ export default function AddRoom({ onSuccess }: { onSuccess: () => void }) {
         closeModal();
         toast.success("Meja berhasil ditambahkan");
       })
-      .catch((error) => {
-        const err = error as AxiosError;
-        if (err.response?.status === 400) {
-          toast.error("Meja sudah ada");
+      .catch((error: any) => {
+        if (error.response.status === 500) {
+          toast.error("Penambahan gagal, silakan coba lagi");
+        } else if (
+          error.response.data &&
+          error.response.data.message &&
+          typeof error.response.data.message === "object"
+        ) {
+          const errors = error.response.data.message;
+          for (const field in errors) {
+            errors[field].forEach((error: string) => {
+              toast.error(error);
+            });
+          }
         } else {
-          toast.error("Gagal menambahkan meja");
+          toast.error("Penambahan gagal, silakan coba lagi");
         }
-
         setLoading(false);
         closeModal();
-        console.log(err.response?.data, "error upload");
       });
   }
 
