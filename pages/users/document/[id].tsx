@@ -159,8 +159,8 @@ export default function DocumentPage() {
             </p>
           ) : (
             <p className="font-sans">
-              Dokumen ini berada di Ruang {data.room_name} dengan radius
-              maksimal 10m dari {data.table_name}
+              Dokumen ini berada di Ruang {data.room_name} dengan
+              {data.table_name}
             </p>
           )}
         </div>

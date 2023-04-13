@@ -188,8 +188,7 @@ export default function DashboardAdmin() {
             </li>
             <li className="">
               <a
-                className="btn btn-error text-white mt-5 py-3"
-                //setloading true onclick
+                className="btn btn-error text-white mt-5 py-3 capitalize"
                 onClick={logoutHandler}
               >
                 {loading ? (

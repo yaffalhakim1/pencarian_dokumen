@@ -7,6 +7,7 @@ import DocumentsList from "../../components/documents/DocumentsList";
 import Head from "next/head";
 import useSWR from "swr";
 import { TailSpin } from "react-loader-spinner";
+import { toast } from "sonner";
 
 interface Document {
   id: any;
@@ -51,7 +52,7 @@ export default function HomeUser() {
         },
       })
       .then((res) => {
-        console.log(res, "logged out from user role");
+        toast.success("Berhasil Logout");
       })
       .catch((err) => {
         // console.log(err);
