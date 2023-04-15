@@ -74,10 +74,21 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
     formData.append("device_id", field.device_id);
     formData.append("uuid", field.uuid);
     formData.append("code", field.code);
-    // field.tag.forEach((tag) => formData.append("tag[]", tag));
-    for (let i = 0; i < field.tag.length; i++) {
-      formData.append("tag[]", field.tag[i]);
+
+    if (field.tag.length === 0) {
+      formData.append("tag[]", "");
     }
+    field.tag.forEach((tag: any) => {
+      formData.append("tag[]", tag);
+    });
+    // for (let i = 0; i < field.tag.length; i++) {
+    //   formData.append("tag[]", field.tag[i]);
+    // }
+
+    // formData.append("tag[]", JSON.stringify(field.tag));
+
+    console.log(field.tag);
+
     const options = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -144,12 +155,23 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
         )
   );
 
+  // const handleSelectChange = (selectedOptions: any) => {
+  //   const options = selectedOptions.map((option: any) => option.label);
+
+  //   setField({
+  //     ...field,
+  //     tag: options,
+  //   });
+  // };
+
   const handleSelectChange = (selectedOptions: any) => {
-    const options = selectedOptions.map((option: any) => option.label);
-    setField({
-      ...field,
-      tag: options,
-    });
+    const options = selectedOptions
+      ? selectedOptions.map((option: any) => option.label)
+      : [];
+    setField({ ...field, tag: options });
+    if (selectedOptions === null) {
+      setField({ ...field, tag: [] });
+    }
   };
 
   const handleSelectDeviceChange = (selectedDevice: any) => {
@@ -259,6 +281,7 @@ export default function EditDocs({ datas, onSuccess }: EditButtonProps) {
                       onChange={handleSelectChange}
                       defaultValue={defaultValue}
                       classNamePrefix="select"
+                      isClearable
                     />
                   </label>
                 </Dialog.Description>

@@ -95,16 +95,22 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
       "input[type='file']"
     ) as HTMLInputElement;
     const formData = new FormData();
-    for (let i = 0; i < field.tag.length; i++) {
-      formData.append("tag[]", field.tag[i]);
-    }
+    // for (let i = 0; i < field.tag.length; i++) {
+    //   formData.append("tag[]", field.tag[i]);
+    // }
     formData.append("name", field.name);
     formData.append("table_id", field.table_id);
     formData.append("room_id", field.room_id);
     if (field.photo instanceof File) {
       formData.append("photo", field.photo);
     }
-    formData.append("code", field.code);
+
+    if (field.tag.length === 0) {
+      formData.append("tag[]", "");
+    }
+    field.tag.forEach((tag: any) => {
+      formData.append("tag[]", tag);
+    });
 
     const options = {
       headers: {
@@ -147,11 +153,13 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
   };
 
   const handleSelectChange = (selectedOptions: any) => {
-    const options = selectedOptions.map((option: any) => option.label);
-    setField({
-      ...field,
-      tag: options,
-    });
+    const options = selectedOptions
+      ? selectedOptions.map((option: any) => option.label)
+      : [];
+    setField({ ...field, tag: options });
+    if (selectedOptions === null) {
+      setField({ ...field, tag: [] });
+    }
   };
 
   const handleSelectRoomChange = (selectedRoom: any) => {
