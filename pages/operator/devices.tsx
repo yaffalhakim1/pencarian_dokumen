@@ -148,6 +148,7 @@ export default function CrudDevices() {
                   <th>Ruang</th>
                   <th>Meja</th>
                   <th>Tag</th>
+                  <th>Status</th>
                   <th></th>
                 </tr>
               </thead>
@@ -163,6 +164,18 @@ export default function CrudDevices() {
                     <td>{item.room_name}</td>
                     <td>{item.table_name}</td>
                     <td>{item.tag.join(", ")}</td>
+                    <td>
+                      {" "}
+                      {item.status == true ? (
+                        <span className="badge badge-success text-white">
+                          Terhubung
+                        </span>
+                      ) : (
+                        <span className="badge badge-error text-white">
+                          Tidak terhubung
+                        </span>
+                      )}
+                    </td>
 
                     <td>
                       <EditHardware
