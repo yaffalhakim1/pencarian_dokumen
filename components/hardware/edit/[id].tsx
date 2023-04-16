@@ -75,9 +75,7 @@ export default function EditHardware({ datas, onSuccess }: EditButtonProps) {
   });
   let [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  // const [options, setOptions] = useState<any>([]);
-  // const [tables, setTables] = useState<any>([]);
-  // const [rooms, setRooms] = useState<any>([]);
+
   const [selectedRoom, setSelectedRoom] = useState<any>([]);
 
   function closeModal() {

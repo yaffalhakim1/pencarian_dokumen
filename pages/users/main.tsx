@@ -1,6 +1,7 @@
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import HomeUser from "./home";
+import useRoleAuthorization from "../../hooks/useRoleAuth";
 
 export default function Main() {
   const [activeTab, setActiveTab] = useState(0);
@@ -8,6 +9,7 @@ export default function Main() {
   const handleTabClick = (index: React.SetStateAction<number>) => {
     setActiveTab(index);
   };
+  useRoleAuthorization(["User"]);
 
   const renderTabContent = () => {
     switch (activeTab) {
